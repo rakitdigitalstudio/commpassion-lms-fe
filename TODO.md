@@ -51,5 +51,41 @@ functions exist, they plug straight into these wrappers.
       `getCertificates`, `checkout`)
 - [ ] Add CSRF token handling + `credentials: include` to the Golang client
       wrapper
-- [ ] Add `.env.example` with `VITE_STRAPI_URL`, `VITE_STRAPI_TOKEN`,
-      `VITE_API_URL`
+- [ ] Add `VITE_STRAPI_URL`, `VITE_STRAPI_TOKEN`, `VITE_API_URL` to
+      `.env.example` (the file exists now, added in #4 for `VITE_USE_MOCKS`
+      — these three still need to be added alongside it)
+
+## Ticket #4 — MSW mock handler setup: blocked on the same SDS §6 gap
+
+**Status:** infra done, handlers blocked.
+
+Ticket #4 mock handlers must return payloads matching **SDS §6 exactly**
+(so Epic 8 can diff mock shapes against real ones) and cover every endpoint
+in **SDS §5 and §2** — we don't have §2 either. Writing approximate
+handlers now would be exactly the "simplified/approximate" version the
+ticket says not to build, and they'd need rewriting once §6 (and the
+Ticket #3 client modules they intercept) exist anyway.
+
+**Done (doesn't need §6):**
+
+- MSW installed, worker generated (`public/mockServiceWorker.js`)
+- `VITE_USE_MOCKS` toggle wired in `src/mocks/enable-mocks.ts` +
+  `main.tsx`, documented in README "Mocking (MSW)" and `.env.example`
+- `src/mocks/handlers.ts` / `src/mocks/browser.ts` scaffolded, empty
+
+**What's needed to unblock:** SDS §6 (response shapes) — same ask as
+Ticket #3 — plus SDS §2, which hasn't been shared at all yet.
+
+**Todos (from the ticket, unstarted):**
+
+- [ ] Get SDS §2 and §6 from the SDS owner
+- [ ] Write mock handlers for Strapi calls: course list, course
+      detail/lessons, site_config
+- [ ] Write mock handlers for Golang auth calls: csrf, register, login, me,
+      logout, forgot-password, reset-password
+- [ ] Write mock handlers for Golang user data calls: user/courses,
+      user/stats, user/activities, certificates
+- [ ] Write mock handlers for the lessons and checkout endpoints
+- [ ] Seed mock data covering every UI state in Images 2-9 (new-user/empty
+      state, in-progress courses, completed course + certificate,
+      in-review certificate)
