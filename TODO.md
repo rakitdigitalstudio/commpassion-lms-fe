@@ -120,3 +120,31 @@ change, only the types they consume.
 `ProtectedRoute`) since it reads as a public catalog page and the login
 page mockup has an "Explore Online Courses" CTA for guests — this isn't
 stated in any ticket, just inferred from the mockups.
+
+## Ticket #6 — Shared component library: done with inferred assumptions
+
+**Status:** done.
+
+Built `Button`, `StatusBadge`, `ProgressBar`, `StatCard`, `CourseCard`
+(catalog/purchased via a discriminated union in `CourseCard.types.ts`),
+and `EmptyState` in `src/components/`. All shown live on `/style-guide`.
+
+**Assumptions worth flagging (not spec'd anywhere):**
+
+- Added a `success` `Button` variant beyond the ticket's named list
+  (primary/accent/outline), to match the Purchases mockup's green "View
+  Certificate" CTA — using `accent` (yellow) or `primary` for it would
+  have been visually wrong.
+- Added `--color-highlight` (`#a855f7`, eyeballed) to `src/index.css` for
+  the dashboard's 4th stat card ("My Certificates", purple) — no existing
+  token fit. Same "needs Figma confirmation" caveat as the rest of Ticket
+  2's palette.
+- `CourseCard`'s `catalog` variant is **inferred, not pixel-matched** —
+  none of the 6 provided screenshots show the public catalog card, only
+  the purchased-course variant (My Purchases page). Built a plausible
+  banner + price + "View Course" layout; Ticket #21 ("Course card —
+  catalog variant") should replace/confirm it against the real design.
+- `CourseCard` banners use plain Tailwind background colors
+  (`bannerClassName` prop, e.g. `bg-indigo-600`) as a placeholder for the
+  real banner artwork/images seen in the mockups — no asset pipeline
+  exists yet for those.
