@@ -1,19 +1,50 @@
-import type { HttpHandler } from 'msw'
+import { http, HttpResponse, type HttpHandler } from 'msw'
+
+import type { AuthResponse, User } from '@/lib/api/auth.types'
 
 /**
  * MSW request handlers.
  *
- * BLOCKED (see TODO.md): the real handlers — one per SDS §5/§2 endpoint,
- * with response payloads matching SDS §6 exactly — can't be written yet.
- * We don't have SDS §6 (response shapes) or §2, and the client modules
- * these handlers are meant to intercept (Ticket #3) aren't built either,
- * since they're typed against the same missing §6.
+ * MOSTLY BLOCKED (see TODO.md): handlers for the SDS §5/§2 endpoints
+ * beyond auth can't be written yet — we don't have SDS §6 (response
+ * shapes) or §2, and the client modules they'd intercept (Ticket #3)
+ * aren't built either.
  *
- * This file is intentionally empty until that lands. Add handlers grouped
- * by client (Strapi vs. Golang) as they're written, e.g.:
- *
- *   http.get('https://api.example.com/courses', () =>
- *     HttpResponse.json(coursesFixture),
- *   )
+ * The auth handlers below are the exception, added for Ticket #5: they're
+ * PROVISIONAL, built from usual login/getMe/logout conventions rather than
+ * a confirmed spec (see auth.types.ts). Replace/confirm once SDS §6 lands.
  */
-export const handlers: HttpHandler[] = []
+
+const mockUser: User = {
+  id: '11111111-1111-1111-1111-111111111111',
+  email: 'marco.herbert@example.com',
+  fullName: 'Marco Herbert',
+  role: 'student',
+  emailVerifiedAt: '2026-01-01T00:00:00Z',
+}
+
+// In-memory only — resets on every full page reload, since there's no real
+// session store yet. Starts unauthenticated so the login redirect flow
+// (Ticket #5's acceptance criteria) is the default state to exercise.
+let isAuthenticated = false
+
+export const handlers: HttpHandler[] = [
+  http.get('*/api/v1/auth/csrf', () => HttpResponse.json({ csrfToken: 'mock-csrf-token' })),
+
+  http.post('*/api/v1/auth/login', () => {
+    isAuthenticated = true
+    return HttpResponse.json<AuthResponse>({ user: mockUser })
+  }),
+
+  http.get('*/api/v1/auth/me', () => {
+    if (!isAuthenticated) {
+      return new HttpResponse(null, { status: 401 })
+    }
+    return HttpResponse.json<AuthResponse>({ user: mockUser })
+  }),
+
+  http.post('*/api/v1/auth/logout', () => {
+    isAuthenticated = false
+    return new HttpResponse(null, { status: 204 })
+  }),
+]
