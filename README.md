@@ -4,7 +4,8 @@ LMS client for Compassion — the authenticated area where users watch courses, 
 purchases, and handle payment. Separate from `commpassion-landing-page` (Next.js); per
 SDS §3.B this app is mostly CSR behind auth, so it's plain React via Vite instead of Next.
 
-This ticket is scaffold-only: no API calls, auth logic, or styled components yet.
+Ticket 1 was scaffold-only (no API calls, auth logic, or styled components). Ticket 2
+added Tailwind CSS and the design token layer described below.
 
 ## Getting started
 
@@ -53,6 +54,24 @@ Placeholder routes only, no auth guards yet:
 - `/explore`
 - `/settings`
 - `/courses/:courseId`
+- `/style-guide` — palette and type scale reference (Ticket 2)
+
+## Design tokens
+
+Tailwind CSS v4, config lives in `src/index.css` via `@theme` — there is no
+`tailwind.config.ts`. Visit `/style-guide` for a live reference.
+
+- `--color-primary` (`#84c6da`) and `--color-accent` (`#faea05`) are pulled
+  from the same Figma file as `compassion-landing-page` (see that repo's
+  `globals.css`) — not eyeballed.
+- Status colors (`--color-success`, `--color-info`, `--color-warning`), the
+  type scale (`--text-display`/`h2`/`h3`/`stat`), radius (`--radius-card`,
+  `--radius-control`), and `--shadow-card` are eyeballed from the dashboard
+  mockups (Images 1-9), **not** pulled from Figma yet — this repo doesn't
+  have Figma Editor access. Flagging per Ticket 2: someone with Editor
+  access needs to confirm/replace these against the real file.
+- Font is DM Sans (`@fontsource-variable/dm-sans`), matching
+  `compassion-landing-page`'s `next/font` choice.
 
 ## Git Workflow
 
