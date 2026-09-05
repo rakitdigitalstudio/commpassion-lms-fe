@@ -35,8 +35,10 @@ is the single lockfile for this repo.
 ```
 src/
   components/   shared UI components
-  lib/          shared utilities/helpers
+  hooks/        shared hooks (useApiQuery/useApiMutation, etc.)
+  lib/          shared utilities/helpers (query client, query-key factory)
   pages/        route-level page components
+  providers/    app-level context providers (QueryProvider, etc.)
   routes/       React Router route definitions
 ```
 
@@ -72,6 +74,48 @@ Tailwind CSS v4, config lives in `src/index.css` via `@theme` — there is no
   access needs to confirm/replace these against the real file.
 - Font is DM Sans (`@fontsource-variable/dm-sans`), matching
   `compassion-landing-page`'s `next/font` choice.
+
+## Data fetching (TanStack Query)
+
+All server data — Strapi and the Golang API alike, once the client modules
+in Ticket #3 land (blocked, see `TODO.md`) — goes through
+[TanStack Query](https://tanstack.com/query), not raw `fetch`/`useEffect`.
+
+- **Never call `useQuery`/`useMutation` directly.** Use the wrapper hooks
+  in `src/hooks/`: `useApiQuery` for reads, `useApiMutation` for writes.
+  They exist so app-wide defaults (`staleTime`, `retry`, cache
+  invalidation — see `src/lib/query-client.ts`) live in one place instead
+  of being repeated, and drifting, at every call site.
+- **Query keys come from `src/lib/query-keys.ts`.** Don't hand-write a key
+  array inline — add a branch to the `queryKeys` factory instead. This is
+  what keeps `useApiMutation`'s `invalidateKeys` in sync with the queries
+  it's supposed to invalidate.
+- **One hook per resource.** Wrap each API client function in its own
+  named hook (e.g. `useCourses()`, `useUserStats()`) rather than calling
+  `useApiQuery` ad hoc inside components. Put the hook next to the
+  component(s) that use it, or in `src/hooks/` if it's shared.
+- **Mutations declare `invalidateKeys`.** Any mutation that changes server
+  state passes the query keys that should refetch afterward — don't
+  manually refetch or reload the page instead.
+- **No fetching in `useEffect`.** If data is needed before render, use the
+  query's `isLoading`/`isPending` state (or a route loader later), not a
+  manual effect + `useState`.
+- **Errors are surfaced, not swallowed.** Read `error`/`isError` off the
+  hook and let the component decide how to render it — don't catch and
+  discard in the query/mutation function.
+
+Example, once a real API function exists:
+
+```ts
+// src/hooks/useCourses.ts
+import { getCourses } from '@/lib/api/strapi'
+import { useApiQuery } from '@/hooks/useApiQuery'
+import { queryKeys } from '@/lib/query-keys'
+
+export function useCourses() {
+  return useApiQuery(queryKeys.courses(), getCourses)
+}
+```
 
 ## Git Workflow
 

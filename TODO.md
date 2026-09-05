@@ -24,6 +24,12 @@ prevent.
 auth, course list/detail, user courses/stats/activities, lessons,
 certificates, checkout) from whoever owns the SDS.
 
+**Already done ahead of the client modules themselves:** TanStack Query is
+installed and wired up (`QueryProvider`, `queryClient`, `queryKeys`
+factory, `useApiQuery`/`useApiMutation` wrapper hooks) — see the README
+"Data fetching" section. Once §6 lands and the Strapi/Golang client
+functions exist, they plug straight into these wrappers.
+
 **What we already have, ready to use once §6 lands:**
 
 - §4 `lms` database schema (`users`, `password_reset_tokens`, `enrollments`,
