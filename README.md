@@ -66,14 +66,33 @@ Tailwind CSS v4, config lives in `src/index.css` via `@theme` — there is no
 - `--color-primary` (`#84c6da`) and `--color-accent` (`#faea05`) are pulled
   from the same Figma file as `compassion-landing-page` (see that repo's
   `globals.css`) — not eyeballed.
-- Status colors (`--color-success`, `--color-info`, `--color-warning`), the
-  type scale (`--text-display`/`h2`/`h3`/`stat`), radius (`--radius-card`,
-  `--radius-control`), and `--shadow-card` are eyeballed from the dashboard
-  mockups (Images 1-9), **not** pulled from Figma yet — this repo doesn't
-  have Figma Editor access. Flagging per Ticket 2: someone with Editor
-  access needs to confirm/replace these against the real file.
+- Status colors (`--color-success`, `--color-info`, `--color-warning`,
+  `--color-highlight`), the type scale (`--text-display`/`h2`/`h3`/`stat`),
+  radius (`--radius-card`, `--radius-control`), and `--shadow-card` are
+  eyeballed from the dashboard mockups (Images 1-9), **not** pulled from
+  Figma yet — this repo doesn't have Figma Editor access. Flagging per
+  Ticket 2: someone with Editor access needs to confirm/replace these
+  against the real file.
 - Font is DM Sans (`@fontsource-variable/dm-sans`), matching
   `compassion-landing-page`'s `next/font` choice.
+
+## Component library
+
+Shared, reusable UI components live in `src/components/`. Visit
+`/style-guide` for a live reference of every component and variant.
+
+- `Button` — `primary` / `accent` / `outline` / `success` variants.
+  `success` isn't in Ticket #6's original list; added to match the
+  Purchases mockup's green "View Certificate" CTA.
+- `StatusBadge` — `completed` / `in-progress` / `not-started`.
+- `ProgressBar` — colored by the same `Status` as `StatusBadge`, so a
+  course's badge and bar always agree.
+- `StatCard` — plain (dashboard) or with an `icon` (purchases-page style).
+- `CourseCard` — `catalog` | `purchased` variant via a discriminated union
+  (`CourseCard.types.ts`). **`catalog` is inferred, not pixel-matched** —
+  none of the provided mockups show it; Ticket #21 should refine it.
+  `purchased` matches the My Purchases mockup.
+- `EmptyState` — icon + heading + subtext + optional CTA.
 
 ## Data fetching (TanStack Query)
 

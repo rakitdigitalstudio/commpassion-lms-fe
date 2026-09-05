@@ -18,6 +18,7 @@
   --color-success: #22c55e;
   --color-info: #3b82f6;
   --color-warning: #eab308;
+  --color-highlight: #a855f7; /* dashboard "My Certificates" stat — eyeballed, no clear brand role yet */
 
   --color-border: #e5e7eb;
   --color-muted: #6b7280;
@@ -31,6 +32,7 @@
   --color-success: var(--color-success);
   --color-info: var(--color-info);
   --color-warning: var(--color-warning);
+  --color-highlight: var(--color-highlight);
   --color-border: var(--color-border);
   --color-muted: var(--color-muted);
 
