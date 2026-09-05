@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { AppShell } from '@/components/AppShell'
 import { CourseDetail } from '@/pages/CourseDetail'
 import { Dashboard } from '@/pages/Dashboard'
 import { Explore } from '@/pages/Explore'
@@ -20,39 +21,24 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/dashboard',
+    // Single AppShell (sidebar + topbar) wraps every protected route via
+    // Outlet, per Ticket #7's acceptance criteria.
     element: (
       <ProtectedRoute>
-        <Dashboard />
+        <AppShell />
       </ProtectedRoute>
     ),
+    children: [
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/purchases', element: <Purchases /> },
+      { path: '/settings', element: <Settings /> },
+      { path: '/courses/:courseId', element: <CourseDetail /> },
+    ],
   },
-  {
-    path: '/purchases',
-    element: (
-      <ProtectedRoute>
-        <Purchases />
-      </ProtectedRoute>
-    ),
-  },
-  // Public catalog browsing — no auth required, matches the login page's
-  // "Explore Online Courses" CTA for guests. Inferred, not spec'd.
+  // Public catalog browsing, outside the shell — no mockup shows an
+  // authenticated /explore with sidebar/topbar (Ticket #7 only covers
+  // "authenticated screens"), and it's reachable while logged out (login
+  // page's "Explore Online Courses" CTA). Revisit alongside Ticket #20.
   { path: '/explore', element: <Explore /> },
-  {
-    path: '/settings',
-    element: (
-      <ProtectedRoute>
-        <Settings />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/courses/:courseId',
-    element: (
-      <ProtectedRoute>
-        <CourseDetail />
-      </ProtectedRoute>
-    ),
-  },
   { path: '/style-guide', element: <StyleGuide /> },
 ])
