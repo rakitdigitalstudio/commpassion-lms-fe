@@ -13,6 +13,10 @@ const API_URL = import.meta.env.VITE_API_URL ?? ''
  * treat "not logged in" as a normal resolved state instead of an error. */
 export class UnauthenticatedError extends Error {}
 
+/** Thrown by login() on a 401 (wrong email/password), so the form can
+ * show a generic "invalid credentials" message instead of a network error. */
+export class InvalidCredentialsError extends Error {}
+
 async function getCsrfToken(): Promise<string> {
   const res = await fetch(`${API_URL}/api/v1/auth/csrf`, {
     credentials: 'include',
@@ -39,6 +43,10 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
     },
     body: JSON.stringify(payload),
   })
+
+  if (res.status === 401) {
+    throw new InvalidCredentialsError('Invalid email or password')
+  }
 
   if (!res.ok) {
     throw new Error(`Login failed: ${res.status}`)
