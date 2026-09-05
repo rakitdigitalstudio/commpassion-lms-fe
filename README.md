@@ -94,6 +94,20 @@ Shared, reusable UI components live in `src/components/`. Visit
   `purchased` matches the My Purchases mockup.
 - `EmptyState` — icon + heading + subtext + optional CTA.
 
+## App shell
+
+`AppShell` (`src/components/AppShell.tsx`) is the single layout —
+sidebar + topbar + `<Outlet>` — wrapping every protected route via a
+parent route in `src/routes/index.tsx`. `Sidebar` highlights the active
+nav item and wires its logout button to `useAuth().logout()`; `Topbar`
+reads the current user from `useAuth()` (no hardcoded user data). Icons
+are a small hand-authored set in `src/components/icons.tsx` — no icon
+library added yet.
+
+`/explore` is intentionally outside the shell (no mockup shows an
+authenticated Explore page) — see `TODO.md` for why, and revisit
+alongside Ticket #20.
+
 ## Data fetching (TanStack Query)
 
 All server data — Strapi and the Golang API alike, once the client modules

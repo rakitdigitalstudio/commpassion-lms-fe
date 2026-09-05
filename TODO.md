@@ -148,3 +148,27 @@ and `EmptyState` in `src/components/`. All shown live on `/style-guide`.
   (`bannerClassName` prop, e.g. `bg-indigo-600`) as a placeholder for the
   real banner artwork/images seen in the mockups — no asset pipeline
   exists yet for those.
+
+## Ticket #7 — App shell layout: done with an inferred assumption
+
+**Status:** done.
+
+Built `AppShell` (`src/components/AppShell.tsx`, sidebar + topbar +
+`<Outlet>`), `Sidebar`, `Topbar`, and a small hand-authored icon set
+(`src/components/icons.tsx` — no icon library added). Wired as a single
+parent route in `src/routes/index.tsx`: `<ProtectedRoute><AppShell /></ProtectedRoute>`
+wraps `/dashboard`, `/purchases`, `/settings`, `/courses/:courseId` as
+children, satisfying "single layout component wrapping all protected
+routes." Topbar's user info and Sidebar's logout button both go through
+`useAuth()` — no hardcoded user data.
+
+**Assumption worth flagging:** `/explore` was kept outside `AppShell`
+entirely (no sidebar/topbar), since none of the 6 provided screenshots
+show an authenticated Explore page and Ticket #7 scopes the shell to
+"authenticated screens." Revisit when Ticket #20 (Catalog page) is built —
+an authenticated user browsing Explore probably _should_ see the shell,
+which would mean moving it inside the `AppShell` children instead.
+
+**Not built (out of scope for this ticket, not asked for):** the language
+dropdown and notification bell are static placeholders — no real i18n
+switching or notification list exists yet.
