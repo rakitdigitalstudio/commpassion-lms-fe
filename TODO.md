@@ -172,3 +172,32 @@ which would mean moving it inside the `AppShell` children instead.
 **Not built (out of scope for this ticket, not asked for):** the language
 dropdown and notification bell are static placeholders — no real i18n
 switching or notification list exists yet.
+
+## Ticket #9 — Login page: done, one open question from the ticket itself
+
+**Status:** done.
+
+Built `src/pages/Login.tsx` per the mockup: two-column layout, email/lock
+icons, password show/hide toggle, Remember Me, Forgot Password/Sign up
+links (pointing at not-yet-built `/forgot-password` and `/register`
+routes — Tickets #10/#11), Sign In wired through `useAuth().login()`, and
+"Explore Online Courses". Also added `InvalidCredentialsError` to
+`auth.ts` and made the MSW login handler actually validate credentials
+(`marco.herbert@example.com` / `password123`, else 401) so the error
+state and redirect-on-success are both exercisable — verified both paths
+with a script against the mock handlers (no connected browser this
+session to click through it).
+
+`VITE_IS_COMING_SOON` env toggle added per your instruction: `"true"`
+hides the sign-in form/sign-up link, showing a "coming soon" notice;
+"Explore Online Courses" stays visible regardless.
+
+**Open question — straight from Ticket #9's own todo list, still
+unresolved:** "confirm with Irene whether \[the promo panel] is hardcoded
+or should eventually come from Strapi `site_config`." Built it hardcoded
+for now since there's no one to ask in this session; flagging so it
+doesn't get lost.
+
+**Other assumption:** the featured-course image is a plain color
+placeholder, same reasoning as `CourseCard` banners (see Ticket #6) — no
+real asset/pipeline for course imagery exists yet.

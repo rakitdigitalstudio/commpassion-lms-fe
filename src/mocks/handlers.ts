@@ -1,6 +1,6 @@
 import { http, HttpResponse, type HttpHandler } from 'msw'
 
-import type { AuthResponse, User } from '@/lib/api/auth.types'
+import type { AuthResponse, LoginPayload, User } from '@/lib/api/auth.types'
 
 /**
  * MSW request handlers.
@@ -23,6 +23,10 @@ const mockUser: User = {
   emailVerifiedAt: '2026-01-01T00:00:00Z',
 }
 
+// Mock-valid credentials for exercising the Ticket #9 login form. Any
+// other email/password combination is treated as invalid (401).
+const MOCK_CREDENTIALS = { email: mockUser.email, password: 'password123' }
+
 // In-memory only — resets on every full page reload, since there's no real
 // session store yet. Starts unauthenticated so the login redirect flow
 // (Ticket #5's acceptance criteria) is the default state to exercise.
@@ -31,7 +35,13 @@ let isAuthenticated = false
 export const handlers: HttpHandler[] = [
   http.get('*/api/v1/auth/csrf', () => HttpResponse.json({ csrfToken: 'mock-csrf-token' })),
 
-  http.post('*/api/v1/auth/login', () => {
+  http.post('*/api/v1/auth/login', async ({ request }) => {
+    const body = (await request.json()) as Partial<LoginPayload>
+
+    if (body.email !== MOCK_CREDENTIALS.email || body.password !== MOCK_CREDENTIALS.password) {
+      return HttpResponse.json({ message: 'Invalid email or password' }, { status: 401 })
+    }
+
     isAuthenticated = true
     return HttpResponse.json<AuthResponse>({ user: mockUser })
   }),
