@@ -6,6 +6,7 @@ import { Explore } from '@/pages/Explore'
 import { Login } from '@/pages/Login'
 import { Purchases } from '@/pages/Purchases'
 import { Settings } from '@/pages/Settings'
+import { StyleGuide } from '@/pages/StyleGuide'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
@@ -14,4 +15,5 @@ export const router = createBrowserRouter([
   { path: '/explore', element: <Explore /> },
   { path: '/settings', element: <Settings /> },
   { path: '/courses/:courseId', element: <CourseDetail /> },
+  { path: '/style-guide', element: <StyleGuide /> },
 ])
