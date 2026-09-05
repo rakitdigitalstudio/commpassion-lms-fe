@@ -5,7 +5,8 @@ outside this repo, so it doesn't get lost between sessions.
 
 ## Ticket #3 — API client scaffolding: blocked on SDS §6
 
-**Status:** blocked, not started.
+**Status:** blocked overall; auth functions provisionally unblocked for
+Ticket #5 (see below).
 
 Ticket #3 (`API client scaffolding`) requires every client function's return
 type to match its corresponding **SDS §6 response shape exactly** (e.g.
@@ -43,14 +44,19 @@ functions exist, they plug straight into these wrappers.
 **Todos (from the ticket, unstarted):**
 
 - [ ] Get SDS §6 from the SDS owner
-- [ ] Define TypeScript types for every SDS §6 response shape
+- [ ] **Re-confirm `src/lib/api/auth.types.ts` and `auth.ts`** (`login`,
+      `getMe`, `logout`) against real §6 — currently PROVISIONAL, built
+      from usual conventions + the §4 `users` columns for Ticket #5, not
+      from a spec. Field names/casing/envelope shape may all be wrong.
+- [ ] Define TypeScript types for every other SDS §6 response shape
 - [ ] Build Strapi client module (`getCourses`, `getCourseBySlug`,
       `getSiteConfig`, etc.)
-- [ ] Build Golang client module (`login`, `register`, `getMe`, `logout`,
-      `getUserCourses`, `getUserStats`, `getUserActivities`, `getLesson`,
-      `getCertificates`, `checkout`)
-- [ ] Add CSRF token handling + `credentials: include` to the Golang client
-      wrapper
+- [ ] Build remaining Golang client functions (`register`, `getUserCourses`,
+      `getUserStats`, `getUserActivities`, `getLesson`, `getCertificates`,
+      `checkout`) — `login`/`getMe`/`logout` exist provisionally, see above
+- [x] Add CSRF token handling + `credentials: include` to the Golang client
+      wrapper — done for the auth functions in `auth.ts`; carry the same
+      pattern to the rest once built
 - [ ] Add `VITE_STRAPI_URL`, `VITE_STRAPI_TOKEN`, `VITE_API_URL` to
       `.env.example` (the file exists now, added in #4 for `VITE_USE_MOCKS`
       — these three still need to be added alongside it)
@@ -66,12 +72,14 @@ handlers now would be exactly the "simplified/approximate" version the
 ticket says not to build, and they'd need rewriting once §6 (and the
 Ticket #3 client modules they intercept) exist anyway.
 
-**Done (doesn't need §6):**
+**Done:**
 
 - MSW installed, worker generated (`public/mockServiceWorker.js`)
 - `VITE_USE_MOCKS` toggle wired in `src/mocks/enable-mocks.ts` +
   `main.tsx`, documented in README "Mocking (MSW)" and `.env.example`
-- `src/mocks/handlers.ts` / `src/mocks/browser.ts` scaffolded, empty
+- Auth handlers added for Ticket #5 (`csrf`, `login`, `me`, `logout`) —
+  PROVISIONAL, same caveat as the #3 auth client above: built from
+  convention, not SDS §6. In-memory only, resets on page reload.
 
 **What's needed to unblock:** SDS §6 (response shapes) — same ask as
 Ticket #3 — plus SDS §2, which hasn't been shared at all yet.
@@ -81,11 +89,34 @@ Ticket #3 — plus SDS §2, which hasn't been shared at all yet.
 - [ ] Get SDS §2 and §6 from the SDS owner
 - [ ] Write mock handlers for Strapi calls: course list, course
       detail/lessons, site_config
-- [ ] Write mock handlers for Golang auth calls: csrf, register, login, me,
-      logout, forgot-password, reset-password
+- [x] Write mock handlers for Golang auth calls: csrf, login, me, logout
+      (provisional, see above) — `register`, `forgot-password`,
+      `reset-password` still unstarted
 - [ ] Write mock handlers for Golang user data calls: user/courses,
       user/stats, user/activities, certificates
 - [ ] Write mock handlers for the lessons and checkout endpoints
 - [ ] Seed mock data covering every UI state in Images 2-9 (new-user/empty
       state, in-progress courses, completed course + certificate,
       in-review certificate)
+
+## Ticket #5 — Auth context + protected route wrapper: done with provisional types
+
+**Status:** done.
+
+Built `AuthContext`/`AuthProvider` (`src/context/`, `src/providers/`),
+`useAuth()`, and `<ProtectedRoute>`/`<GuestOnlyRoute>` (`src/routes/`),
+wired into `App.tsx` and `src/routes/index.tsx`. Session resolution calls
+`getMe()` once via `useApiQuery` on load; `login`/`logout` mutations
+invalidate the `me` query so the context updates automatically.
+
+This ticket's acceptance criteria don't depend on the exact §6 shape (just
+that _a_ user object exists), so it's not blocked the way #3/#4 are — but
+it's built on the same PROVISIONAL `auth.ts`/`auth.types.ts` from #3.
+**When §6 lands:** re-check `User`'s fields and the `{ user }` response
+envelope; `AuthProvider`/`ProtectedRoute` themselves shouldn't need to
+change, only the types they consume.
+
+**Assumption worth flagging:** `/explore` was left public (not wrapped in
+`ProtectedRoute`) since it reads as a public catalog page and the login
+page mockup has an "Explore Online Courses" CTA for guests — this isn't
+stated in any ticket, just inferred from the mockups.
