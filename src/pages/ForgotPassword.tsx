@@ -64,11 +64,13 @@ export function ForgotPassword() {
         </form>
       )}
 
-      <p className="mt-5 text-center text-sm">
-        <Link to="/login" className="text-primary font-medium">
-          {t('auth.forgotPassword.backToSignIn')}
-        </Link>
-      </p>
+      {IS_COMING_SOON ? null : (
+        <p className="mt-5 text-center text-sm">
+          <Link to="/login" className="text-primary font-medium">
+            {t('auth.forgotPassword.backToSignIn')}
+          </Link>
+        </p>
+      )}
     </AuthLayout>
   )
 }

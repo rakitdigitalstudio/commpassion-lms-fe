@@ -142,11 +142,13 @@ export function Login() {
         </form>
       )}
 
-      <Link to="/explore" className="mt-5 block">
-        <Button variant="outline" className="w-full">
-          {t('auth.login.exploreCourses')}
-        </Button>
-      </Link>
+      {IS_COMING_SOON ? null : (
+        <Link to="/explore" className="mt-5 block">
+          <Button variant="outline" className="w-full">
+            {t('auth.login.exploreCourses')}
+          </Button>
+        </Link>
+      )}
     </AuthLayout>
   )
 }
