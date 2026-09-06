@@ -95,8 +95,16 @@ Shared, reusable UI components live in `src/components/`. Visit
   `success` isn't in Ticket #6's original list; added to match the
   Purchases mockup's green "View Certificate" CTA.
 - `StatusBadge` — `completed` / `in-progress` / `not-started`.
-- `ProgressBar` — colored by the same `Status` as `StatusBadge`, so a
-  course's badge and bar always agree.
+- `Progress` — the universal progress bar. `value` (0-100) plus plain CSS
+  color strings for `trackColor` (default `#D9D9D980`, i.e. `#D9D9D9` at
+  50% opacity) and `color` (default `#84C6DA`, matching `--color-primary`)
+  — colors are CSS strings, not Tailwind classes, so an exact Figma value
+  (including alpha) can be passed through without inventing a token per
+  usage. `ProgressBar` (below) wraps it.
+- `ProgressBar` — colored by the same `Status` as `StatusBadge` (via CSS
+  `var(--color-success|info|warning)` passed to `Progress`), so a
+  course's badge and bar always agree. A thin wrapper, not a separate
+  implementation.
 - `StatCard` — plain (dashboard) or with an `icon` (purchases-page style).
 - `CourseCard` — `catalog` | `purchased` variant via a discriminated union
   (`CourseCard.types.ts`). **`catalog` is inferred, not pixel-matched** —

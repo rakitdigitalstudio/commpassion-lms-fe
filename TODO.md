@@ -364,3 +364,17 @@ used solid `bg-primary`) and a new `--shadow-promo` token
 (`0px 4px 16px 0px #00000040`) in `src/index.css`, distinct from
 `--shadow-card`. Both confirmed via generated CSS output. The inner
 course-info sub-card still uses solid `bg-primary`, unchanged.
+
+Also: extracted `AuthPromoPanel`'s hand-rolled progress bar into a new
+universal `Progress` component (`src/components/Progress.tsx`) — track
+`#D9D9D980` (default) / fill `#078CB580` (this page's override) per your
+spec, both plain CSS color strings rather than Tailwind classes so exact
+Figma alpha values pass through untouched. **Refactored the existing
+status-based `ProgressBar` to wrap `Progress`** instead of duplicating
+the markup — this changes its track color from the old `bg-border` gray
+to the new `#D9D9D980` default, a visible (if subtle) change to every
+existing `ProgressBar` usage (`CourseCard`, `/style-guide`), not just
+`AuthPromoPanel`. Flagging since it wasn't explicitly asked to touch
+`ProgressBar` — seemed like the obvious right move for "universal
+component" rather than leaving two near-duplicate progress-bar
+implementations.
