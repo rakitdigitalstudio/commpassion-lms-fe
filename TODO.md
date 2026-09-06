@@ -258,9 +258,33 @@ auth/API state is broken. `NotFound` (404) is the catch-all route
 
 **Not addressed (out of scope, wasn't asked):** what a real backend 503
 should do (currently nothing translates a failed API response into
-maintenance mode — it's purely the env flag), and there's still no route
-for `/` itself (unmatched, so it currently hits `NotFound` too) — worth a
-decision on what `/` should redirect to.
+maintenance mode — it's purely the env flag).
+
+**Update:** the "no route for `/`" gap above is resolved — `/` now
+redirects to `/login`, see the "Deployment / root route" entry below.
+
+## Vercel deploy fixes: /login 404 in production, root route missing
+
+**Status:** done.
+
+Two related production bugs reported after deploying:
+
+1. **`/login` (and any direct/refreshed route) 404'd on Vercel.** Cause:
+   Vercel's static hosting looks for a file/function matching the exact
+   path and 404s if none exists — it never got a chance to serve
+   `index.html` so React Router could take over client-side. Fixed with
+   `vercel.json`'s catch-all rewrite (`/(.*)` → `/index.html`). This is
+   Vercel-specific — local dev/`vite preview` never hit this because both
+   already fall back to `index.html` for unmatched paths on their own.
+2. **No route existed for `/` itself** — it fell through to the
+   `NotFound` catch-all, same underlying gap noted in the Maintenance
+   entry above. Added `{ path: '/', element: <Navigate to="/login" replace /> }`.
+   Per your instruction ("when coming soon, reroute to /login for users
+   that landed in root"): redirecting to `/login` handles this correctly
+   without any extra coming-soon-specific logic, since `/login` already
+   does the right thing in every case — `GuestOnlyRoute` forwards an
+   authenticated visitor on to `/dashboard`, and an unauthenticated one
+   sees the coming-soon-locked form when `IS_COMING_SOON` is true.
 
 **Correction (same PR, before merge):** initially also added a
 `/maintenance` route in `routes/index.tsx` alongside the `App.tsx`
