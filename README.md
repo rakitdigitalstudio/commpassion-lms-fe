@@ -44,6 +44,15 @@ this broke the Vercel build. If a new dependency ever needs its build
 script approved, add it here rather than running `pnpm approve-builds`
 interactively (that doesn't persist anywhere CI can see it).
 
+## Deployment (Vercel)
+
+`vercel.json` rewrites every path to `/index.html` — required for a
+client-side-routed SPA on Vercel's static hosting. Without it, a direct
+visit or refresh on any route other than `/` (e.g. `/login`) 404s: Vercel
+looks for a matching static file/function for that exact path, finds
+none, and never gets a chance to hand off to React Router client-side.
+Don't remove this file.
+
 ## Project structure
 
 ```
@@ -62,6 +71,10 @@ src/
 
 ## Routes
 
+- `/` — redirects straight to `/login`, which handles both cases:
+  `GuestOnlyRoute` forwards an already-authenticated visitor on to
+  `/dashboard`, and an unauthenticated one sees the coming-soon-locked
+  form when `IS_COMING_SOON` is true.
 - `/login`, `/register` — guest-only (redirect to `/dashboard` if already
   authenticated); `/register` has no design yet (see "Register page")
 - `/dashboard`, `/purchases`, `/settings`, `/courses/:courseId` — protected,

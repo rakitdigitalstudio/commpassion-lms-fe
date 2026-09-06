@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import { AppShell } from '@/components/AppShell'
 import { CourseDetail } from '@/pages/CourseDetail'
@@ -16,6 +16,11 @@ import { GuestOnlyRoute } from '@/routes/GuestOnlyRoute'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
 
 export const router = createBrowserRouter([
+  // Root has no page of its own — send everyone through /login, which
+  // already does the right thing either way: GuestOnlyRoute forwards an
+  // authenticated visitor on to /dashboard, and an unauthenticated one
+  // sees the coming-soon-locked form when IS_COMING_SOON is true.
+  { path: '/', element: <Navigate to="/login" replace /> },
   {
     path: '/login',
     element: (
