@@ -1,4 +1,16 @@
 {
+  "common": {
+    "maintenance": {
+      "heading": "Sedang Dalam Perbaikan",
+      "body": "Kami sedang melakukan peningkatan dan akan segera kembali. Terima kasih atas kesabaran Anda."
+    },
+    "notFound": {
+      "code": "404",
+      "heading": "Halaman tidak ditemukan",
+      "body": "Halaman yang Anda cari tidak ada atau mungkin telah dipindahkan.",
+      "backHome": "Kembali ke Beranda"
+    }
+  },
   "auth": {
     "comingSoon": {
       "heading": "Segera hadir",
