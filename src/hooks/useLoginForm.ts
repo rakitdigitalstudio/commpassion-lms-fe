@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
@@ -11,10 +11,18 @@ import { InvalidCredentialsError } from '@/lib/api/auth'
  * component so Login.tsx stays presentational (JSX + wiring these values
  * to inputs). See README "Forms" for the convention this follows.
  */
+interface LoginLocationState {
+  justRegistered?: boolean
+}
+
 export function useLoginForm() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useAuth()
   const password = usePasswordVisibility()
+
+  const showRegisteredNotice =
+    (location.state as LoginLocationState | null)?.justRegistered === true
 
   const [email, setEmail] = useState('')
   const [passwordValue, setPasswordValue] = useState('')
@@ -46,5 +54,6 @@ export function useLoginForm() {
     error,
     isSubmitting,
     submit,
+    showRegisteredNotice,
   } as const
 }
