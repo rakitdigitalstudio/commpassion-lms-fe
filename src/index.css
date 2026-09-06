@@ -2,6 +2,9 @@
 @import '@fontsource-variable/dm-sans';
 
 :root {
+  /* Light only — no dark mode. Fixed regardless of OS/browser preference. */
+  color-scheme: light;
+
   --background: #ffffff;
   --foreground: #0f172a;
 
@@ -63,13 +66,6 @@
     #c2e3ed 89.01%,
     #e0f1f6 95.53%
   ); /* AuthPromoPanel, per Figma — generates the bg-promo utility */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

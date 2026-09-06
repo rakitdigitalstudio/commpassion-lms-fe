@@ -83,6 +83,9 @@ Tailwind CSS v4, config lives in `src/index.css` via `@theme` — there is no
   against the real file.
 - Font is DM Sans (`@fontsource-variable/dm-sans`), matching
   `compassion-landing-page`'s `next/font` choice.
+- **Light mode only, no dark mode** — `color-scheme: light` on `:root`,
+  no `prefers-color-scheme: dark` media query. Fixed regardless of the
+  user's OS/browser setting.
 
 ## Component library
 
