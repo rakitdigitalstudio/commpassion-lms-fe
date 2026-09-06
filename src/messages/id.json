@@ -9,6 +9,11 @@
       "heading": "Halaman tidak ditemukan",
       "body": "Halaman yang Anda cari tidak ada atau mungkin telah dipindahkan.",
       "backHome": "Kembali ke Beranda"
+    },
+    "underConstruction": {
+      "heading": "Masih dalam pengembangan",
+      "body": "Halaman ini belum siap. Silakan cek kembali nanti.",
+      "backToLogin": "Kembali ke Halaman Masuk"
     }
   },
   "auth": {

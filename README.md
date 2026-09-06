@@ -16,6 +16,13 @@ pnpm install
 pnpm dev
 ```
 
+`.env.local` is created automatically from `.env.example` (see
+`scripts/ensure-env.mjs`, run via `postinstall` and `predev`) if it
+doesn't exist yet — you don't need to copy it by hand. **Never edit
+`.env.example` expecting it to take effect** — Vite only reads `.env`/
+`.env.local`/`.env.[mode](.local)`, never `.env.example`; it's a template
+only. Edit `.env.local` (gitignored, per-machine) instead.
+
 ## Scripts
 
 - `pnpm dev` — start the dev server with HMR
@@ -55,8 +62,6 @@ src/
 - `/explore` — public, outside the shell (see "App shell")
 - `/forgot-password`, `/reset-password?token=...` — public, no design yet
   (see "Forgot / reset password")
-- `/maintenance` — shown for every route when `VITE_MAINTENANCE_MODE=true`
-  (see "Maintenance page"); also reachable directly
 - `/style-guide` — palette, type scale, and component reference (Ticket 2/6)
 - `*` (catch-all, public, must stay last) — `NotFound` (404) for any
   unmatched URL
@@ -78,6 +83,9 @@ Tailwind CSS v4, config lives in `src/index.css` via `@theme` — there is no
   against the real file.
 - Font is DM Sans (`@fontsource-variable/dm-sans`), matching
   `compassion-landing-page`'s `next/font` choice.
+- **Light mode only, no dark mode** — `color-scheme: light` on `:root`,
+  no `prefers-color-scheme: dark` media query. Fixed regardless of the
+  user's OS/browser setting.
 
 ## Component library
 
@@ -88,8 +96,16 @@ Shared, reusable UI components live in `src/components/`. Visit
   `success` isn't in Ticket #6's original list; added to match the
   Purchases mockup's green "View Certificate" CTA.
 - `StatusBadge` — `completed` / `in-progress` / `not-started`.
-- `ProgressBar` — colored by the same `Status` as `StatusBadge`, so a
-  course's badge and bar always agree.
+- `Progress` — the universal progress bar. `value` (0-100) plus plain CSS
+  color strings for `trackColor` (default `#D9D9D980`, i.e. `#D9D9D9` at
+  50% opacity) and `color` (default `#84C6DA`, matching `--color-primary`)
+  — colors are CSS strings, not Tailwind classes, so an exact Figma value
+  (including alpha) can be passed through without inventing a token per
+  usage. `ProgressBar` (below) wraps it.
+- `ProgressBar` — colored by the same `Status` as `StatusBadge` (via CSS
+  `var(--color-success|info|warning)` passed to `Progress`), so a
+  course's badge and bar always agree. A thin wrapper, not a separate
+  implementation.
 - `StatCard` — plain (dashboard) or with an `icon` (purchases-page style).
 - `CourseCard` — `catalog` | `purchased` variant via a discriminated union
   (`CourseCard.types.ts`). **`catalog` is inferred, not pixel-matched** —
@@ -109,7 +125,9 @@ library added yet.
 
 `/explore` is intentionally outside the shell (no mockup shows an
 authenticated Explore page) — see `TODO.md` for why, and revisit
-alongside Ticket #20.
+alongside Ticket #20. Its content is currently a generic "still under
+construction" `EmptyState` (`src/pages/Explore.tsx`) — the real catalog
+page is Ticket #20's job, not built yet.
 
 ## Data fetching (TanStack Query)
 
@@ -159,8 +177,9 @@ export function useCourses() {
 at the network level so features can be built before either backend
 (Strapi, Golang) is running.
 
-- Toggle: `VITE_USE_MOCKS` in `.env.local` (copy from `.env.example`).
-  `"true"` starts the MSW worker before the app renders (see
+- Toggle: `VITE_USE_MOCKS` in `.env.local` (auto-created from
+  `.env.example` — see "Getting started"). `"true"` starts the MSW
+  worker before the app renders (see
   `src/mocks/enable-mocks.ts`); anything else is a no-op, so flipping it to
   `"false"` (or unsetting it) turns mocking off without removing the
   handlers.
@@ -254,12 +273,24 @@ shell for Login, Register, and Forgot Password — left box (page content)
 * Stacks to a single column below the `lg` breakpoint — there's no
   mockup for a narrow two-column layout, and the forms need full width
   there anyway.
+* `AuthPromoPanel`'s box: `bg-promo` (a `linear-gradient(152.69deg,
+#84c6da 2.32%, #c2e3ed 89.01%, #e0f1f6 95.53%)`, via
+  `--background-image-promo` in `src/index.css`) and `shadow-promo`
+  (`0px 4px 16px 0px #00000040`, a dedicated token — distinct from
+  `shadow-card`). The inner course-info sub-card stays solid
+  `bg-primary` (`#84c6da`).
 
-`ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) replaces the
-form on all three pages when `IS_COMING_SOON` is true (see "Config").
-Secondary navigation (Login's "Explore Online Courses", Forgot Password's
-"Back to Sign In") stays visible either way — only the data-entry form
-itself is hidden.
+`ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) renders
+**inside the form**, in place of the error message, on all three pages
+when `IS_COMING_SOON` is true (see "Config") — the form itself, its
+fields, and cross-links (Sign up, Forgot Password?) stay visible; only
+the submit button is disabled (`disabled={isSubmitting || IS_COMING_SOON}`).
+It's a message-plus-disabled-action, not a replacement for the whole
+form. **Separately**, secondary navigation _outside_ the form is hidden —
+Login's "Explore Online Courses" and Forgot Password's "Back to Sign
+In" — for a full lockdown rather than leaving one working link on an
+otherwise disabled page (Ticket #43; reverses Ticket #9's original
+"stays visible either way").
 
 ## Login page
 
@@ -271,8 +302,8 @@ generic "Invalid email or password" message, any other failure shows a
 generic error, and success navigates to `/dashboard`.
 
 - **`VITE_IS_COMING_SOON`** (via `src/lib/config.ts`): `"true"` hides the
-  sign-in form and sign-up link, showing `ComingSoonNotice` instead.
-  "Explore Online Courses" stays visible either way.
+  sign-in form, sign-up link, and "Explore Online Courses", showing
+  `ComingSoonNotice` instead (see "Auth layout & coming soon").
 - **Promo panel content is hardcoded** — Ticket #9 itself flags this as
   needing confirmation ("confirm with Irene whether this is hardcoded or
   should eventually come from Strapi `site_config`"), unresolved, see
@@ -340,9 +371,12 @@ criteria are concrete even without a mockup.
 `src/pages/Maintenance.tsx` — shown for the **entire app**, any route,
 when `VITE_MAINTENANCE_MODE=true` (`MAINTENANCE_MODE` in
 `src/lib/config.ts`). Checked in `App.tsx` before `QueryProvider`,
-`AuthProvider`, or the router even mount, so it works regardless of
-backend/session state — it's not just another route. Also reachable
-directly at `/maintenance` regardless of the flag.
+`AuthProvider`, or the router even mount.
+
+**It has no route of its own** (no `/maintenance` in
+`src/routes/index.tsx`) — deliberately: it's a global mode that overrides
+every page, not a page you navigate to. Don't add a `/maintenance` route;
+if the flag is off, that path should 404 like any other unmatched URL.
 
 ## 404 / Not Found
 

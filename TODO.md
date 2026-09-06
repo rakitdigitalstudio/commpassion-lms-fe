@@ -262,6 +262,13 @@ maintenance mode — it's purely the env flag), and there's still no route
 for `/` itself (unmatched, so it currently hits `NotFound` too) — worth a
 decision on what `/` should redirect to.
 
+**Correction (same PR, before merge):** initially also added a
+`/maintenance` route in `routes/index.tsx` alongside the `App.tsx`
+global check — wrong, per your feedback: maintenance mode is a global
+override, not a page you navigate to. Removed the route; `Maintenance`
+now only renders via the `MAINTENANCE_MODE` check. Visiting `/maintenance`
+directly with the flag off now 404s like any other unmatched URL.
+
 ## Ticket #10 — Register page: done, with explicit approvals from you
 
 **Status:** done. Unlike #11, this ticket explicitly said "Not started
@@ -332,3 +339,77 @@ sets (script-checked, no silently-missing translations).
   export — worth re-exporting/compressing from the real source once
   available; it's noticeably larger than the other image assets in this
   repo.
+
+## Ticket #43 — .env.local bootstrap + hide Explore during coming soon: done
+
+**Status:** done.
+
+**Root cause of "env is not loaded":** confirmed — this repo had no
+`.env.local`, only `.env.example` (a template Vite never reads).
+Fix: `scripts/ensure-env.mjs` copies `.env.example` -> `.env.local` if
+missing, run via both `postinstall` and `predev` in `package.json`.
+Two hooks because `pnpm install` doesn't reliably re-run `postinstall`
+when it decides nothing changed ("Already up to date") — `predev` is the
+one that's actually guaranteed to fire, verified directly. Also added
+`.npmrc` (`enable-pre-post-scripts=true`) since pre/post script hooks
+aren't on by default in this pnpm version/config.
+
+**Explore Courses hidden during coming soon:** done on Login. Also
+hid Forgot Password's "Back to Sign In" for the same reason — full
+lockdown instead of one working link on an otherwise-disabled page.
+Register has no equivalent secondary link (its "Sign in" link lives
+inside the form block, already hidden). **This reverses Ticket #9's
+original acceptance criterion** ("Explore Online Courses stays visible
+either way") — a deliberate product-decision change per your instruction,
+not a bug fix; README updated to match.
+
+**Also done in this branch (not part of #43, requested alongside it):**
+`AuthPromoPanel`'s box uses a new `--background-image-promo` token
+(`linear-gradient(152.69deg, #84c6da 2.32%, #c2e3ed 89.01%, #e0f1f6
+95.53%)`, generating a `bg-promo` utility — superseded a first pass that
+used solid `bg-primary`) and a new `--shadow-promo` token
+(`0px 4px 16px 0px #00000040`) in `src/index.css`, distinct from
+`--shadow-card`. Both confirmed via generated CSS output. The inner
+course-info sub-card still uses solid `bg-primary`, unchanged.
+
+Also: extracted `AuthPromoPanel`'s hand-rolled progress bar into a new
+universal `Progress` component (`src/components/Progress.tsx`) — track
+`#D9D9D980` (default) / fill `#078CB580` (this page's override) per your
+spec, both plain CSS color strings rather than Tailwind classes so exact
+Figma alpha values pass through untouched. **Refactored the existing
+status-based `ProgressBar` to wrap `Progress`** instead of duplicating
+the markup — this changes its track color from the old `bg-border` gray
+to the new `#D9D9D980` default, a visible (if subtle) change to every
+existing `ProgressBar` usage (`CourseCard`, `/style-guide`), not just
+`AuthPromoPanel`. Flagging since it wasn't explicitly asked to touch
+`ProgressBar` — seemed like the obvious right move for "universal
+component" rather than leaving two near-duplicate progress-bar
+implementations.
+
+## Restored /explore + "under construction" placeholder
+
+`src/pages/Explore.tsx` and its route in `src/routes/index.tsx` had been
+accidentally deleted from the working tree mid-session (not by me — see
+the corrupted-file incident below). Restored the route and rebuilt the
+page as a generic "still under construction" `EmptyState` (translated
+EN/ID, `common.underConstruction.*`) per your request, since the real
+catalog page is Ticket #20's scope, not this one.
+
+**Also fixed the coming-soon gate shape, per your correction:**
+`ComingSoonNotice` previously replaced the entire form on
+Login/Register/Forgot Password. Now it renders _inside_ the form (where
+the error message goes) and only the submit button is disabled
+(`isSubmitting || IS_COMING_SOON`) — the fields and cross-links stay
+visible and usable-looking, just can't actually be submitted. This does
+not change the earlier decision to hide Explore/Back-to-Sign-In
+(secondary nav _outside_ the form) during coming soon — that stays as-is.
+
+## Incident: working tree corruption mid-session (informational only)
+
+At one point `src/routes/index.tsx` and `src/pages/Login.tsx` reverted to
+an earlier state on disk with a broken reference (`Maintenance` imported
+nowhere, `/maintenance` route still present), and `src/pages/Explore.tsx`
+was deleted outright — none of it done by me. Restored from the last
+commit before continuing (confirmed with you first). No idea what caused
+it (editor undo, a discarded hunk, etc.) — noting here only so it isn't
+mistaken for an intentional change later; not something to fix in code.

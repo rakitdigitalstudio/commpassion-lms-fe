@@ -44,109 +44,114 @@ export function Login() {
         </p>
       ) : null}
 
-      {IS_COMING_SOON ? (
-        <ComingSoonNotice className="mt-8" />
-      ) : (
-        <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
-          {error ? (
-            <p role="alert" className="bg-warning/10 text-warning rounded-control p-3 text-sm">
-              {t(error)}
-            </p>
-          ) : null}
-
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium">
-              {t('auth.login.emailLabel')}
-            </label>
-            <div className="relative">
-              <MailIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder={t('auth.login.emailPlaceholder')}
-                className="border-border placeholder:text-muted focus:ring-primary/40 w-full rounded-control border py-2 pr-3 pl-9 text-sm focus:ring-2 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium">
-              {t('auth.login.passwordLabel')}
-            </label>
-            <div className="relative">
-              <LockIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-              <input
-                id="password"
-                type={passwordVisibility.inputType}
-                required
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder={t('auth.login.passwordPlaceholder')}
-                className="border-border placeholder:text-muted focus:ring-primary/40 w-full rounded-control border py-2 pr-9 pl-9 text-sm focus:ring-2 focus:outline-none"
-              />
-              <button
-                type="button"
-                onClick={passwordVisibility.toggle}
-                aria-label={t(
-                  passwordVisibility.isVisible
-                    ? 'auth.passwordToggle.hide'
-                    : 'auth.passwordToggle.show',
-                )}
-                className="text-muted absolute top-1/2 right-3 -translate-y-1/2"
-              >
-                {passwordVisibility.isVisible ? (
-                  <EyeOffIcon className="h-4 w-4" />
-                ) : (
-                  <EyeIcon className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-                className="border-border h-4 w-4 rounded"
-              />
-              {t('auth.login.rememberMe')}
-            </label>
-            <Link to="/forgot-password" className="text-primary font-medium">
-              {t('auth.login.forgotPassword')}
-            </Link>
-          </div>
-
-          <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
-          </Button>
-
-          <p className="text-center text-sm">
-            {t('auth.login.noAccount')}{' '}
-            <Link to="/register" className="text-primary font-medium">
-              {t('auth.login.signUp')}
-            </Link>
+      <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
+        {IS_COMING_SOON ? (
+          <ComingSoonNotice />
+        ) : error ? (
+          <p role="alert" className="bg-warning/10 text-warning rounded-control p-3 text-sm">
+            {t(error)}
           </p>
+        ) : null}
 
-          <div className="flex items-center gap-3">
-            <span className="border-border flex-1 border-t" />
-            <span className="text-muted text-xs">{t('auth.login.or')}</span>
-            <span className="border-border flex-1 border-t" />
+        <div>
+          <label htmlFor="email" className="mb-1 block text-sm font-medium">
+            {t('auth.login.emailLabel')}
+          </label>
+          <div className="relative">
+            <MailIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder={t('auth.login.emailPlaceholder')}
+              className="border-border placeholder:text-muted focus:ring-primary/40 w-full rounded-control border py-2 pr-3 pl-9 text-sm focus:ring-2 focus:outline-none"
+            />
           </div>
-        </form>
-      )}
+        </div>
 
-      <Link to="/explore" className="mt-5 block">
-        <Button variant="outline" className="w-full">
-          {t('auth.login.exploreCourses')}
+        <div>
+          <label htmlFor="password" className="mb-1 block text-sm font-medium">
+            {t('auth.login.passwordLabel')}
+          </label>
+          <div className="relative">
+            <LockIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              id="password"
+              type={passwordVisibility.inputType}
+              required
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder={t('auth.login.passwordPlaceholder')}
+              className="border-border placeholder:text-muted focus:ring-primary/40 w-full rounded-control border py-2 pr-9 pl-9 text-sm focus:ring-2 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={passwordVisibility.toggle}
+              aria-label={t(
+                passwordVisibility.isVisible
+                  ? 'auth.passwordToggle.hide'
+                  : 'auth.passwordToggle.show',
+              )}
+              className="text-muted absolute top-1/2 right-3 -translate-y-1/2"
+            >
+              {passwordVisibility.isVisible ? (
+                <EyeOffIcon className="h-4 w-4" />
+              ) : (
+                <EyeIcon className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(event) => setRememberMe(event.target.checked)}
+              className="border-border h-4 w-4 rounded"
+            />
+            {t('auth.login.rememberMe')}
+          </label>
+          <Link to="/forgot-password" className="text-primary font-medium">
+            {t('auth.login.forgotPassword')}
+          </Link>
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full"
+          disabled={isSubmitting || IS_COMING_SOON}
+        >
+          {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
         </Button>
-      </Link>
+
+        <p className="text-center text-sm">
+          {t('auth.login.noAccount')}{' '}
+          <Link to="/register" className="text-primary font-medium">
+            {t('auth.login.signUp')}
+          </Link>
+        </p>
+
+        <div className="flex items-center gap-3">
+          <span className="border-border flex-1 border-t" />
+          <span className="text-muted text-xs">{t('auth.login.or')}</span>
+          <span className="border-border flex-1 border-t" />
+        </div>
+      </form>
+
+      {IS_COMING_SOON ? null : (
+        <Link to="/explore" className="mt-5 block">
+          <Button variant="outline" className="w-full">
+            {t('auth.login.exploreCourses')}
+          </Button>
+        </Link>
+      )}
     </AuthLayout>
   )
 }

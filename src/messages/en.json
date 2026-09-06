@@ -9,6 +9,11 @@
       "heading": "Page not found",
       "body": "The page you're looking for doesn't exist or may have been moved.",
       "backHome": "Back to Home"
+    },
+    "underConstruction": {
+      "heading": "Still under construction",
+      "body": "This page isn't ready yet. Check back soon.",
+      "backToLogin": "Back to Sign In"
     }
   },
   "auth": {

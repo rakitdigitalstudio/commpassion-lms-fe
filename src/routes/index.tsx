@@ -6,7 +6,6 @@ import { Dashboard } from '@/pages/Dashboard'
 import { Explore } from '@/pages/Explore'
 import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
-import { Maintenance } from '@/pages/Maintenance'
 import { NotFound } from '@/pages/NotFound'
 import { Purchases } from '@/pages/Purchases'
 import { Register } from '@/pages/Register'
@@ -57,7 +56,6 @@ export const router = createBrowserRouter([
   // session that's already logged in elsewhere) — not guest-gated.
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/reset-password', element: <ResetPassword /> },
-  { path: '/maintenance', element: <Maintenance /> },
   { path: '/style-guide', element: <StyleGuide /> },
   // Catch-all — must stay last. Public, not gated: an unmatched URL isn't
   // "protected content," so redirecting to /login first would be wrong.

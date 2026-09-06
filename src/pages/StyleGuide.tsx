@@ -1,6 +1,7 @@
 import { Button } from '@/components/Button'
 import { CourseCard } from '@/components/CourseCard'
 import { EmptyState } from '@/components/EmptyState'
+import { Progress } from '@/components/Progress'
 import { ProgressBar } from '@/components/ProgressBar'
 import { StatCard } from '@/components/StatCard'
 import { StatusBadge, type Status } from '@/components/StatusBadge'
@@ -101,10 +102,16 @@ export function StyleGuide() {
 
       <section>
         <h2 className="text-h2 font-semibold mb-4">Progress bars</h2>
+        <p className="text-sm text-muted mb-3">
+          <code>ProgressBar</code> (status-colored) wraps the universal <code>Progress</code>{' '}
+          component, which also takes explicit colors.
+        </p>
         <div className="max-w-sm space-y-3">
           {statuses.map((status) => (
             <ProgressBar key={status} status={status} value={status === 'completed' ? 100 : 60} />
           ))}
+          <Progress value={40} />
+          <Progress value={70} trackColor="#D9D9D980" color="#078CB580" />
         </div>
       </section>
 
