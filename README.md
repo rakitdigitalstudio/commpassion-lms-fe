@@ -234,26 +234,50 @@ form fields or a hand-rolled try/catch submit handler directly.
   `onSubmit` handler, not `FormEvent` — the latter is deprecated in
   `@types/react` ("doesn't actually exist").
 
+## Auth layout & coming soon
+
+`AuthLayout` (`src/components/AuthLayout.tsx`) is the reusable two-column
+shell for Login, Register, and Forgot Password — left box (page content)
+
+- right box (`AuthPromoPanel`). Proportions are translated manually from
+  Figma (no Figma access this session — verify against the real file):
+
+* Design width `1440px`, left box `511px`, gap `112px`, right box
+  `645px`. `511 + 112 + 645 = 1268px`; the remaining `172px` is assumed
+  to be `86px` outer margin per side, **not confirmed against Figma**.
+* Expressed as percentages/`fr` units, not fixed px, so the ratio holds
+  at any viewport width: `grid-template-columns: 511fr 645fr`,
+  column gap `8.833%` (`112/1268`), outer padding `5.972%` (`86/1440`).
+* Stacks to a single column below the `lg` breakpoint — there's no
+  mockup for a narrow two-column layout, and the forms need full width
+  there anyway.
+
+`ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) replaces the
+form on all three pages when `IS_COMING_SOON` is true (see "Config").
+Secondary navigation (Login's "Explore Online Courses", Forgot Password's
+"Back to Sign In") stays visible either way — only the data-entry form
+itself is hidden.
+
 ## Login page
 
-`src/pages/Login.tsx` — two-column layout (form left, promo panel right),
-matching the mockup. Form state/submit logic lives in `useLoginForm`
-(see "Forms"); the page itself is presentational. Submits through
-`useAuth().login()`; a 401 (`InvalidCredentialsError`) shows a generic
-"Invalid email or password" message, any other failure shows a generic
-error, and success navigates to `/dashboard`.
+`src/pages/Login.tsx` — built on `AuthLayout` (form left, `AuthPromoPanel`
+right), matching the mockup. Form state/submit logic lives in
+`useLoginForm` (see "Forms"); the page itself is presentational. Submits
+through `useAuth().login()`; a 401 (`InvalidCredentialsError`) shows a
+generic "Invalid email or password" message, any other failure shows a
+generic error, and success navigates to `/dashboard`.
 
 - **`VITE_IS_COMING_SOON`** (via `src/lib/config.ts`): `"true"` hides the
-  sign-in form and sign-up link, showing a "coming soon" notice instead.
+  sign-in form and sign-up link, showing `ComingSoonNotice` instead.
   "Explore Online Courses" stays visible either way.
 - **Promo panel content is hardcoded** — Ticket #9 itself flags this as
   needing confirmation ("confirm with Irene whether this is hardcoded or
   should eventually come from Strapi `site_config`"), unresolved, see
   `TODO.md`.
-- The featured-course image is a plain color placeholder — no real
-  asset/pipeline for it exists yet, same as `CourseCard` banners.
-- The promo panel itself is shared with Register: `AuthPromoPanel`
-  (`src/components/AuthPromoPanel.tsx`).
+- The featured-course image (`src/assets/course-placeholder-mc.png`) is a
+  placeholder photo provided in Ticket #41 — not final course artwork.
+- The promo panel itself is shared with Register and Forgot Password:
+  `AuthPromoPanel` (`src/components/AuthPromoPanel.tsx`).
 - A `justRegistered` router-state flag (set by `Register` on redirect)
   shows an "Account created! Please sign in." notice — not a URL param,
   so it only shows once and isn't bookmarkable/shareable.
@@ -263,7 +287,7 @@ error, and success navigates to `/dashboard`.
 `src/pages/Register.tsx` — **no Figma frame exists for this yet** (Ticket
 #10 flags this itself: "Flag missing design to Irene/Marco Herbert").
 Built with an **explicitly approved placeholder layout** (your call, not
-inferred) reusing Login's two-column style + `AuthPromoPanel`.
+inferred), on the shared `AuthLayout`.
 
 - Full name, email, password (with the same live rules checklist as
   Reset Password — `src/lib/password-rules.ts`), confirm password.
@@ -276,14 +300,14 @@ inferred) reusing Login's two-column style + `AuthPromoPanel`.
 - Mock: re-registering `marco.herbert@example.com` (the mock login user)
   or any email already registered this session returns 409 — verified
   with a script against the mock handlers.
+- `VITE_IS_COMING_SOON=true` hides the form, showing `ComingSoonNotice`.
 
 ## Forgot / reset password
 
 `src/pages/ForgotPassword.tsx` and `ResetPassword.tsx` — **no Figma frame
 exists for these yet** (Ticket #11 flags this itself: "Flag missing
 design to Irene/Marco Herbert"). Built anyway since the acceptance
-criteria are concrete even without a mockup; layout reuses the Login
-page's single-column form style as a placeholder pending real design.
+criteria are concrete even without a mockup.
 
 - **Forgot password never reveals whether an email exists** —
   `useForgotPasswordForm` always shows the same generic success message
@@ -300,6 +324,13 @@ page's single-column form style as a placeholder pending real design.
   missing/invalid/expired all show a generic error, never which one.
 - Mock reset token: any value except `"invalid"` or empty succeeds (see
   `src/mocks/handlers.ts`).
+- **`ForgotPassword` uses `AuthLayout` + `ComingSoonNotice`** (Ticket
+  #41); **`ResetPassword` doesn't** — it's not one of the three pages
+  named in that ticket (there's no `token` link to reach it from a
+  coming-soon app anyway) and still uses its original single-column
+  layout. It's also **not translated** — still hardcoded English, along
+  with its password-rule labels (`PasswordRule.label`, not `.labelKey`).
+  See `TODO.md`.
 
 ## Maintenance page
 
@@ -357,11 +388,27 @@ defaults are available.
 Two systems handle translation — know which one a given piece of copy
 belongs to:
 
-**Static UI copy** → next-intl, `messages/en.json` + `messages/id.json`
+**Static UI copy** → [react-i18next](https://react.i18next.com/),
+`src/messages/en.json` + `src/messages/id.json`. **Not `next-intl`** —
+this repo previously documented `next-intl` here (copied from
+`compassion-landing-page`), but that library is Next.js-only and doesn't
+work in a Vite/CSR app. Corrected in Ticket #41.
 
 - Nav labels, button labels, form labels, error/empty states, pagination
   text
 - Anything structural to the UI, not editable by the client
+- Setup: `src/lib/i18n.ts` (imported once in `main.tsx`), detects from
+  `localStorage` then the browser, falls back to English. Use `const { t } = useTranslation()`
+  and `t('namespace.key')` — don't hardcode user-facing strings.
+- **Coverage so far: Login, Register, Forgot Password only** (Ticket
+  #41). Every other page still has hardcoded English strings — see
+  `TODO.md`.
+- Locale switcher: the Topbar's `EN`/`ID` control (`i18n.changeLanguage()`)
+  cycles between the two — a toggle, not a real dropdown menu (no
+  dropdown component exists yet, see `TODO.md`).
+- Keep `en.json`/`id.json` in sync — same keys in both files. A key
+  present in one and missing in the other silently falls back to English
+  for that string (via `fallbackLng`) rather than erroring.
 
 **Dynamic CMS content** → Strapi i18n plugin, fetched via `?locale=en` /
 `?locale=id`
@@ -375,5 +422,5 @@ belongs to:
 - Phone, email, address, social links, WhatsApp number (Site Config,
   Ticket 8)
 
-Locale codes: use `en` / `id` consistently across both Next.js routing and
-Strapi locale settings — no `en-US` vs `en` mismatches.
+Locale codes: use `en` / `id` consistently everywhere — no `en-US` vs
+`en` mismatches.
