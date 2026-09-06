@@ -6,17 +6,37 @@
  */
 export interface PasswordRule {
   id: string
+  /** English fallback — ResetPassword (not translated yet, see TODO.md)
+   * still reads this directly; Register uses `labelKey` via t() instead. */
   label: string
+  /** i18n key, e.g. t(rule.labelKey) -> "At least 8 characters" / "Minimal 8 karakter". */
+  labelKey: string
   test: (password: string) => boolean
 }
 
 export const passwordRules: PasswordRule[] = [
-  { id: 'length', label: 'At least 8 characters', test: (password) => password.length >= 8 },
-  { id: 'uppercase', label: 'One uppercase letter', test: (password) => /[A-Z]/.test(password) },
-  { id: 'number', label: 'One number', test: (password) => /[0-9]/.test(password) },
+  {
+    id: 'length',
+    label: 'At least 8 characters',
+    labelKey: 'auth.passwordRules.length',
+    test: (password) => password.length >= 8,
+  },
+  {
+    id: 'uppercase',
+    label: 'One uppercase letter',
+    labelKey: 'auth.passwordRules.uppercase',
+    test: (password) => /[A-Z]/.test(password),
+  },
+  {
+    id: 'number',
+    label: 'One number',
+    labelKey: 'auth.passwordRules.number',
+    test: (password) => /[0-9]/.test(password),
+  },
   {
     id: 'special',
     label: 'One special character',
+    labelKey: 'auth.passwordRules.special',
     test: (password) => /[^A-Za-z0-9]/.test(password),
   },
 ]

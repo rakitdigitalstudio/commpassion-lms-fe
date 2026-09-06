@@ -1,3 +1,7 @@
+import { useTranslation } from 'react-i18next'
+
+import courseImage from '@/assets/course-placeholder-mc.png'
+
 interface PromoStatProps {
   value: string
   label: string
@@ -13,41 +17,44 @@ function PromoStat({ value, label }: PromoStatProps) {
 }
 
 /**
- * Promo panel shared by Login and Register (right side of the two-column
- * auth layout). Hardcoded per the mockup — Ticket #9 flags this exact
- * question ("confirm with Irene whether this is hardcoded or should
- * eventually come from Strapi site_config") — unresolved, see TODO.md.
- * The featured-course image is a plain color placeholder; no real
- * asset/pipeline for it exists yet.
+ * Promo panel shared by Login, Register, and Forgot Password (right box
+ * of AuthLayout). Copy/stats are hardcoded per the mockup — Ticket #9
+ * flags this exact question ("confirm with Irene whether this is
+ * hardcoded or should eventually come from Strapi site_config") —
+ * unresolved, see TODO.md. The course image (565x424 in Figma) is the
+ * placeholder photo provided in Ticket #41, not final course artwork.
  */
 export function AuthPromoPanel() {
+  const { t } = useTranslation()
+
   return (
-    <div className="hidden items-center p-8 lg:flex">
+    <div className="hidden items-center lg:flex">
       <div className="w-full rounded-card bg-primary p-10 text-white">
         <h2 className="text-display font-bold">
-          Communicate to <span className="font-black">Influence</span>.
+          {t('auth.promo.headlineStart')}{' '}
+          <span className="font-black">{t('auth.promo.headlineInfluence')}</span>.
           <br />
-          Lead to <span className="font-black">Inspire</span>.
+          {t('auth.promo.headlineLead')}{' '}
+          <span className="font-black">{t('auth.promo.headlineInspire')}</span>.
         </h2>
-        <p className="mt-4 max-w-md opacity-90">
-          Join thousands of learners transforming how they connect, communicate, and lead.
-        </p>
+        <p className="mt-4 max-w-md opacity-90">{t('auth.promo.subtitle')}</p>
 
         <div className="mt-8 flex gap-8">
-          <PromoStat value="5000+" label="Voices Empowered" />
-          <PromoStat value="150+" label="Learning Experiences" />
-          <PromoStat value="50+" label="Trusted Partnerships" />
+          <PromoStat value="5000+" label={t('auth.promo.stats.voices')} />
+          <PromoStat value="150+" label={t('auth.promo.stats.experiences')} />
+          <PromoStat value="50+" label={t('auth.promo.stats.partnerships')} />
         </div>
 
         <div className="mt-8 overflow-hidden rounded-card">
-          <div className="relative h-56 bg-slate-800">
+          <div className="relative aspect-[565/424]">
+            <img src={courseImage} alt="" className="h-full w-full object-cover" />
             <span className="bg-accent text-foreground absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-semibold">
-              Featured Course
+              {t('auth.promo.featuredCourse')}
             </span>
           </div>
           <div className="bg-primary p-4">
-            <p className="font-semibold">How to Be A Great MC</p>
-            <p className="text-sm opacity-90">By Indra Herlambang • 12 Video Modules</p>
+            <p className="font-semibold">{t('auth.promo.courseTitle')}</p>
+            <p className="text-sm opacity-90">{t('auth.promo.courseMeta')}</p>
             <div className="mt-3 flex items-center gap-3">
               <div className="h-2 flex-1 rounded-full bg-white/30">
                 <div className="h-full w-1/5 rounded-full bg-white" />

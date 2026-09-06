@@ -269,3 +269,55 @@ new-email/duplicate-email paths with a script against the mock handlers.
 design to Irene/Marco Herbert — can't do that from this session, someone
 needs to actually ask them. Replace the placeholder layout once a real
 frame exists.
+
+## Ticket #41 — Coming soon + reusable AuthLayout + EN/ID: done, with flagged assumptions
+
+**Status:** done.
+
+Built `AuthLayout` (`src/components/AuthLayout.tsx`) — the reusable
+two-column shell — and `ComingSoonNotice`; refactored Login, Register,
+and Forgot Password onto both. Installed `react-i18next` + `i18next` +
+`i18next-browser-languagedetector`; added `src/lib/i18n.ts` and
+`src/messages/en.json` / `id.json`; translated every string on those
+three pages (labels, placeholders, buttons, error/success messages,
+coming-soon text); wired the Topbar's language control to actually call
+`i18n.changeLanguage()`. Verified: exact CSS output for the layout
+proportions (`grid-template-columns:511fr 645fr`, `column-gap:8.833%`,
+`padding-inline:5.972%`), all three pages serving correctly with mocks +
+coming-soon both on and off, and `en.json`/`id.json` have identical key
+sets (script-checked, no silently-missing translations).
+
+**Assumptions/gaps worth flagging (all noted inline too):**
+
+- **The `172px` leftover** (`1440 − 511 − 112 − 645`) is assumed to be
+  `86px` outer margin per side — **not confirmed against the real Figma
+  file** (no Figma access this session). If Figma says something else
+  (e.g. the margin isn't even, or there's a missing element), the
+  percentages in `AuthLayout` need recalculating.
+- **`react-i18next` chosen without being asked to pick a specific
+  library** — the ticket said "implement translations," not which
+  library. Reasonable default for a Vite/CSR app since `next-intl`
+  (documented in this README before this ticket) is Next.js-only.
+- **Translation coverage is scoped to Login/Register/Forgot Password
+  only**, per the ticket's literal wording ("this ticket will handle...
+  1. Login... 2. same thing applies to register and forgot password").
+     Everything else in the app (Dashboard, Sidebar, Topbar's own
+     "Search..." placeholder and "Guest" fallback, etc.) is still hardcoded
+     English. A follow-up ticket should cover the rest.
+- **`ResetPassword` was left out of both `AuthLayout` and translation** —
+  the ticket named exactly three pages and Reset Password wasn't one of
+  them (also unreachable from a coming-soon app, since it needs an
+  emailed token). It still uses its original single-column layout and
+  hardcoded English `PasswordRule.label` fields. `password-rules.ts` now
+  has both `label` (English, what `ResetPassword` still reads) and
+  `labelKey` (i18n key, what `Register` uses) — reconcile this once
+  `ResetPassword` is brought into scope.
+- **Language switcher is a cycle-on-click toggle**, not a real dropdown
+  menu — no dropdown component exists in the design system yet. Good
+  enough to prove locale-switching works end-to-end; revisit once/if a
+  proper `Dropdown` component is built.
+- **Course placeholder image** (`src/assets/course-placeholder-mc.png`,
+  578KB) was pulled from this conversation's image cache, not a design
+  export — worth re-exporting/compressing from the real source once
+  available; it's noticeably larger than the other image assets in this
+  repo.

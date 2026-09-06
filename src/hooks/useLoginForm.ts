@@ -28,6 +28,8 @@ export function useLoginForm() {
   const [passwordValue, setPasswordValue] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
 
+  // `error` holds an i18n key (translated by the page via t(error)), not
+  // display text — see README "Forms" / "Internationalization".
   const {
     run: submit,
     isSubmitting,
@@ -39,8 +41,8 @@ export function useLoginForm() {
     },
     (submitError) =>
       submitError instanceof InvalidCredentialsError
-        ? 'Invalid email or password. Please try again.'
-        : 'Something went wrong. Please try again.',
+        ? 'auth.login.errorInvalidCredentials'
+        : 'auth.login.errorGeneric',
   )
 
   return {

@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "comingSoon": {
+      "heading": "We're coming soon",
+      "body": "We're putting the finishing touches on accounts. Check back soon."
+    },
+    "promo": {
+      "headlineStart": "Communicate to",
+      "headlineInfluence": "Influence",
+      "headlineLead": "Lead to",
+      "headlineInspire": "Inspire",
+      "subtitle": "Join thousands of learners transforming how they connect, communicate, and lead.",
+      "stats": {
+        "voices": "Voices Empowered",
+        "experiences": "Learning Experiences",
+        "partnerships": "Trusted Partnerships"
+      },
+      "featuredCourse": "Featured Course",
+      "courseTitle": "How to Be A Great MC",
+      "courseMeta": "By Indra Herlambang • 12 Video Modules"
+    },
+    "login": {
+      "heading": "Sign in to your account",
+      "subtitle": "Enter your email address and password to sign in.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Input Your Email Address",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Input Your Password",
+      "rememberMe": "Remember Me",
+      "forgotPassword": "Forgot Password?",
+      "submit": "Sign In",
+      "submitting": "Signing in…",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "or": "or",
+      "exploreCourses": "Explore Online Courses",
+      "registeredNotice": "Account created! Please sign in.",
+      "errorInvalidCredentials": "Invalid email or password. Please try again.",
+      "errorGeneric": "Something went wrong. Please try again."
+    },
+    "register": {
+      "heading": "Create your account",
+      "subtitle": "Sign up to start learning with CommPassion.",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Input Your Full Name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Input Your Email Address",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Input Your Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm Your Password",
+      "submit": "Sign Up",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "errorEmailTaken": "An account with this email already exists.",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "errorFullNameRequired": "Please enter your full name.",
+      "errorPasswordRules": "Password does not meet the requirements below.",
+      "errorPasswordMismatch": "Passwords do not match."
+    },
+    "forgotPassword": {
+      "heading": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a link to reset it.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Input Your Email Address",
+      "submit": "Send Reset Link",
+      "submitting": "Sending…",
+      "successMessage": "If an account exists for that email, we've sent instructions to reset your password.",
+      "backToSignIn": "Back to Sign In"
+    },
+    "passwordRules": {
+      "length": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "number": "One number",
+      "special": "One special character"
+    },
+    "passwordToggle": {
+      "show": "Show password",
+      "hide": "Hide password"
+    }
+  }
+}

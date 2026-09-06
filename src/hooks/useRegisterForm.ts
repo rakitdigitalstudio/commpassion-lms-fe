@@ -22,6 +22,9 @@ export function useRegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
+  // Both validationError and the async error hold i18n keys (translated
+  // by the page via t(error)), not display text — see README "Forms" /
+  // "Internationalization".
   const {
     run: submitRegister,
     isSubmitting,
@@ -33,21 +36,21 @@ export function useRegisterForm() {
     },
     (submitError) =>
       submitError instanceof EmailAlreadyRegisteredError
-        ? 'An account with this email already exists.'
-        : 'Something went wrong. Please try again.',
+        ? 'auth.register.errorEmailTaken'
+        : 'auth.register.errorGeneric',
   )
 
   function submit() {
     if (!fullName.trim()) {
-      setValidationError('Please enter your full name.')
+      setValidationError('auth.register.errorFullNameRequired')
       return
     }
     if (!isPasswordValid(password)) {
-      setValidationError('Password does not meet the requirements below.')
+      setValidationError('auth.register.errorPasswordRules')
       return
     }
     if (password !== confirmPassword) {
-      setValidationError('Passwords do not match.')
+      setValidationError('auth.register.errorPasswordMismatch')
       return
     }
     setValidationError(null)
