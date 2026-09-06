@@ -16,6 +16,13 @@ pnpm install
 pnpm dev
 ```
 
+`.env.local` is created automatically from `.env.example` (see
+`scripts/ensure-env.mjs`, run via `postinstall` and `predev`) if it
+doesn't exist yet — you don't need to copy it by hand. **Never edit
+`.env.example` expecting it to take effect** — Vite only reads `.env`/
+`.env.local`/`.env.[mode](.local)`, never `.env.example`; it's a template
+only. Edit `.env.local` (gitignored, per-machine) instead.
+
 ## Scripts
 
 - `pnpm dev` — start the dev server with HMR
@@ -159,8 +166,9 @@ export function useCourses() {
 at the network level so features can be built before either backend
 (Strapi, Golang) is running.
 
-- Toggle: `VITE_USE_MOCKS` in `.env.local` (copy from `.env.example`).
-  `"true"` starts the MSW worker before the app renders (see
+- Toggle: `VITE_USE_MOCKS` in `.env.local` (auto-created from
+  `.env.example` — see "Getting started"). `"true"` starts the MSW
+  worker before the app renders (see
   `src/mocks/enable-mocks.ts`); anything else is a no-op, so flipping it to
   `"false"` (or unsetting it) turns mocking off without removing the
   handlers.
@@ -254,12 +262,16 @@ shell for Login, Register, and Forgot Password — left box (page content)
 * Stacks to a single column below the `lg` breakpoint — there's no
   mockup for a narrow two-column layout, and the forms need full width
   there anyway.
+* `AuthPromoPanel`'s box: `bg-primary` (`#84c6da`) and `shadow-promo`
+  (`0px 4px 16px 0px #00000040`, a dedicated token in `src/index.css` —
+  distinct from `shadow-card`).
 
 `ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) replaces the
 form on all three pages when `IS_COMING_SOON` is true (see "Config").
-Secondary navigation (Login's "Explore Online Courses", Forgot Password's
-"Back to Sign In") stays visible either way — only the data-entry form
-itself is hidden.
+**All secondary navigation is hidden too** — Login's "Explore Online
+Courses" and Forgot Password's "Back to Sign In" — for a full lockdown
+rather than leaving one working link on an otherwise disabled page
+(Ticket #43; reverses Ticket #9's original "stays visible either way").
 
 ## Login page
 
@@ -271,8 +283,8 @@ generic "Invalid email or password" message, any other failure shows a
 generic error, and success navigates to `/dashboard`.
 
 - **`VITE_IS_COMING_SOON`** (via `src/lib/config.ts`): `"true"` hides the
-  sign-in form and sign-up link, showing `ComingSoonNotice` instead.
-  "Explore Online Courses" stays visible either way.
+  sign-in form, sign-up link, and "Explore Online Courses", showing
+  `ComingSoonNotice` instead (see "Auth layout & coming soon").
 - **Promo panel content is hardcoded** — Ticket #9 itself flags this as
   needing confirmation ("confirm with Irene whether this is hardcoded or
   should eventually come from Strapi `site_config`"), unresolved, see

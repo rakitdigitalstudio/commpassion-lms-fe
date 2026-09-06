@@ -332,3 +332,32 @@ sets (script-checked, no silently-missing translations).
   export — worth re-exporting/compressing from the real source once
   available; it's noticeably larger than the other image assets in this
   repo.
+
+## Ticket #43 — .env.local bootstrap + hide Explore during coming soon: done
+
+**Status:** done.
+
+**Root cause of "env is not loaded":** confirmed — this repo had no
+`.env.local`, only `.env.example` (a template Vite never reads).
+Fix: `scripts/ensure-env.mjs` copies `.env.example` -> `.env.local` if
+missing, run via both `postinstall` and `predev` in `package.json`.
+Two hooks because `pnpm install` doesn't reliably re-run `postinstall`
+when it decides nothing changed ("Already up to date") — `predev` is the
+one that's actually guaranteed to fire, verified directly. Also added
+`.npmrc` (`enable-pre-post-scripts=true`) since pre/post script hooks
+aren't on by default in this pnpm version/config.
+
+**Explore Courses hidden during coming soon:** done on Login. Also
+hid Forgot Password's "Back to Sign In" for the same reason — full
+lockdown instead of one working link on an otherwise-disabled page.
+Register has no equivalent secondary link (its "Sign in" link lives
+inside the form block, already hidden). **This reverses Ticket #9's
+original acceptance criterion** ("Explore Online Courses stays visible
+either way") — a deliberate product-decision change per your instruction,
+not a bug fix; README updated to match.
+
+**Also done in this branch (not part of #43, requested alongside it):**
+`AuthPromoPanel`'s box explicitly uses `bg-primary` (`#84c6da` — already
+matched, confirmed via generated CSS) and a new `--shadow-promo` token
+(`0px 4px 16px 0px #00000040`) in `src/index.css`, distinct from
+`--shadow-card`.
