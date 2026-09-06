@@ -122,7 +122,9 @@ library added yet.
 
 `/explore` is intentionally outside the shell (no mockup shows an
 authenticated Explore page) — see `TODO.md` for why, and revisit
-alongside Ticket #20.
+alongside Ticket #20. Its content is currently a generic "still under
+construction" `EmptyState` (`src/pages/Explore.tsx`) — the real catalog
+page is Ticket #20's job, not built yet.
 
 ## Data fetching (TanStack Query)
 
@@ -275,12 +277,17 @@ shell for Login, Register, and Forgot Password — left box (page content)
   `shadow-card`). The inner course-info sub-card stays solid
   `bg-primary` (`#84c6da`).
 
-`ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) replaces the
-form on all three pages when `IS_COMING_SOON` is true (see "Config").
-**All secondary navigation is hidden too** — Login's "Explore Online
-Courses" and Forgot Password's "Back to Sign In" — for a full lockdown
-rather than leaving one working link on an otherwise disabled page
-(Ticket #43; reverses Ticket #9's original "stays visible either way").
+`ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) renders
+**inside the form**, in place of the error message, on all three pages
+when `IS_COMING_SOON` is true (see "Config") — the form itself, its
+fields, and cross-links (Sign up, Forgot Password?) stay visible; only
+the submit button is disabled (`disabled={isSubmitting || IS_COMING_SOON}`).
+It's a message-plus-disabled-action, not a replacement for the whole
+form. **Separately**, secondary navigation _outside_ the form is hidden —
+Login's "Explore Online Courses" and Forgot Password's "Back to Sign
+In" — for a full lockdown rather than leaving one working link on an
+otherwise disabled page (Ticket #43; reverses Ticket #9's original
+"stays visible either way").
 
 ## Login page
 

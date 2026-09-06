@@ -385,3 +385,31 @@ existing `ProgressBar` usage (`CourseCard`, `/style-guide`), not just
 `ProgressBar` — seemed like the obvious right move for "universal
 component" rather than leaving two near-duplicate progress-bar
 implementations.
+
+## Restored /explore + "under construction" placeholder
+
+`src/pages/Explore.tsx` and its route in `src/routes/index.tsx` had been
+accidentally deleted from the working tree mid-session (not by me — see
+the corrupted-file incident below). Restored the route and rebuilt the
+page as a generic "still under construction" `EmptyState` (translated
+EN/ID, `common.underConstruction.*`) per your request, since the real
+catalog page is Ticket #20's scope, not this one.
+
+**Also fixed the coming-soon gate shape, per your correction:**
+`ComingSoonNotice` previously replaced the entire form on
+Login/Register/Forgot Password. Now it renders _inside_ the form (where
+the error message goes) and only the submit button is disabled
+(`isSubmitting || IS_COMING_SOON`) — the fields and cross-links stay
+visible and usable-looking, just can't actually be submitted. This does
+not change the earlier decision to hide Explore/Back-to-Sign-In
+(secondary nav _outside_ the form) during coming soon — that stays as-is.
+
+## Incident: working tree corruption mid-session (informational only)
+
+At one point `src/routes/index.tsx` and `src/pages/Login.tsx` reverted to
+an earlier state on disk with a broken reference (`Maintenance` imported
+nowhere, `/maintenance` route still present), and `src/pages/Explore.tsx`
+was deleted outright — none of it done by me. Restored from the last
+commit before continuing (confirmed with you first). No idea what caused
+it (editor undo, a discarded hunk, etc.) — noting here only so it isn't
+mistaken for an intentional change later; not something to fix in code.
