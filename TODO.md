@@ -424,9 +424,22 @@ catalog page is Ticket #20's scope, not this one.
 Login/Register/Forgot Password. Now it renders _inside_ the form (where
 the error message goes) and only the submit button is disabled
 (`isSubmitting || IS_COMING_SOON`) — the fields and cross-links stay
-visible and usable-looking, just can't actually be submitted. This does
-not change the earlier decision to hide Explore/Back-to-Sign-In
-(secondary nav _outside_ the form) during coming soon — that stays as-is.
+visible and usable-looking, just can't actually be submitted.
+
+## Un-hid "Explore Online Courses" during coming soon
+
+**Status:** done, per your explicit correction.
+
+Ticket #43 had hidden Login's "Explore Online Courses" during coming soon
+for a "full lockdown." You corrected that — it should stay visible. Fully
+reverted to Ticket #9's original behavior: the button is now unconditional
+in `Login.tsx`, no `IS_COMING_SOON` check.
+
+**Inconsistency now on the table, not yet resolved:** Forgot Password's
+"Back to Sign In" is still hidden during coming soon (same original #43
+logic, untouched since you only mentioned Explore). Worth deciding
+whether it should also always show, for the same reason — flagging
+rather than silently changing a second thing you didn't ask about.
 
 ## Incident: working tree corruption mid-session (informational only)
 

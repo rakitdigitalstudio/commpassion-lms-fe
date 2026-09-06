@@ -306,11 +306,12 @@ when `IS_COMING_SOON` is true (see "Config") — the form itself, its
 fields, and cross-links (Sign up, Forgot Password?) stay visible; only
 the submit button is disabled (`disabled={isSubmitting || IS_COMING_SOON}`).
 It's a message-plus-disabled-action, not a replacement for the whole
-form. **Separately**, secondary navigation _outside_ the form is hidden —
-Login's "Explore Online Courses" and Forgot Password's "Back to Sign
-In" — for a full lockdown rather than leaving one working link on an
-otherwise disabled page (Ticket #43; reverses Ticket #9's original
-"stays visible either way").
+form. Secondary navigation _outside_ the form: Login's "Explore Online
+Courses" is **always visible**, coming soon or not — per your explicit
+correction, restoring Ticket #9's original "stays visible either way"
+(Ticket #43 had briefly hidden it for a "full lockdown," reverted).
+Forgot Password's "Back to Sign In" **is still hidden** during coming
+soon — inconsistent with Explore now, not yet revisited; see `TODO.md`.
 
 ## Login page
 
@@ -321,9 +322,10 @@ through `useAuth().login()`; a 401 (`InvalidCredentialsError`) shows a
 generic "Invalid email or password" message, any other failure shows a
 generic error, and success navigates to `/dashboard`.
 
-- **`VITE_IS_COMING_SOON`** (via `src/lib/config.ts`): `"true"` hides the
-  sign-in form, sign-up link, and "Explore Online Courses", showing
-  `ComingSoonNotice` instead (see "Auth layout & coming soon").
+- **`VITE_IS_COMING_SOON`** (via `src/lib/config.ts`): `"true"` shows
+  `ComingSoonNotice` inside the form and disables Sign In — the fields
+  and "Explore Online Courses" stay visible (see "Auth layout & coming
+  soon").
 - **Promo panel content is hardcoded** — Ticket #9 itself flags this as
   needing confirmation ("confirm with Irene whether this is hardcoded or
   should eventually come from Strapi `site_config`"), unresolved, see
