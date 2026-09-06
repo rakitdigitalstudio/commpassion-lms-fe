@@ -1,10 +1,11 @@
-import { type FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import type { SubmitEvent } from 'react'
+import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/Button'
-import { EyeIcon, EyeOffIcon, LockIcon, LogoIcon, MailIcon } from '@/components/icons'
-import { useAuth } from '@/hooks/useAuth'
-import { InvalidCredentialsError } from '@/lib/api/auth'
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/icons'
+import { Logo } from '@/components/Logo'
+import { useLoginForm } from '@/hooks/useLoginForm'
+import { IS_COMING_SOON } from '@/lib/config'
 
 interface PromoStatProps {
   value: string
@@ -69,46 +70,33 @@ function PromoPanel() {
 }
 
 export function Login() {
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    passwordVisibility,
+    rememberMe,
+    setRememberMe,
+    error,
+    isSubmitting,
+    submit,
+  } = useLoginForm()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const isComingSoon = import.meta.env.VITE_IS_COMING_SOON === 'true'
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
-    setError(null)
-    setIsSubmitting(true)
-
-    try {
-      await login({ email, password })
-      navigate('/dashboard', { replace: true })
-    } catch (submitError) {
-      setError(
-        submitError instanceof InvalidCredentialsError
-          ? 'Invalid email or password. Please try again.'
-          : 'Something went wrong. Please try again.',
-      )
-    } finally {
-      setIsSubmitting(false)
-    }
+    void submit()
   }
 
   return (
     <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
       <div className="flex items-center justify-center p-8 lg:p-16">
         <div className="w-full max-w-md">
-          <LogoIcon className="text-primary h-12 w-12" />
+          <Logo className="h-16 w-auto" />
           <h1 className="text-display mt-6 font-bold">Sign in to your account</h1>
           <p className="text-muted mt-2">Enter your email address and password to sign in.</p>
 
-          {isComingSoon ? (
+          {IS_COMING_SOON ? (
             <div className="border-border mt-8 rounded-card border border-dashed p-6 text-center">
               <p className="font-semibold">Sign-in is coming soon</p>
               <p className="text-muted mt-1 text-sm">
@@ -150,7 +138,7 @@ export function Login() {
                   <LockIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                   <input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={passwordVisibility.inputType}
                     required
                     autoComplete="current-password"
                     value={password}
@@ -160,11 +148,11 @@ export function Login() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((value) => !value)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    onClick={passwordVisibility.toggle}
+                    aria-label={passwordVisibility.isVisible ? 'Hide password' : 'Show password'}
                     className="text-muted absolute top-1/2 right-3 -translate-y-1/2"
                   >
-                    {showPassword ? (
+                    {passwordVisibility.isVisible ? (
                       <EyeOffIcon className="h-4 w-4" />
                     ) : (
                       <EyeIcon className="h-4 w-4" />
