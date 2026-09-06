@@ -1,6 +1,6 @@
 import { http, HttpResponse, type HttpHandler } from 'msw'
 
-import type { AuthResponse, LoginPayload, User } from '@/lib/api/auth.types'
+import type { AuthResponse, LoginPayload, ResetPasswordPayload, User } from '@/lib/api/auth.types'
 
 /**
  * MSW request handlers.
@@ -55,6 +55,22 @@ export const handlers: HttpHandler[] = [
 
   http.post('*/api/v1/auth/logout', () => {
     isAuthenticated = false
+    return new HttpResponse(null, { status: 204 })
+  }),
+
+  // Always the same response regardless of whether the email exists —
+  // don't leak account existence, per Ticket #11's acceptance criteria.
+  http.post('*/api/v1/auth/forgot-password', () => new HttpResponse(null, { status: 204 })),
+
+  // Mock reset token for exercising Ticket #11's reset-password form:
+  // any token except "invalid" (or empty) succeeds.
+  http.post('*/api/v1/auth/reset-password', async ({ request }) => {
+    const body = (await request.json()) as Partial<ResetPasswordPayload>
+
+    if (!body.token || body.token === 'invalid') {
+      return HttpResponse.json({ message: 'Invalid or expired reset link' }, { status: 400 })
+    }
+
     return new HttpResponse(null, { status: 204 })
   }),
 ]
