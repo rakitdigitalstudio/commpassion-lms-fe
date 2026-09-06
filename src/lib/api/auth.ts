@@ -1,4 +1,9 @@
-import type { AuthResponse, LoginPayload } from '@/lib/api/auth.types'
+import type {
+  AuthResponse,
+  ForgotPasswordPayload,
+  LoginPayload,
+  ResetPasswordPayload,
+} from '@/lib/api/auth.types'
 
 /**
  * PROVISIONAL Golang auth client (see auth.types.ts). Endpoint paths match
@@ -16,6 +21,9 @@ export class UnauthenticatedError extends Error {}
 /** Thrown by login() on a 401 (wrong email/password), so the form can
  * show a generic "invalid credentials" message instead of a network error. */
 export class InvalidCredentialsError extends Error {}
+
+/** Thrown by resetPassword() on a 400/401 (invalid or expired token). */
+export class InvalidResetTokenError extends Error {}
 
 async function getCsrfToken(): Promise<string> {
   const res = await fetch(`${API_URL}/api/v1/auth/csrf`, {
@@ -82,5 +90,51 @@ export async function logout(): Promise<void> {
 
   if (!res.ok) {
     throw new Error(`Logout failed: ${res.status}`)
+  }
+}
+
+/**
+ * Always resolves on a 2xx/4xx alike from the caller's point of view —
+ * the backend intentionally returns the same response whether or not the
+ * email exists (don't leak account existence), so there's nothing to
+ * branch on here. A genuine network/server error still throws.
+ */
+export async function forgotPassword(payload: ForgotPasswordPayload): Promise<void> {
+  const csrfToken = await getCsrfToken()
+
+  const res = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!res.ok) {
+    throw new Error(`forgotPassword failed: ${res.status}`)
+  }
+}
+
+export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
+  const csrfToken = await getCsrfToken()
+
+  const res = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (res.status === 400 || res.status === 401) {
+    throw new InvalidResetTokenError('Invalid or expired reset link')
+  }
+
+  if (!res.ok) {
+    throw new Error(`resetPassword failed: ${res.status}`)
   }
 }
