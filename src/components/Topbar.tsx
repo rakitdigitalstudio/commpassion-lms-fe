@@ -1,13 +1,26 @@
+import { useTranslation } from 'react-i18next'
+
 import { BellIcon, ChevronDownIcon, SearchIcon } from '@/components/icons'
 import { useAuth } from '@/hooks/useAuth'
 
+const LOCALES = ['en', 'id'] as const
+
 /**
- * Language dropdown and notification bell are visual placeholders here —
- * actual i18n switching and a notifications list are their own scope, not
- * this ticket's. The user dropdown is real: it reads from AuthContext.
+ * Notification bell is still a visual placeholder — a notifications
+ * feature is its own scope, not this ticket's (#41). The language control
+ * is real now: it cycles between the two supported locales (no dropdown
+ * menu component exists yet, so a toggle-on-click stands in for one — see
+ * TODO.md). The user dropdown is real: it reads from AuthContext.
  */
 export function Topbar() {
   const { user } = useAuth()
+  const { i18n } = useTranslation()
+
+  function cycleLocale() {
+    const current = LOCALES.indexOf(i18n.language as (typeof LOCALES)[number])
+    const next = LOCALES[(current + 1) % LOCALES.length]
+    void i18n.changeLanguage(next)
+  }
 
   return (
     <header className="flex items-center gap-4 border-b border-border bg-background px-6 py-4">
@@ -21,8 +34,12 @@ export function Topbar() {
       </div>
 
       <div className="ml-auto flex items-center gap-4">
-        <button type="button" className="flex items-center gap-1 text-sm font-medium text-muted">
-          EN
+        <button
+          type="button"
+          onClick={cycleLocale}
+          className="flex items-center gap-1 text-sm font-medium text-muted uppercase"
+        >
+          {i18n.language}
           <ChevronDownIcon className="h-4 w-4" />
         </button>
 
