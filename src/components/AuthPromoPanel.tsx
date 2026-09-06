@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 import courseImage from '@/assets/course-placeholder-mc.png'
+import { Progress } from '@/components/Progress'
 
 interface PromoStatProps {
   value: string
@@ -29,7 +30,7 @@ export function AuthPromoPanel() {
 
   return (
     <div className="hidden items-center lg:flex">
-      <div className="bg-promo shadow-promo w-full rounded-card p-10 text-white">
+      <div className="bg-promo w-full rounded-card p-10 text-white">
         <h2 className="text-display font-bold">
           {t('auth.promo.headlineStart')}{' '}
           <span className="font-black">{t('auth.promo.headlineInfluence')}</span>.
@@ -45,7 +46,7 @@ export function AuthPromoPanel() {
           <PromoStat value="50+" label={t('auth.promo.stats.partnerships')} />
         </div>
 
-        <div className="mt-8 overflow-hidden rounded-card">
+        <div className="mt-8 overflow-hidden rounded-card shadow-promo">
           <div className="relative aspect-[565/424]">
             <img src={courseImage} alt="" className="h-full w-full object-cover" />
             <span className="bg-accent text-foreground absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-semibold">
@@ -56,9 +57,7 @@ export function AuthPromoPanel() {
             <p className="font-semibold">{t('auth.promo.courseTitle')}</p>
             <p className="text-sm opacity-90">{t('auth.promo.courseMeta')}</p>
             <div className="mt-3 flex items-center gap-3">
-              <div className="h-2 flex-1 rounded-full bg-white/30">
-                <div className="h-full w-1/5 rounded-full bg-white" />
-              </div>
+              <Progress value={20} color="#078CB580" className="flex-1" />
               <span className="text-xs opacity-90">20%</span>
             </div>
           </div>
