@@ -31,14 +31,14 @@ export function ForgotPassword() {
       <h1 className="text-display mt-6 font-bold">{t('auth.forgotPassword.heading')}</h1>
       <p className="text-muted mt-2">{t('auth.forgotPassword.subtitle')}</p>
 
-      {IS_COMING_SOON ? (
-        <ComingSoonNotice className="mt-8" />
-      ) : isSubmitted ? (
+      {isSubmitted ? (
         <p className="border-border mt-8 rounded-card border p-4 text-sm">
           {t('auth.forgotPassword.successMessage')}
         </p>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
+          {IS_COMING_SOON ? <ComingSoonNotice /> : null}
+
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium">
               {t('auth.forgotPassword.emailLabel')}
@@ -58,7 +58,12 @@ export function ForgotPassword() {
             </div>
           </div>
 
-          <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={isSubmitting || IS_COMING_SOON}
+          >
             {isSubmitting ? t('auth.forgotPassword.submitting') : t('auth.forgotPassword.submit')}
           </Button>
         </form>
