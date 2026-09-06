@@ -357,7 +357,10 @@ either way") — a deliberate product-decision change per your instruction,
 not a bug fix; README updated to match.
 
 **Also done in this branch (not part of #43, requested alongside it):**
-`AuthPromoPanel`'s box explicitly uses `bg-primary` (`#84c6da` — already
-matched, confirmed via generated CSS) and a new `--shadow-promo` token
+`AuthPromoPanel`'s box uses a new `--background-image-promo` token
+(`linear-gradient(152.69deg, #84c6da 2.32%, #c2e3ed 89.01%, #e0f1f6
+95.53%)`, generating a `bg-promo` utility — superseded a first pass that
+used solid `bg-primary`) and a new `--shadow-promo` token
 (`0px 4px 16px 0px #00000040`) in `src/index.css`, distinct from
-`--shadow-card`.
+`--shadow-card`. Both confirmed via generated CSS output. The inner
+course-info sub-card still uses solid `bg-primary`, unchanged.

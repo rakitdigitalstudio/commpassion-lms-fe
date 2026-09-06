@@ -262,9 +262,12 @@ shell for Login, Register, and Forgot Password — left box (page content)
 * Stacks to a single column below the `lg` breakpoint — there's no
   mockup for a narrow two-column layout, and the forms need full width
   there anyway.
-* `AuthPromoPanel`'s box: `bg-primary` (`#84c6da`) and `shadow-promo`
-  (`0px 4px 16px 0px #00000040`, a dedicated token in `src/index.css` —
-  distinct from `shadow-card`).
+* `AuthPromoPanel`'s box: `bg-promo` (a `linear-gradient(152.69deg,
+#84c6da 2.32%, #c2e3ed 89.01%, #e0f1f6 95.53%)`, via
+  `--background-image-promo` in `src/index.css`) and `shadow-promo`
+  (`0px 4px 16px 0px #00000040`, a dedicated token — distinct from
+  `shadow-card`). The inner course-info sub-card stays solid
+  `bg-primary` (`#84c6da`).
 
 `ComingSoonNotice` (`src/components/ComingSoonNotice.tsx`) replaces the
 form on all three pages when `IS_COMING_SOON` is true (see "Config").
