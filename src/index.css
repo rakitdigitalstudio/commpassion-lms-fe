@@ -55,6 +55,14 @@
   /* Shadow */
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06);
   --shadow-promo: 0px 4px 16px 0px #00000040; /* AuthPromoPanel, per Figma */
+
+  /* Background images */
+  --background-image-promo: linear-gradient(
+    152.69deg,
+    #84c6da 2.32%,
+    #c2e3ed 89.01%,
+    #e0f1f6 95.53%
+  ); /* AuthPromoPanel, per Figma — generates the bg-promo utility */
 }
 
 @media (prefers-color-scheme: dark) {
