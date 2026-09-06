@@ -37,6 +37,13 @@ only. Edit `.env.local` (gitignored, per-machine) instead.
 pnpm only. Don't commit `package-lock.json` or `yarn.lock` — `pnpm-lock.yaml`
 is the single lockfile for this repo.
 
+`pnpm-workspace.yaml`'s `allowBuilds: { msw: true }` lets `msw`'s
+postinstall script run. Without it, pnpm 11 blocks unapproved dependency
+build scripts and **`pnpm install` exits 1** (not just a warning) —
+this broke the Vercel build. If a new dependency ever needs its build
+script approved, add it here rather than running `pnpm approve-builds`
+interactively (that doesn't persist anywhere CI can see it).
+
 ## Project structure
 
 ```
