@@ -4,8 +4,11 @@ import { AppShell } from '@/components/AppShell'
 import { CourseDetail } from '@/pages/CourseDetail'
 import { Dashboard } from '@/pages/Dashboard'
 import { Explore } from '@/pages/Explore'
+import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
+import { Maintenance } from '@/pages/Maintenance'
 import { Purchases } from '@/pages/Purchases'
+import { ResetPassword } from '@/pages/ResetPassword'
 import { Settings } from '@/pages/Settings'
 import { StyleGuide } from '@/pages/StyleGuide'
 import { GuestOnlyRoute } from '@/routes/GuestOnlyRoute'
@@ -40,5 +43,10 @@ export const router = createBrowserRouter([
   // "authenticated screens"), and it's reachable while logged out (login
   // page's "Explore Online Courses" CTA). Revisit alongside Ticket #20.
   { path: '/explore', element: <Explore /> },
+  // Reachable regardless of auth state (e.g. a mailed link opened in a
+  // session that's already logged in elsewhere) — not guest-gated.
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/reset-password', element: <ResetPassword /> },
+  { path: '/maintenance', element: <Maintenance /> },
   { path: '/style-guide', element: <StyleGuide /> },
 ])
