@@ -250,3 +250,22 @@ a static page only: no ticket specifies when/how maintenance mode should
 actually trigger (a global env flag redirecting every route here, a
 backend 503 passed through, etc.), so that wiring doesn't exist — nothing
 currently navigates to this route automatically.
+
+## Ticket #10 — Register page: done, with explicit approvals from you
+
+**Status:** done. Unlike #11, this ticket explicitly said "Not started
+until a design frame exists **or a placeholder layout is explicitly
+approved**" — you approved a placeholder (reusing Login's two-column
+style) and decided the post-registration flow (redirect to `/login`,
+no auto-login) directly, so neither is an inferred assumption.
+
+Built `Register.tsx` + `useRegisterForm`, `register()` on the provisional
+auth client (`EmailAlreadyRegisteredError` on 409) + matching MSW handler,
+and extracted the promo panel out of `Login.tsx` into a shared
+`AuthPromoPanel` component so both pages use the same one. Verified
+new-email/duplicate-email paths with a script against the mock handlers.
+
+**Still outstanding (the ticket's own first todo):** flag the missing
+design to Irene/Marco Herbert — can't do that from this session, someone
+needs to actually ask them. Replace the placeholder layout once a real
+frame exists.

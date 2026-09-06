@@ -2,6 +2,7 @@ import type {
   AuthResponse,
   ForgotPasswordPayload,
   LoginPayload,
+  RegisterPayload,
   ResetPasswordPayload,
 } from '@/lib/api/auth.types'
 
@@ -24,6 +25,9 @@ export class InvalidCredentialsError extends Error {}
 
 /** Thrown by resetPassword() on a 400/401 (invalid or expired token). */
 export class InvalidResetTokenError extends Error {}
+
+/** Thrown by register() on a 409 (email already registered). */
+export class EmailAlreadyRegisteredError extends Error {}
 
 async function getCsrfToken(): Promise<string> {
   const res = await fetch(`${API_URL}/api/v1/auth/csrf`, {
@@ -61,6 +65,33 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   }
 
   return res.json() as Promise<AuthResponse>
+}
+
+/**
+ * Does NOT log the user in — per your decision, registration always
+ * redirects to /login afterward rather than starting a session, so this
+ * intentionally returns void instead of AuthResponse.
+ */
+export async function register(payload: RegisterPayload): Promise<void> {
+  const csrfToken = await getCsrfToken()
+
+  const res = await fetch(`${API_URL}/api/v1/auth/register`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (res.status === 409) {
+    throw new EmailAlreadyRegisteredError('An account with this email already exists')
+  }
+
+  if (!res.ok) {
+    throw new Error(`register failed: ${res.status}`)
+  }
 }
 
 export async function getMe(): Promise<AuthResponse> {

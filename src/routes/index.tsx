@@ -8,6 +8,7 @@ import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
 import { Maintenance } from '@/pages/Maintenance'
 import { Purchases } from '@/pages/Purchases'
+import { Register } from '@/pages/Register'
 import { ResetPassword } from '@/pages/ResetPassword'
 import { Settings } from '@/pages/Settings'
 import { StyleGuide } from '@/pages/StyleGuide'
@@ -20,6 +21,14 @@ export const router = createBrowserRouter([
     element: (
       <GuestOnlyRoute>
         <Login />
+      </GuestOnlyRoute>
+    ),
+  },
+  {
+    path: '/register',
+    element: (
+      <GuestOnlyRoute>
+        <Register />
       </GuestOnlyRoute>
     ),
   },
