@@ -243,13 +243,24 @@ the mock handlers.
 style — there's no real design to match yet. Replace once Irene/Marco
 Herbert provide one.
 
-## Maintenance page — built, not wired anywhere
+## Maintenance mode + 404 page: done
 
-Added `src/pages/Maintenance.tsx` at `/maintenance` per your request. It's
-a static page only: no ticket specifies when/how maintenance mode should
-actually trigger (a global env flag redirecting every route here, a
-backend 503 passed through, etc.), so that wiring doesn't exist — nothing
-currently navigates to this route automatically.
+**Status:** done. (Supersedes the earlier "Maintenance page — built, not
+wired anywhere" entry — it's wired now.)
+
+`VITE_MAINTENANCE_MODE=true` shows `Maintenance` for the whole app,
+checked in `App.tsx` before `QueryProvider`/`AuthProvider`/the router
+mount — deliberately not just another route, so it works even if
+auth/API state is broken. `NotFound` (404) is the catch-all route
+(`path: '*'`) for any unmatched URL, public/ungated. Both translated
+(EN/ID, `common.maintenance.*` / `common.notFound.*`) — verified
+`en.json`/`id.json` still have identical key sets.
+
+**Not addressed (out of scope, wasn't asked):** what a real backend 503
+should do (currently nothing translates a failed API response into
+maintenance mode — it's purely the env flag), and there's still no route
+for `/` itself (unmatched, so it currently hits `NotFound` too) — worth a
+decision on what `/` should redirect to.
 
 ## Ticket #10 — Register page: done, with explicit approvals from you
 

@@ -55,9 +55,11 @@ src/
 - `/explore` — public, outside the shell (see "App shell")
 - `/forgot-password`, `/reset-password?token=...` — public, no design yet
   (see "Forgot / reset password")
-- `/maintenance` — static page, nothing routes here automatically yet (see
-  "Maintenance page")
+- `/maintenance` — shown for every route when `VITE_MAINTENANCE_MODE=true`
+  (see "Maintenance page"); also reachable directly
 - `/style-guide` — palette, type scale, and component reference (Ticket 2/6)
+- `*` (catch-all, public, must stay last) — `NotFound` (404) for any
+  unmatched URL
 
 ## Design tokens
 
@@ -197,9 +199,10 @@ Ticket #3's requirement for the Golang client wrapper.
 
 `src/lib/config.ts` is the **only** place that reads `import.meta.env`.
 Everywhere else imports the exported constant (`IS_COMING_SOON`,
-`USE_MOCKS`) instead of reading `import.meta.env.VITE_*` inline — one
-place for flag names and parsing (`=== 'true'`), so it can't drift between
-call sites. Add new env-derived flags here, not inline in a component.
+`USE_MOCKS`, `MAINTENANCE_MODE`) instead of reading
+`import.meta.env.VITE_*` inline — one place for flag names and parsing
+(`=== 'true'`), so it can't drift between call sites. Add new env-derived
+flags here, not inline in a component.
 
 ## Logo & favicon
 
@@ -334,11 +337,21 @@ criteria are concrete even without a mockup.
 
 ## Maintenance page
 
-`src/pages/Maintenance.tsx` at `/maintenance` — a static "Under
-Maintenance" page. **Nothing routes here automatically** — no ticket
-specifies when/how maintenance mode should trigger (a global env flag
-redirecting every route, a backend 503, etc.), so only the page itself
-exists so far. See `TODO.md`.
+`src/pages/Maintenance.tsx` — shown for the **entire app**, any route,
+when `VITE_MAINTENANCE_MODE=true` (`MAINTENANCE_MODE` in
+`src/lib/config.ts`). Checked in `App.tsx` before `QueryProvider`,
+`AuthProvider`, or the router even mount, so it works regardless of
+backend/session state — it's not just another route. Also reachable
+directly at `/maintenance` regardless of the flag.
+
+## 404 / Not Found
+
+`src/pages/NotFound.tsx` — the catch-all (`path: '*'`, must stay last in
+`src/routes/index.tsx`) for any unmatched URL. Public, not gated by
+`ProtectedRoute`/`GuestOnlyRoute` — an unknown URL isn't "protected
+content," so redirecting to `/login` first would be the wrong behavior.
+"Back to Home" links to `/dashboard`; `ProtectedRoute` sends an
+unauthenticated visitor on to `/login` from there as normal.
 
 ## Git Workflow
 

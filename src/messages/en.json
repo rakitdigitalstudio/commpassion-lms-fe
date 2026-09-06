@@ -1,4 +1,16 @@
 {
+  "common": {
+    "maintenance": {
+      "heading": "Under Maintenance",
+      "body": "We're making some improvements and will be back shortly. Thanks for your patience."
+    },
+    "notFound": {
+      "code": "404",
+      "heading": "Page not found",
+      "body": "The page you're looking for doesn't exist or may have been moved.",
+      "backHome": "Back to Home"
+    }
+  },
   "auth": {
     "comingSoon": {
       "heading": "We're coming soon",

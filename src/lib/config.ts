@@ -10,3 +10,6 @@ export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
 
 /** Hides the Login page's sign-in form/sign-up link. See README "Login page". */
 export const IS_COMING_SOON = import.meta.env.VITE_IS_COMING_SOON === 'true'
+
+/** When true, the whole app shows the Maintenance page instead of routing normally. See README "Maintenance page". */
+export const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
