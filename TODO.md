@@ -201,3 +201,52 @@ doesn't get lost.
 **Other assumption:** the featured-course image is a plain color
 placeholder, same reasoning as `CourseCard` banners (see Ticket #6) — no
 real asset/pipeline for course imagery exists yet.
+
+## Fixes applied on top of Ticket #9 (per your feedback)
+
+- Copied the real logo (`src/assets/compassion-logo-blue.png`) and
+  favicon (`public/favicon.ico`) from `compassion-landing-page` — no
+  longer placeholders. `Sidebar` still uses the hand-authored `LogoIcon`
+  icon-only mark (see README "Logo & favicon" for why).
+- Extracted Login's inline form state + submit handler into
+  `useLoginForm` (`src/hooks/`), composing two new shared hooks
+  (`usePasswordVisibility`, `useAsyncAction`). `Login.tsx` is now
+  presentational. Documented as a rule in README "Forms" —
+  page components shouldn't carry form `useState`/submit logic directly.
+- Wrapped `import.meta.env.VITE_*` reads behind `src/lib/config.ts`
+  (`IS_COMING_SOON`, `USE_MOCKS`); nothing else should read
+  `import.meta.env` directly anymore (`enable-mocks.ts` and `Login.tsx`
+  updated). Documented in README "Config".
+- Fixed a `FormEvent` deprecation warning (`@types/react` deprecated it —
+  "doesn't actually exist") by switching to `SubmitEvent`. Documented in
+  README "Forms".
+
+## Ticket #11 — Forgot / reset password pages: done, no design existed
+
+**Status:** done, per the ticket's own "not started until design exists"
+caveat — built anyway since the acceptance criteria are concrete without
+a mockup (generic success message, password rules). Flag to Irene/Marco
+Herbert about the missing Figma frame is still outstanding (can't do that
+from this session) — the ticket's first todo.
+
+Built `ForgotPassword.tsx` / `ResetPassword.tsx` + `useForgotPasswordForm`
+/ `useResetPasswordForm`, `forgotPassword()`/`resetPassword()` on the
+provisional auth client (+ matching MSW handlers), and
+`src/lib/password-rules.ts` (8+ chars, uppercase, number, special
+character — sourced from the Settings > Security mockup's bullet list,
+the one concrete reference we have, per the ticket's "matches Image 8's
+rules"). Verified forgot-password's always-generic-success behavior and
+reset-password's valid/invalid/missing-token paths with a script against
+the mock handlers.
+
+**Layout is a placeholder**, reusing the Login page's single-column form
+style — there's no real design to match yet. Replace once Irene/Marco
+Herbert provide one.
+
+## Maintenance page — built, not wired anywhere
+
+Added `src/pages/Maintenance.tsx` at `/maintenance` per your request. It's
+a static page only: no ticket specifies when/how maintenance mode should
+actually trigger (a global env flag redirecting every route here, a
+backend 503 passed through, etc.), so that wiring doesn't exist — nothing
+currently navigates to this route automatically.
