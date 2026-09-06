@@ -62,8 +62,6 @@ src/
 - `/explore` — public, outside the shell (see "App shell")
 - `/forgot-password`, `/reset-password?token=...` — public, no design yet
   (see "Forgot / reset password")
-- `/maintenance` — shown for every route when `VITE_MAINTENANCE_MODE=true`
-  (see "Maintenance page"); also reachable directly
 - `/style-guide` — palette, type scale, and component reference (Ticket 2/6)
 - `*` (catch-all, public, must stay last) — `NotFound` (404) for any
   unmatched URL
@@ -363,9 +361,12 @@ criteria are concrete even without a mockup.
 `src/pages/Maintenance.tsx` — shown for the **entire app**, any route,
 when `VITE_MAINTENANCE_MODE=true` (`MAINTENANCE_MODE` in
 `src/lib/config.ts`). Checked in `App.tsx` before `QueryProvider`,
-`AuthProvider`, or the router even mount, so it works regardless of
-backend/session state — it's not just another route. Also reachable
-directly at `/maintenance` regardless of the flag.
+`AuthProvider`, or the router even mount.
+
+**It has no route of its own** (no `/maintenance` in
+`src/routes/index.tsx`) — deliberately: it's a global mode that overrides
+every page, not a page you navigate to. Don't add a `/maintenance` route;
+if the flag is off, that path should 404 like any other unmatched URL.
 
 ## 404 / Not Found
 

@@ -262,6 +262,13 @@ maintenance mode — it's purely the env flag), and there's still no route
 for `/` itself (unmatched, so it currently hits `NotFound` too) — worth a
 decision on what `/` should redirect to.
 
+**Correction (same PR, before merge):** initially also added a
+`/maintenance` route in `routes/index.tsx` alongside the `App.tsx`
+global check — wrong, per your feedback: maintenance mode is a global
+override, not a page you navigate to. Removed the route; `Maintenance`
+now only renders via the `MAINTENANCE_MODE` check. Visiting `/maintenance`
+directly with the flag off now 404s like any other unmatched URL.
+
 ## Ticket #10 — Register page: done, with explicit approvals from you
 
 **Status:** done. Unlike #11, this ticket explicitly said "Not started
