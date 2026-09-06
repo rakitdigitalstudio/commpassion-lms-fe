@@ -29,7 +29,7 @@ export function AuthPromoPanel() {
 
   return (
     <div className="hidden items-center lg:flex">
-      <div className="w-full rounded-card bg-primary p-10 text-white">
+      <div className="shadow-promo w-full rounded-card bg-primary p-10 text-white">
         <h2 className="text-display font-bold">
           {t('auth.promo.headlineStart')}{' '}
           <span className="font-black">{t('auth.promo.headlineInfluence')}</span>.
