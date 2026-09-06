@@ -7,6 +7,7 @@ import { Explore } from '@/pages/Explore'
 import { ForgotPassword } from '@/pages/ForgotPassword'
 import { Login } from '@/pages/Login'
 import { Maintenance } from '@/pages/Maintenance'
+import { NotFound } from '@/pages/NotFound'
 import { Purchases } from '@/pages/Purchases'
 import { Register } from '@/pages/Register'
 import { ResetPassword } from '@/pages/ResetPassword'
@@ -58,4 +59,7 @@ export const router = createBrowserRouter([
   { path: '/reset-password', element: <ResetPassword /> },
   { path: '/maintenance', element: <Maintenance /> },
   { path: '/style-guide', element: <StyleGuide /> },
+  // Catch-all — must stay last. Public, not gated: an unmatched URL isn't
+  // "protected content," so redirecting to /login first would be wrong.
+  { path: '*', element: <NotFound /> },
 ])
