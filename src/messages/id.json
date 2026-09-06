@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "comingSoon": {
+      "heading": "Segera hadir",
+      "body": "Kami sedang menyempurnakan fitur akun. Silakan cek kembali nanti."
+    },
+    "promo": {
+      "headlineStart": "Berkomunikasi untuk",
+      "headlineInfluence": "Memengaruhi",
+      "headlineLead": "Memimpin untuk",
+      "headlineInspire": "Menginspirasi",
+      "subtitle": "Bergabunglah dengan ribuan peserta yang mengubah cara mereka terhubung, berkomunikasi, dan memimpin.",
+      "stats": {
+        "voices": "Suara Diberdayakan",
+        "experiences": "Pengalaman Belajar",
+        "partnerships": "Mitra Terpercaya"
+      },
+      "featuredCourse": "Kursus Unggulan",
+      "courseTitle": "How to Be A Great MC",
+      "courseMeta": "Oleh Indra Herlambang • 12 Video Modul"
+    },
+    "login": {
+      "heading": "Masuk ke akun Anda",
+      "subtitle": "Masukkan email dan kata sandi Anda untuk masuk.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Masukkan Alamat Email Anda",
+      "passwordLabel": "Kata Sandi",
+      "passwordPlaceholder": "Masukkan Kata Sandi Anda",
+      "rememberMe": "Ingat Saya",
+      "forgotPassword": "Lupa Kata Sandi?",
+      "submit": "Masuk",
+      "submitting": "Sedang masuk…",
+      "noAccount": "Belum punya akun?",
+      "signUp": "Daftar",
+      "or": "atau",
+      "exploreCourses": "Jelajahi Kursus Online",
+      "registeredNotice": "Akun berhasil dibuat! Silakan masuk.",
+      "errorInvalidCredentials": "Email atau kata sandi salah. Silakan coba lagi.",
+      "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
+    },
+    "register": {
+      "heading": "Buat akun Anda",
+      "subtitle": "Daftar untuk mulai belajar bersama CommPassion.",
+      "fullNameLabel": "Nama Lengkap",
+      "fullNamePlaceholder": "Masukkan Nama Lengkap Anda",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Masukkan Alamat Email Anda",
+      "passwordLabel": "Kata Sandi",
+      "passwordPlaceholder": "Masukkan Kata Sandi Anda",
+      "confirmPasswordLabel": "Konfirmasi Kata Sandi",
+      "confirmPasswordPlaceholder": "Masukkan Ulang Kata Sandi Anda",
+      "submit": "Daftar",
+      "submitting": "Membuat akun…",
+      "haveAccount": "Sudah punya akun?",
+      "signIn": "Masuk",
+      "errorEmailTaken": "Akun dengan email ini sudah terdaftar.",
+      "errorGeneric": "Terjadi kesalahan. Silakan coba lagi.",
+      "errorFullNameRequired": "Silakan masukkan nama lengkap Anda.",
+      "errorPasswordRules": "Kata sandi belum memenuhi persyaratan di bawah ini.",
+      "errorPasswordMismatch": "Kata sandi tidak cocok."
+    },
+    "forgotPassword": {
+      "heading": "Lupa kata sandi Anda?",
+      "subtitle": "Masukkan email Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Masukkan Alamat Email Anda",
+      "submit": "Kirim Tautan Reset",
+      "submitting": "Mengirim…",
+      "successMessage": "Jika akun dengan email tersebut terdaftar, kami telah mengirimkan instruksi untuk mengatur ulang kata sandi Anda.",
+      "backToSignIn": "Kembali ke Halaman Masuk"
+    },
+    "passwordRules": {
+      "length": "Minimal 8 karakter",
+      "uppercase": "Satu huruf kapital",
+      "number": "Satu angka",
+      "special": "Satu karakter khusus"
+    },
+    "passwordToggle": {
+      "show": "Tampilkan kata sandi",
+      "hide": "Sembunyikan kata sandi"
+    }
+  }
+}
