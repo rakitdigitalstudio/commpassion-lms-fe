@@ -1,6 +1,12 @@
 import { http, HttpResponse, type HttpHandler } from 'msw'
 
-import type { AuthResponse, LoginPayload, ResetPasswordPayload, User } from '@/lib/api/auth.types'
+import type {
+  AuthResponse,
+  LoginPayload,
+  RegisterPayload,
+  ResetPasswordPayload,
+  User,
+} from '@/lib/api/auth.types'
 
 /**
  * MSW request handlers.
@@ -32,6 +38,10 @@ const MOCK_CREDENTIALS = { email: mockUser.email, password: 'password123' }
 // (Ticket #5's acceptance criteria) is the default state to exercise.
 let isAuthenticated = false
 
+// Emails already "registered" — seeded with the mock login user so
+// re-registering it is exercisable as the 409 conflict path.
+const registeredEmails = new Set([mockUser.email])
+
 export const handlers: HttpHandler[] = [
   http.get('*/api/v1/auth/csrf', () => HttpResponse.json({ csrfToken: 'mock-csrf-token' })),
 
@@ -56,6 +66,25 @@ export const handlers: HttpHandler[] = [
   http.post('*/api/v1/auth/logout', () => {
     isAuthenticated = false
     return new HttpResponse(null, { status: 204 })
+  }),
+
+  // Does NOT log the user in — matches register() not returning
+  // AuthResponse. 409 if the email is already "registered".
+  http.post('*/api/v1/auth/register', async ({ request }) => {
+    const body = (await request.json()) as Partial<RegisterPayload>
+
+    if (body.email && registeredEmails.has(body.email)) {
+      return HttpResponse.json(
+        { message: 'An account with this email already exists' },
+        { status: 409 },
+      )
+    }
+
+    if (body.email) {
+      registeredEmails.add(body.email)
+    }
+
+    return new HttpResponse(null, { status: 201 })
   }),
 
   // Always the same response regardless of whether the email exists —

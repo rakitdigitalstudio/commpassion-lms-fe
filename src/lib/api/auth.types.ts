@@ -23,6 +23,12 @@ export interface AuthResponse {
   user: User
 }
 
+export interface RegisterPayload {
+  fullName: string
+  email: string
+  password: string
+}
+
 export interface ForgotPasswordPayload {
   email: string
 }
