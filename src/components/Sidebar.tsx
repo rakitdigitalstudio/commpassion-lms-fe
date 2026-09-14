@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import {
   CartIcon,
@@ -25,6 +25,16 @@ const navItemClassName = ({ isActive }: { isActive: boolean }) =>
 
 export function Sidebar() {
   const { logout } = useUserAuthenticationContext()
+  const navigate = useNavigate()
+
+  // Explicit navigate rather than relying on ProtectedRoute's reactive
+  // redirect once `user` goes null (Ticket #12) — same pattern as
+  // useLoginForm's post-login navigate, and avoids depending on render
+  // timing after the auth cache updates.
+  async function handleLogout() {
+    await logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-background">
@@ -52,7 +62,7 @@ export function Sidebar() {
         </NavLink>
         <button
           type="button"
-          onClick={() => void logout()}
+          onClick={() => void handleLogout()}
           className="flex w-full items-center gap-3 rounded-control border-l-2 border-transparent px-3 py-2 text-left text-sm font-medium text-muted hover:bg-border/50"
         >
           <LogoutIcon className="h-5 w-5 shrink-0" />
