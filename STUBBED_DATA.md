@@ -39,15 +39,16 @@ full page reload):
   `src/pages/Login.tsx`'s email field is `type="text"` rather than
   `type="email"` specifically so this non-email-shaped username can be
   submitted) additionally writes the resulting user to `localStorage`
-  (`useUserAuthentication.ts`). On load, `fetchCurrentUser()` checks that
-  storage _before_ calling `getMe()`, so this one account's session
-  survives a reload even though the mock backend's own session doesn't.
-  Logging out, or logging in as any other account, clears it.
+  (`useUserAuthentication.ts`). On load, `useGetMeQuery.ts`'s
+  `fetchCurrentUser()` checks that storage _before_ calling `getMe()`, so
+  this one account's session survives a reload even though the mock
+  backend's own session doesn't. Logging out, or logging in as any other
+  account, clears it.
 - **Remove this whole mechanism** (`src/lib/demo-account.ts`, its call
-  sites in `useUserAuthentication.ts`, the seeded account in
-  `handlers.ts`, and the login input's `type` change) once a real
-  backend/session exists — it's a demo-only bypass, not an auth pattern
-  to build on.
+  sites in `useUserAuthentication.ts`/`useGetMeQuery.ts`, the seeded
+  account in `handlers.ts`, and the login input's `type` change) once a
+  real backend/session exists — it's a demo-only bypass, not an auth
+  pattern to build on.
 
 ## `src/lib/stub-data/dashboard.ts`
 

@@ -1,14 +1,8 @@
-import { useApiMutation } from '@/hooks/useApiMutation'
-import { useApiQuery } from '@/hooks/useApiQuery'
-import { getMe, login, logout, UnauthenticatedError } from '@/lib/api/auth'
+import { useGetMeQuery } from '@/hooks/useGetMeQuery'
+import { useLoginMutation } from '@/hooks/useLoginMutation'
+import { useLogoutMutation } from '@/hooks/useLogoutMutation'
 import type { LoginPayload, User } from '@/lib/api/auth.types'
-import {
-  clearDemoSession,
-  isDemoAccountEmail,
-  loadDemoSession,
-  saveDemoSession,
-} from '@/lib/demo-account'
-import { queryKeys } from '@/lib/query-keys'
+import { clearDemoSession, isDemoAccountEmail, saveDemoSession } from '@/lib/demo-account'
 
 export interface UserAuthenticationValue {
   user: User | null
@@ -18,53 +12,34 @@ export interface UserAuthenticationValue {
   logout: () => Promise<void>
 }
 
-async function fetchCurrentUser(): Promise<User | null> {
-  // Demo account bypass (see src/lib/demo-account.ts) — checked first so
-  // it survives a reload even though the mock backend's own session
-  // doesn't.
-  const demoUser = loadDemoSession()
-  if (demoUser) {
-    return demoUser
-  }
-
-  try {
-    const { user } = await getMe()
-    return user
-  } catch (error) {
-    if (error instanceof UnauthenticatedError) {
-      return null
-    }
-    throw error
-  }
-}
-
 /**
- * Actual auth logic — session query + login/logout mutations. Kept
- * separate from `UserAuthenticationContext` so the context file only ever
- * has to wire `const value = useUserAuthentication()` into a provider.
+ * Actual auth logic — composes the per-resource query/mutation hooks
+ * (useGetMeQuery/useLoginMutation/useLogoutMutation, per README "Data
+ * fetching") into the single value UserAuthenticationContext exposes. Kept
+ * separate from that context so the context file only ever has to wire
+ * `const value = useUserAuthentication()` into a provider.
  */
 export function useUserAuthentication(): UserAuthenticationValue {
-  const meQuery = useApiQuery(queryKeys.me(), fetchCurrentUser, { retry: false })
-
-  const loginMutation = useApiMutation(login, { invalidateKeys: [queryKeys.me()] })
-  const logoutMutation = useApiMutation(logout, { invalidateKeys: [queryKeys.me()] })
+  const { data: user, isLoading } = useGetMeQuery()
+  const { mutateAsync: handleLogin } = useLoginMutation()
+  const { mutateAsync: handleLogout } = useLogoutMutation()
 
   return {
-    user: meQuery.data ?? null,
-    isLoading: meQuery.isLoading,
+    user: user ?? null,
+    isLoading,
     login: async (payload) => {
-      const { user } = await loginMutation.mutateAsync(payload)
+      const { user: loggedInUser } = await handleLogin(payload)
 
       // Clear first so switching from the demo account to a real one (or
       // vice versa) never leaves a stale session shadowing the new one.
       clearDemoSession()
       if (isDemoAccountEmail(payload.email)) {
-        saveDemoSession(user)
+        saveDemoSession(loggedInUser)
       }
     },
     logout: async () => {
       clearDemoSession()
-      await logoutMutation.mutateAsync()
+      await handleLogout()
     },
   }
 }
