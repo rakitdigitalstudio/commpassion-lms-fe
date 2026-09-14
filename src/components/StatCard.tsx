@@ -1,19 +1,23 @@
 import type { ReactNode } from 'react'
 
-export type StatCardColor = 'primary' | 'accent' | 'success' | 'highlight'
+import { Card } from '@/components/Card'
+
+export type StatCardColor = 'primary' | 'accent' | 'success' | 'highlight' | 'warning'
 
 const valueClassName: Record<StatCardColor, string> = {
   primary: 'text-primary',
   accent: 'text-accent',
   success: 'text-success',
   highlight: 'text-highlight',
+  warning: 'text-warning',
 }
 
 const iconClassName: Record<StatCardColor, string> = {
-  primary: 'bg-primary/10 text-primary',
-  accent: 'bg-accent/10 text-accent',
-  success: 'bg-success/10 text-success',
-  highlight: 'bg-highlight/10 text-highlight',
+  primary: 'bg-primary/25 text-primary',
+  accent: 'bg-accent/25 text-accent',
+  success: 'bg-success/25 text-success',
+  highlight: 'bg-highlight/25 text-highlight',
+  warning: 'bg-warning/25 text-warning',
 }
 
 interface StatCardProps {
@@ -24,11 +28,22 @@ interface StatCardProps {
   helperText?: string
   /** Icon in a colored square above the label (purchases-page variant). Omit for the plain dashboard style. */
   icon?: ReactNode
+  /** Renders the value in a flat gray regardless of `color` — the New User dashboard's all-0 zero-state (Figma: #c4bfbf). */
+  muted?: boolean
+  className?: string
 }
 
-export function StatCard({ label, value, color = 'primary', helperText, icon }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  color = 'primary',
+  helperText,
+  icon,
+  muted = false,
+  className = '',
+}: StatCardProps) {
   return (
-    <div className="rounded-card shadow-card border border-border bg-background p-6">
+    <Card className={className}>
       {icon ? (
         <div
           className={`mb-3 flex h-10 w-10 items-center justify-center rounded-control ${iconClassName[color]}`}
@@ -37,8 +52,10 @@ export function StatCard({ label, value, color = 'primary', helperText, icon }: 
         </div>
       ) : null}
       <p className="text-sm text-muted">{label}</p>
-      <p className={`text-stat font-bold ${valueClassName[color]}`}>{value}</p>
+      <p className={`text-stat font-bold ${muted ? 'text-muted-2' : valueClassName[color]}`}>
+        {value}
+      </p>
       {helperText ? <p className="mt-1 text-sm text-muted">{helperText}</p> : null}
-    </div>
+    </Card>
   )
 }
