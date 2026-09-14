@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 import { BellIcon, ChevronDownIcon, SearchIcon } from '@/components/icons'
-import { useAuth } from '@/hooks/useAuth'
+import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
 const LOCALES = ['en', 'id'] as const
 
@@ -13,7 +13,7 @@ const LOCALES = ['en', 'id'] as const
  * TODO.md). The user dropdown is real: it reads from AuthContext.
  */
 export function Topbar() {
-  const { user } = useAuth()
+  const { user } = useUserAuthenticationContext()
   const { i18n } = useTranslation()
 
   function cycleLocale() {

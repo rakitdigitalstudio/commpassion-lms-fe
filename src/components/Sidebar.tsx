@@ -8,7 +8,7 @@ import {
   LogoutIcon,
   SettingsIcon,
 } from '@/components/icons'
-import { useAuth } from '@/hooks/useAuth'
+import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
 const navItems = [
   { to: '/dashboard', label: 'My Dashboard', icon: DashboardIcon },
@@ -24,7 +24,7 @@ const navItemClassName = ({ isActive }: { isActive: boolean }) =>
   }`
 
 export function Sidebar() {
-  const { logout } = useAuth()
+  const { logout } = useUserAuthenticationContext()
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-background">

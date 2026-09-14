@@ -1,11 +1,16 @@
-import type { ReactNode } from 'react'
-
-import { AuthContext, type AuthContextValue } from '@/context/auth-context'
 import { useApiMutation } from '@/hooks/useApiMutation'
 import { useApiQuery } from '@/hooks/useApiQuery'
 import { getMe, login, logout, UnauthenticatedError } from '@/lib/api/auth'
-import type { User } from '@/lib/api/auth.types'
+import type { LoginPayload, User } from '@/lib/api/auth.types'
 import { queryKeys } from '@/lib/query-keys'
+
+export interface UserAuthenticationValue {
+  user: User | null
+  /** True only while the initial getMe() session check is in flight. */
+  isLoading: boolean
+  login: (payload: LoginPayload) => Promise<void>
+  logout: () => Promise<void>
+}
 
 async function fetchCurrentUser(): Promise<User | null> {
   try {
@@ -19,13 +24,18 @@ async function fetchCurrentUser(): Promise<User | null> {
   }
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+/**
+ * Actual auth logic — session query + login/logout mutations. Kept
+ * separate from `UserAuthenticationContext` so the context file only ever
+ * has to wire `const value = useUserAuthentication()` into a provider.
+ */
+export function useUserAuthentication(): UserAuthenticationValue {
   const meQuery = useApiQuery(queryKeys.me(), fetchCurrentUser, { retry: false })
 
   const loginMutation = useApiMutation(login, { invalidateKeys: [queryKeys.me()] })
   const logoutMutation = useApiMutation(logout, { invalidateKeys: [queryKeys.me()] })
 
-  const value: AuthContextValue = {
+  return {
     user: meQuery.data ?? null,
     isLoading: meQuery.isLoading,
     login: async (payload) => {
@@ -35,6 +45,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await logoutMutation.mutateAsync()
     },
   }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
