@@ -450,3 +450,50 @@ was deleted outright — none of it done by me. Restored from the last
 commit before continuing (confirmed with you first). No idea what caused
 it (editor undo, a discarded hunk, etc.) — noting here only so it isn't
 mistaken for an intentional change later; not something to fix in code.
+
+## Ticket #13 — Dashboard, My Purchases, Explore Courses: done
+
+Built out all three previously-placeholder pages against Figma (nodes
+676-6149/6284/6364/7052/6686). See `STUBBED_DATA.md` for every
+stubbed number/string/asset and what will eventually replace it.
+
+- **Resolved Ticket #7's flagged assumption**: `/explore` now branches on
+  auth state instead of always showing the placeholder — a guest still
+  sees the original "under construction" page, but a signed-in user gets
+  the real catalog wrapped in `AppShell` (gave `AppShell` an optional
+  `children` prop, defaulting to `<Outlet/>`, so this doesn't disturb its
+  normal use as a router layout route).
+- **Auth restructured per your request mid-task**: replaced
+  `src/context/auth-context.ts` + `src/hooks/useAuth.ts` +
+  `src/providers/AuthProvider.tsx` with
+  `src/context/UserAuthenticationContext.tsx` (createContext +
+  `UserAuthenticationProvider` + `useUserAuthenticationContext`) wired to
+  `src/hooks/useUserAuthentication.ts` (the actual session/login/logout
+  logic). Every prior `useAuth()` call site was updated to
+  `useUserAuthenticationContext()`.
+- **New-vs-existing dashboard state** comes from `User.isNewUser` (stubbed
+  field, see `STUBBED_DATA.md`) rather than a URL parameter — the mock
+  backend now supports multiple accounts so a real register→login round
+  trip exercises both states.
+- **Design tokens confirmed against the real Figma file**: `--color-success`,
+  `--color-info`, `--color-warning`, `--color-highlight`, `--color-muted`
+  in `src/index.css` were all previously "eyeballed" placeholders — now
+  exact. Added `--color-muted-2` for the New User dashboard's zero-state
+  gray. Fixed `ProgressBar`'s in-progress fill (was `--color-info`, should
+  be `--color-primary` — `--color-info` is only the badge _text_ color)
+  and `StatusBadge`'s bg opacity (10% → 25%, matching Figma).
+- **`CourseCard` refactored to composition** (`CourseCardParts.tsx`:
+  `CourseCoverImage`, `CourseStatsRow`, `CourseProgressRow`) per your
+  request for a reusable, composable card content atom. Its public props
+  are unchanged, so `StyleGuide.tsx` still works; extended
+  `CatalogCourseCardProps` with optional `imageSrc`/`rating`/`reviewCount`
+  so Explore can use real cover photos instead of the old colored-gradient
+  placeholder (kept as a fallback when `imageSrc` is omitted).
+- **New shared atoms**: `Card`, `SectionCard`, `PageHeader`, `FilterChip`,
+  `ActivityItem`, `RatingBadge`, `IntroductionVideoCard`. `StatCard` now
+  builds on `Card` and gained a `warning` color + a `muted` display mode.
+- **Not built** (out of scope, not asked for): real API clients/MSW
+  handlers for courses/purchases/stats — still blocked on SDS §6 per
+  Tickets #3/#4 above; the "Buy Now" catalog button label is currently
+  hardcoded in `CourseCard.tsx` rather than run through i18n (see
+  `STUBBED_DATA.md`'s i18n scope note).

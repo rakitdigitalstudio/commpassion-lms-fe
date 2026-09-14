@@ -11,20 +11,21 @@
   /*
    * Brand tokens (Figma). Primary/accent are shared with
    * compassion-landing-page, extracted from the same Figma file.
-   * Status colors and the type/radius/shadow scale below are eyeballed
-   * from the dashboard mockups (Images 1-9) — Figma Editor access is
-   * still needed to confirm exact values. See README "Design tokens".
+   * Status/highlight/muted colors below were previously eyeballed and are
+   * now confirmed against the real Figma file (Ticket #13: Dashboard, My
+   * Purchases, Explore Courses — nodes 676-6149/6284/6364/7052/6686).
    */
   --color-primary: #84c6da;
   --color-accent: #faea05;
 
-  --color-success: #22c55e;
-  --color-info: #3b82f6;
-  --color-warning: #eab308;
-  --color-highlight: #a855f7; /* dashboard "My Certificates" stat — eyeballed, no clear brand role yet */
+  --color-success: #78d68e;
+  --color-info: #09b0e3;
+  --color-warning: #f4e40b; /* dashboard "Skills Unlocked" / purchases "Learning In Progress" — distinct from the brighter --color-accent */
+  --color-highlight: #c89ee9; /* dashboard "My Certificates" stat */
 
   --color-border: #e5e7eb;
-  --color-muted: #6b7280;
+  --color-muted: #808080;
+  --color-muted-2: #c4bfbf; /* Figma's zero-state gray, e.g. New User dashboard's all-0 stats */
 }
 
 @theme inline {
@@ -38,6 +39,7 @@
   --color-highlight: var(--color-highlight);
   --color-border: var(--color-border);
   --color-muted: var(--color-muted);
+  --color-muted-2: var(--color-muted-2);
 
   --font-sans: 'DM Sans Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
 

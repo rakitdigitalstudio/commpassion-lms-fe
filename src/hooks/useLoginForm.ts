@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
-import { useAuth } from '@/hooks/useAuth'
 import { InvalidCredentialsError } from '@/lib/api/auth'
 
 /**
@@ -18,7 +18,7 @@ interface LoginLocationState {
 export function useLoginForm() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
+  const { login } = useUserAuthenticationContext()
   const password = usePasswordVisibility()
 
   const showRegisteredNotice =

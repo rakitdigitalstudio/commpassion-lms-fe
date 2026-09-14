@@ -191,6 +191,15 @@ export function useCourses() {
 }
 ```
 
+At the call site, destructure only what's needed and rename it to what
+it's doing there, rather than holding onto the whole query/mutation
+object:
+
+```ts
+const { data: courses, isLoading } = useCourses()
+const { mutateAsync: handleLogin } = useLoginMutation()
+```
+
 ## Mocking (MSW)
 
 [Mock Service Worker](https://mswjs.io) intercepts client-module fetch calls

@@ -1,8 +1,9 @@
 import { Button, type ButtonVariant } from '@/components/Button'
+import { Card } from '@/components/Card'
+import { CourseCoverImage, CourseProgressRow, CourseStatsRow } from '@/components/CourseCardParts'
 import type { CourseCardProps } from '@/components/CourseCard.types'
-import { ProgressBar } from '@/components/ProgressBar'
+import { RatingBadge } from '@/components/RatingBadge'
 import type { Status } from '@/components/StatusBadge'
-import { StatusBadge } from '@/components/StatusBadge'
 
 const ctaVariantByStatus: Record<Status, ButtonVariant> = {
   'in-progress': 'primary',
@@ -15,44 +16,58 @@ function formatIdr(amount: number): string {
 }
 
 /**
- * `catalog` variant is inferred, not pixel-matched to a mockup — none of
- * the provided screenshots show the public catalog card. Ticket #21
- * ("Course card — catalog variant") should refine it. `purchased` matches
- * the My Purchases mockup.
+ * Composes the atoms in CourseCardParts.tsx rather than branching inside
+ * one big block, so a future card layout can reuse just the pieces it
+ * needs. Public props (the `CourseCardProps` discriminated union) are
+ * unchanged from before this refactor — see StyleGuide.tsx.
  */
 export function CourseCard(props: CourseCardProps) {
   return (
-    <div className="overflow-hidden rounded-card shadow-card border border-border bg-background">
-      <div className={`flex h-40 flex-col justify-end p-4 text-white ${props.bannerClassName}`}>
-        <p className="text-h3 font-bold">{props.title}</p>
-        <p className="text-sm opacity-90">{props.instructorName}</p>
-      </div>
+    <Card padded={false} className="overflow-hidden">
+      <CourseCoverImage
+        title={props.title}
+        instructorName={props.instructorName}
+        imageSrc={props.imageSrc}
+        bannerClassName={props.bannerClassName}
+      />
 
-      <div className="space-y-3 p-4">
-        <p className="text-h3 font-semibold">{props.title}</p>
-        <p className="text-sm text-muted">By {props.instructorName}</p>
+      <div className="flex flex-col gap-5 p-5">
+        <div className="flex flex-col gap-2">
+          <p className="text-h3 font-medium">{props.title}</p>
+          <div className="flex items-center gap-2 text-sm text-muted">
+            <span className="flex-1">By {props.instructorName}</span>
+            {props.variant === 'catalog' && props.rating !== undefined ? (
+              <RatingBadge rating={props.rating} reviewCount={props.reviewCount ?? 0} />
+            ) : null}
+          </div>
+        </div>
 
         {props.variant === 'catalog' ? (
           <>
-            <p className="text-sm text-muted">{props.instructorRole}</p>
-            <p className="font-semibold">{formatIdr(props.price)}</p>
-            <Button variant="primary" className="w-full">
-              View Course
-            </Button>
+            {props.moduleCount !== undefined &&
+            props.completedModules !== undefined &&
+            props.durationLabel ? (
+              <CourseStatsRow
+                moduleCount={props.moduleCount}
+                completedModules={props.completedModules}
+                durationLabel={props.durationLabel}
+              />
+            ) : null}
+            <div className="flex items-center gap-3">
+              <p className="flex-1 font-bold">{formatIdr(props.price)}</p>
+              <Button variant="accent" className="w-[120px]">
+                Buy Now
+              </Button>
+            </div>
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between text-sm text-muted">
-              <span>
-                {props.completedModules}/{props.moduleCount} Module Videos
-              </span>
-              <span>{props.durationLabel}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <StatusBadge status={props.status} />
-              <span className="text-sm font-semibold">{props.progress}%</span>
-            </div>
-            <ProgressBar value={props.progress} status={props.status} />
+            <CourseStatsRow
+              moduleCount={props.moduleCount}
+              completedModules={props.completedModules}
+              durationLabel={props.durationLabel}
+            />
+            <CourseProgressRow status={props.status} progress={props.progress} />
             <Button
               variant={ctaVariantByStatus[props.status]}
               className="w-full"
@@ -63,6 +78,6 @@ export function CourseCard(props: CourseCardProps) {
           </>
         )}
       </div>
-    </div>
+    </Card>
   )
 }

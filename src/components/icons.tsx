@@ -146,3 +146,47 @@ export function EyeOffIcon(props: IconProps) {
     </Icon>
   )
 }
+
+export function SparklesIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z" />
+      <path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z" />
+    </Icon>
+  )
+}
+
+// Solid icon — unlike the outline set above, drawn with its own <svg> so it
+// can fill with currentColor instead of stroking it.
+export function StarIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2.5l2.9 6 6.6.7-4.9 4.5 1.3 6.5L12 16.9l-5.9 3.3 1.3-6.5-4.9-4.5 6.6-.7L12 2.5Z" />
+    </svg>
+  )
+}
+
+export function FilterIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4 5h16M7 12h10M10 19h4" />
+    </Icon>
+  )
+}
+
+export function PlusIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  )
+}
+
+export function InboxIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 12h4l2 3h6l2-3h4" />
+      <path d="M5 12 3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1l-2 7v6a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6Z" />
+    </Icon>
+  )
+}

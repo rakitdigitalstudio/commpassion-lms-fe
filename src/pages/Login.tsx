@@ -122,12 +122,7 @@ export function Login() {
           </Link>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          disabled={isSubmitting || IS_COMING_SOON}
-        >
+        <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
         </Button>
 

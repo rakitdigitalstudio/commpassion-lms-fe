@@ -7,6 +7,7 @@ import type {
   ResetPasswordPayload,
   User,
 } from '@/lib/api/auth.types'
+import { DEMO_ACCOUNT_CREDENTIALS, DEMO_USER } from '@/lib/demo-account'
 
 /**
  * MSW request handlers.
@@ -21,67 +22,105 @@ import type {
  * a confirmed spec (see auth.types.ts). Replace/confirm once SDS §6 lands.
  */
 
-const mockUser: User = {
-  id: '11111111-1111-1111-1111-111111111111',
-  email: 'marco.herbert@example.com',
-  fullName: 'Marco Herbert',
-  role: 'student',
-  emailVerifiedAt: '2026-01-01T00:00:00Z',
+interface MockAccount {
+  user: User
+  password: string
 }
 
-// Mock-valid credentials for exercising the Ticket #9 login form. Any
-// other email/password combination is treated as invalid (401).
-const MOCK_CREDENTIALS = { email: mockUser.email, password: 'password123' }
+// Seeded demo account — an "existing" user with purchase history (see
+// src/lib/stub-data/), so logging in with it exercises the Dashboard's
+// populated state out of the box. Ticket #13: a fresh sign-up gets
+// isNewUser: true instead, so the New User dashboard is reachable via the
+// real register -> login flow rather than a URL toggle — see
+// STUBBED_DATA.md.
+const accounts = new Map<string, MockAccount>([
+  [
+    'marco.herbert@example.com',
+    {
+      password: 'password123',
+      user: {
+        id: '11111111-1111-1111-1111-111111111111',
+        email: 'marco.herbert@example.com',
+        fullName: 'Marco Herbert',
+        role: 'student',
+        emailVerifiedAt: '2026-01-01T00:00:00Z',
+        isNewUser: false,
+      },
+    },
+  ],
+  // TEMPORARY demo account (see src/lib/demo-account.ts / STUBBED_DATA.md).
+  // useLoginMutation resolves it client-side before this handler ever
+  // runs, but it's seeded here too so /me and /logout behave normally
+  // for it whenever mocks happen to be on.
+  [
+    DEMO_ACCOUNT_CREDENTIALS.email,
+    {
+      password: DEMO_ACCOUNT_CREDENTIALS.password,
+      user: DEMO_USER,
+    },
+  ],
+])
 
 // In-memory only — resets on every full page reload, since there's no real
 // session store yet. Starts unauthenticated so the login redirect flow
 // (Ticket #5's acceptance criteria) is the default state to exercise.
-let isAuthenticated = false
-
-// Emails already "registered" — seeded with the mock login user so
-// re-registering it is exercisable as the 409 conflict path.
-const registeredEmails = new Set([mockUser.email])
+let currentUserEmail: string | null = null
 
 export const handlers: HttpHandler[] = [
   http.get('*/api/v1/auth/csrf', () => HttpResponse.json({ csrfToken: 'mock-csrf-token' })),
 
   http.post('*/api/v1/auth/login', async ({ request }) => {
     const body = (await request.json()) as Partial<LoginPayload>
+    const account = body.email ? accounts.get(body.email) : undefined
 
-    if (body.email !== MOCK_CREDENTIALS.email || body.password !== MOCK_CREDENTIALS.password) {
+    if (!account || account.password !== body.password) {
       return HttpResponse.json({ message: 'Invalid email or password' }, { status: 401 })
     }
 
-    isAuthenticated = true
-    return HttpResponse.json<AuthResponse>({ user: mockUser })
+    currentUserEmail = account.user.email
+    return HttpResponse.json<AuthResponse>({ user: account.user })
   }),
 
   http.get('*/api/v1/auth/me', () => {
-    if (!isAuthenticated) {
+    const account = currentUserEmail ? accounts.get(currentUserEmail) : undefined
+
+    if (!account) {
       return new HttpResponse(null, { status: 401 })
     }
-    return HttpResponse.json<AuthResponse>({ user: mockUser })
+    return HttpResponse.json<AuthResponse>({ user: account.user })
   }),
 
   http.post('*/api/v1/auth/logout', () => {
-    isAuthenticated = false
+    currentUserEmail = null
     return new HttpResponse(null, { status: 204 })
   }),
 
   // Does NOT log the user in — matches register() not returning
-  // AuthResponse. 409 if the email is already "registered".
+  // AuthResponse. 409 if the email is already "registered". Marked
+  // isNewUser: true so signing in with it afterward shows the Dashboard's
+  // New User state.
   http.post('*/api/v1/auth/register', async ({ request }) => {
     const body = (await request.json()) as Partial<RegisterPayload>
 
-    if (body.email && registeredEmails.has(body.email)) {
+    if (body.email && accounts.has(body.email)) {
       return HttpResponse.json(
         { message: 'An account with this email already exists' },
         { status: 409 },
       )
     }
 
-    if (body.email) {
-      registeredEmails.add(body.email)
+    if (body.email && body.password && body.fullName) {
+      accounts.set(body.email, {
+        password: body.password,
+        user: {
+          id: crypto.randomUUID(),
+          email: body.email,
+          fullName: body.fullName,
+          role: 'student',
+          emailVerifiedAt: null,
+          isNewUser: true,
+        },
+      })
     }
 
     return new HttpResponse(null, { status: 201 })

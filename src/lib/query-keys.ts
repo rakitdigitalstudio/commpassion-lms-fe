@@ -22,4 +22,6 @@ export const queryKeys = {
   userActivities: () => [...queryKeys.all, 'user', 'activities'] as const,
 
   certificates: () => [...queryKeys.all, 'certificates'] as const,
+
+  siteConfig: () => [...queryKeys.all, 'site-config'] as const,
 }

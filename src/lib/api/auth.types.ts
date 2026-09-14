@@ -12,6 +12,15 @@ export interface User {
   fullName: string
   role: string
   emailVerifiedAt: string | null
+  /**
+   * STUBBED (see STUBBED_DATA.md) — not part of any confirmed SDS §6
+   * shape. Distinguishes the Dashboard's "New User"/"Existing User" Figma
+   * states (empty stats + autoplaying intro video vs. populated stats).
+   * The mock backend sets this true for freshly registered accounts and
+   * false for the seeded demo account — real detection logic is the
+   * backend's call once it exists.
+   */
+  isNewUser: boolean
 }
 
 export interface LoginPayload {

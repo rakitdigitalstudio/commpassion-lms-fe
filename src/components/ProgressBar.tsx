@@ -3,7 +3,9 @@ import type { Status } from '@/components/StatusBadge'
 
 const fillColor: Record<Status, string> = {
   completed: 'var(--color-success)',
-  'in-progress': 'var(--color-info)',
+  // Figma: the in-progress bar fills with primary blue; --color-info is
+  // only the "In Progress" badge's text color (see StatusBadge).
+  'in-progress': 'var(--color-primary)',
   'not-started': 'var(--color-warning)',
 }
 
