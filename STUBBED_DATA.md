@@ -38,12 +38,24 @@ full page reload):
 - Logging in with it (via the normal `/login` form —
   `src/pages/Login.tsx`'s email field is `type="text"` rather than
   `type="email"` specifically so this non-email-shaped username can be
-  submitted) additionally writes the resulting user to `localStorage`
-  (`useUserAuthentication.ts`). On load, `useGetMeQuery.ts`'s
+  submitted) resolves entirely client-side (`matchDemoAccount()` in
+  `demo-account.ts`, called from `useLoginMutation.ts` _before_ any
+  network request) and additionally writes the resulting user to
+  `localStorage` (`useUserAuthentication.ts`). On load, `useGetMeQuery.ts`'s
   `fetchCurrentUser()` checks that storage _before_ calling `getMe()`, so
   this one account's session survives a reload even though the mock
   backend's own session doesn't. Logging out, or logging in as any other
   account, clears it.
+- **Bug fixed along the way**: `useLoginMutation`/`useLogoutMutation`
+  used to declare `invalidateKeys: [queryKeys.me()]`, which triggers a
+  real `getMe()` refetch after login. For the demo account that refetch
+  always 401s (there's no actual backend session for it), and if it
+  resolved after the login response was written to the cache, it
+  silently clobbered the just-logged-in user back to `null` — bouncing
+  straight back to `/login` right after a successful sign-in. Both hooks
+  now write the already-known result straight into the `me` query's
+  cache via `onSuccess` instead of invalidating it (verified with a
+  scripted Playwright run, not just reasoning about it).
 - `Login.tsx`'s submit button is no longer disabled while
   `VITE_IS_COMING_SOON=true` — that flag still shows the "coming soon"
   notice in place of a login error, but the form stays submittable so

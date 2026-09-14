@@ -7,7 +7,7 @@ import type {
   ResetPasswordPayload,
   User,
 } from '@/lib/api/auth.types'
-import { DEMO_ACCOUNT_CREDENTIALS } from '@/lib/demo-account'
+import { DEMO_ACCOUNT_CREDENTIALS, DEMO_USER } from '@/lib/demo-account'
 
 /**
  * MSW request handlers.
@@ -48,21 +48,15 @@ const accounts = new Map<string, MockAccount>([
       },
     },
   ],
-  // TEMPORARY demo account (see src/lib/demo-account.ts / STUBBED_DATA.md)
-  // — lets the Dashboard be shown without the real login flow, via a
-  // localStorage session bypass rather than this mock backend's session.
+  // TEMPORARY demo account (see src/lib/demo-account.ts / STUBBED_DATA.md).
+  // useLoginMutation resolves it client-side before this handler ever
+  // runs, but it's seeded here too so /me and /logout behave normally
+  // for it whenever mocks happen to be on.
   [
     DEMO_ACCOUNT_CREDENTIALS.email,
     {
       password: DEMO_ACCOUNT_CREDENTIALS.password,
-      user: {
-        id: '22222222-2222-2222-2222-222222222222',
-        email: DEMO_ACCOUNT_CREDENTIALS.email,
-        fullName: 'CommPassion Demo',
-        role: 'student',
-        emailVerifiedAt: '2026-01-01T00:00:00Z',
-        isNewUser: false,
-      },
+      user: DEMO_USER,
     },
   ],
 ])
