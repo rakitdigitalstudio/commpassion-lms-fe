@@ -25,6 +25,30 @@ authenticated user object (`useUserAuthenticationContext()` →
   - **To preview the New User dashboard**: register a new account
     through the app's own `/register` form, then sign in with it.
 
+## Demo account (`src/lib/demo-account.ts`) — TEMPORARY
+
+A stubbed account, `commpassion` / `commpassion_admin!2026`, for showing
+the Dashboard in a demo without depending on the mock backend's session
+(which lives in the MSW service worker and doesn't reliably survive a
+full page reload):
+
+- Seeded into `src/mocks/handlers.ts`'s `accounts` map like any other
+  mock account (`isNewUser: false`, so the demo lands on the populated
+  Dashboard, not the empty new-user one).
+- Logging in with it (via the normal `/login` form —
+  `src/pages/Login.tsx`'s email field is `type="text"` rather than
+  `type="email"` specifically so this non-email-shaped username can be
+  submitted) additionally writes the resulting user to `localStorage`
+  (`useUserAuthentication.ts`). On load, `fetchCurrentUser()` checks that
+  storage _before_ calling `getMe()`, so this one account's session
+  survives a reload even though the mock backend's own session doesn't.
+  Logging out, or logging in as any other account, clears it.
+- **Remove this whole mechanism** (`src/lib/demo-account.ts`, its call
+  sites in `useUserAuthentication.ts`, the seeded account in
+  `handlers.ts`, and the login input's `type` change) once a real
+  backend/session exists — it's a demo-only bypass, not an auth pattern
+  to build on.
+
 ## `src/lib/stub-data/dashboard.ts`
 
 Stands in for `queryKeys.userStats()` / `queryKeys.userCourses()` /

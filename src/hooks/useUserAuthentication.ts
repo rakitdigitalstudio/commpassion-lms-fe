@@ -2,6 +2,12 @@ import { useApiMutation } from '@/hooks/useApiMutation'
 import { useApiQuery } from '@/hooks/useApiQuery'
 import { getMe, login, logout, UnauthenticatedError } from '@/lib/api/auth'
 import type { LoginPayload, User } from '@/lib/api/auth.types'
+import {
+  clearDemoSession,
+  isDemoAccountEmail,
+  loadDemoSession,
+  saveDemoSession,
+} from '@/lib/demo-account'
 import { queryKeys } from '@/lib/query-keys'
 
 export interface UserAuthenticationValue {
@@ -13,6 +19,14 @@ export interface UserAuthenticationValue {
 }
 
 async function fetchCurrentUser(): Promise<User | null> {
+  // Demo account bypass (see src/lib/demo-account.ts) — checked first so
+  // it survives a reload even though the mock backend's own session
+  // doesn't.
+  const demoUser = loadDemoSession()
+  if (demoUser) {
+    return demoUser
+  }
+
   try {
     const { user } = await getMe()
     return user
@@ -39,9 +53,17 @@ export function useUserAuthentication(): UserAuthenticationValue {
     user: meQuery.data ?? null,
     isLoading: meQuery.isLoading,
     login: async (payload) => {
-      await loginMutation.mutateAsync(payload)
+      const { user } = await loginMutation.mutateAsync(payload)
+
+      // Clear first so switching from the demo account to a real one (or
+      // vice versa) never leaves a stale session shadowing the new one.
+      clearDemoSession()
+      if (isDemoAccountEmail(payload.email)) {
+        saveDemoSession(user)
+      }
     },
     logout: async () => {
+      clearDemoSession()
       await logoutMutation.mutateAsync()
     },
   }

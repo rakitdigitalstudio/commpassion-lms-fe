@@ -7,6 +7,7 @@ import type {
   ResetPasswordPayload,
   User,
 } from '@/lib/api/auth.types'
+import { DEMO_ACCOUNT_CREDENTIALS } from '@/lib/demo-account'
 
 /**
  * MSW request handlers.
@@ -41,6 +42,23 @@ const accounts = new Map<string, MockAccount>([
         id: '11111111-1111-1111-1111-111111111111',
         email: 'marco.herbert@example.com',
         fullName: 'Marco Herbert',
+        role: 'student',
+        emailVerifiedAt: '2026-01-01T00:00:00Z',
+        isNewUser: false,
+      },
+    },
+  ],
+  // TEMPORARY demo account (see src/lib/demo-account.ts / STUBBED_DATA.md)
+  // — lets the Dashboard be shown without the real login flow, via a
+  // localStorage session bypass rather than this mock backend's session.
+  [
+    DEMO_ACCOUNT_CREDENTIALS.email,
+    {
+      password: DEMO_ACCOUNT_CREDENTIALS.password,
+      user: {
+        id: '22222222-2222-2222-2222-222222222222',
+        email: DEMO_ACCOUNT_CREDENTIALS.email,
+        fullName: 'CommPassion Demo',
         role: 'student',
         emailVerifiedAt: '2026-01-01T00:00:00Z',
         isNewUser: false,

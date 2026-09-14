@@ -61,7 +61,12 @@ export function Login() {
             <MailIcon className="text-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <input
               id="email"
-              type="email"
+              // Not type="email": the temporary demo account's username
+              // ("commpassion", see src/lib/demo-account.ts) isn't
+              // email-shaped, and native email validation would block
+              // submitting it. inputMode keeps the email keyboard on mobile.
+              type="text"
+              inputMode="email"
               required
               autoComplete="email"
               value={email}
