@@ -96,5 +96,55 @@
       "show": "Show password",
       "hide": "Hide password"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back, {{name}}!",
+    "welcomeNew": "Welcome, {{name}}!",
+    "subtitle": "Here's what's happening with your learning today.",
+    "stats": {
+      "learningList": "My Learning List",
+      "skillsUnlocked": "Skills Unlocked",
+      "hoursLearned": "Hours Learned",
+      "certificates": "My Certificates"
+    },
+    "introVideo": {
+      "title": "Introduction Video",
+      "badge": "Recommended for New Learners",
+      "description": "Get direct guidance on interactive learning, and a warm welcome from our professional instructors.",
+      "show": "Show Video",
+      "hide": "Hide Video"
+    },
+    "learningProgress": "Learning Progress",
+    "viewAll": "View All",
+    "recentActivity": "Recent Activity",
+    "courseProgress": "Course Progress",
+    "emptyHeading": "Your learning journey starts here",
+    "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
+    "browseCourses": "Browse Courses"
+  },
+  "purchases": {
+    "title": "My Purchases",
+    "subtitleWithCourses": "{{count}} courses - keep the momentum going!",
+    "subtitleEmpty": "No courses yet - let's change that!",
+    "browseMore": "Browse More Courses",
+    "stats": {
+      "learningList": "My Learning List",
+      "inProgress": "Learning In Progress",
+      "skillsUnlocked": "Skills Unlocked"
+    },
+    "filters": {
+      "all": "All Courses",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "emptyHeading": "Your learning journey starts here",
+    "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
+    "browseCourses": "Browse Courses"
+  },
+  "explore": {
+    "title": "Explore Online Courses",
+    "subtitle": "Discover curated courses from top-class instructors.",
+    "searchPlaceholder": "Search by course title or instructors",
+    "mostPopular": "Most Popular"
   }
 }

@@ -96,5 +96,55 @@
       "show": "Tampilkan kata sandi",
       "hide": "Sembunyikan kata sandi"
     }
+  },
+  "dashboard": {
+    "welcomeBack": "Selamat datang kembali, {{name}}!",
+    "welcomeNew": "Selamat datang, {{name}}!",
+    "subtitle": "Berikut yang terjadi dengan pembelajaran Anda hari ini.",
+    "stats": {
+      "learningList": "Daftar Belajar Saya",
+      "skillsUnlocked": "Keterampilan Terbuka",
+      "hoursLearned": "Jam Belajar",
+      "certificates": "Sertifikat Saya"
+    },
+    "introVideo": {
+      "title": "Video Perkenalan",
+      "badge": "Direkomendasikan untuk Pelajar Baru",
+      "description": "Dapatkan panduan langsung tentang pembelajaran interaktif, dan sambutan hangat dari instruktur profesional kami.",
+      "show": "Tampilkan Video",
+      "hide": "Sembunyikan Video"
+    },
+    "learningProgress": "Progres Belajar",
+    "viewAll": "Lihat Semua",
+    "recentActivity": "Aktivitas Terbaru",
+    "courseProgress": "Progres Kursus",
+    "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
+    "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
+    "browseCourses": "Jelajahi Kursus"
+  },
+  "purchases": {
+    "title": "Pembelian Saya",
+    "subtitleWithCourses": "{{count}} kursus - pertahankan momentumnya!",
+    "subtitleEmpty": "Belum ada kursus - mari kita ubah itu!",
+    "browseMore": "Jelajahi Lebih Banyak Kursus",
+    "stats": {
+      "learningList": "Daftar Belajar Saya",
+      "inProgress": "Belajar Sedang Berlangsung",
+      "skillsUnlocked": "Keterampilan Terbuka"
+    },
+    "filters": {
+      "all": "Semua Kursus",
+      "inProgress": "Sedang Berlangsung",
+      "completed": "Selesai"
+    },
+    "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
+    "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
+    "browseCourses": "Jelajahi Kursus"
+  },
+  "explore": {
+    "title": "Jelajahi Kursus Online",
+    "subtitle": "Temukan kursus pilihan dari instruktur kelas atas.",
+    "searchPlaceholder": "Cari berdasarkan judul kursus atau instruktur",
+    "mostPopular": "Paling Populer"
   }
 }
