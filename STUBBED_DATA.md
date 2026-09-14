@@ -44,10 +44,17 @@ full page reload):
   this one account's session survives a reload even though the mock
   backend's own session doesn't. Logging out, or logging in as any other
   account, clears it.
+- `Login.tsx`'s submit button is no longer disabled while
+  `VITE_IS_COMING_SOON=true` — that flag still shows the "coming soon"
+  notice in place of a login error, but the form stays submittable so
+  this account is reachable during a demo without flipping the flag off
+  (which would also unhide the real sign-in/sign-up options for the
+  public).
 - **Remove this whole mechanism** (`src/lib/demo-account.ts`, its call
   sites in `useUserAuthentication.ts`/`useGetMeQuery.ts`, the seeded
-  account in `handlers.ts`, and the login input's `type` change) once a
-  real backend/session exists — it's a demo-only bypass, not an auth
+  account in `handlers.ts`, the login input's `type` change, and the
+  submit button's `disabled` change) once a real backend/session exists
+  — it's a demo-only bypass, not an auth
   pattern to build on.
 
 ## `src/lib/stub-data/dashboard.ts`
