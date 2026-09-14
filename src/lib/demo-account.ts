@@ -13,7 +13,7 @@ import type { LoginPayload, User } from '@/lib/api/auth.types'
  * mechanism once a real backend/session exists.
  */
 export const DEMO_ACCOUNT_CREDENTIALS = {
-  email: 'commpassion',
+  email: 'commpassion@mail.com',
   password: 'commpassion_admin!2026',
 }
 
