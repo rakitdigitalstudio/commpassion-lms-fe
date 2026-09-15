@@ -123,11 +123,29 @@ rather than linked live:
   Purchases and Explore's stub data.
 - `intro-video-poster.png` — the Introduction Video card's poster frame.
 
+## `src/lib/stub-data/lessons.ts` + `src/lib/api/{courses,lessons}.ts` (Tickets #23/#24)
+
+Stands in for `getLesson()` (see `TODO.md`'s Ticket #3 entry) and the not-yet-existing
+`enrollments` concept (see `TODO.md`'s Ticket #23/#24 entry).
+
+| Stubbed value                                | Current placeholder                                                                                      | Replaces                                    |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `lessonsByCourseSlug['fondasi-komunikasi']`  | 6 lessons, first 4 `completed: true` — matches `purchasedCourses`' 4/6, 60% for the same course        | `getLesson()`/course lesson-list endpoint    |
+| Every lesson's `youtubeVideoId`               | Same public test video ID for all 6 lessons, not real per-lesson course footage                        | real per-lesson video asset                  |
+| `getCourseDetail()`'s `enrolled` flag         | Checked against `purchasedCourses` in-process rather than a real authorization decision                | a real 200/403 (or similar) from the backend |
+| `catalogCourses['negosiasi-percaya-diri']`    | Added purely to give the access-denied path a real, navigable non-enrolled course (`/courses/negosiasi-percaya-diri`) | n/a — test fixture, not a real catalog entry |
+
+"Mark as Done" (`markLessonComplete`) mutates the in-memory
+`lessonsByCourseSlug` store directly (same "exercises the real interaction,
+not a real backend" approach as the demo account above) — resets on page
+reload, same as the MSW auth handlers.
+
 ## i18n scope note
 
 Static page chrome (headings, subtitles, empty-state copy, button/filter
-labels) is wired through `react-i18next` (`dashboard`/`purchases`/`explore`
-keys in `src/messages/{en,id}.json`), per the repo's existing convention.
+labels) is wired through `react-i18next` (`dashboard`/`purchases`/`explore`/
+`courseDetail` keys in `src/messages/{en,id}.json`), per the repo's
+existing convention.
 Stub **content** — course titles, instructor names, stat labels, activity
 descriptions — is left as plain stub data, not i18n keys, since it stands
 in for future CMS/API content rather than app copy.

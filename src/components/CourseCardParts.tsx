@@ -24,12 +24,22 @@ export function CourseCoverImage({
   bannerClassName,
 }: CourseCoverImageProps) {
   if (imageSrc) {
-    return <img src={imageSrc} alt={title} className="h-52 w-full rounded-t-card object-cover" />
+    // aspect-[4/3] matches the stub cover art's native ratio — unlike a
+    // fixed h-52 + w-full, the crop framing doesn't shift (cropping out the
+    // banner's logo/caption text) as the card's width changes with the
+    // viewport; it just scales.
+    return (
+      <img
+        src={imageSrc}
+        alt={title}
+        className="aspect-[4/3] w-full rounded-t-card object-cover"
+      />
+    )
   }
 
   return (
     <div
-      className={`flex h-52 flex-col justify-end rounded-t-card p-4 text-white ${bannerClassName ?? 'bg-slate-700'}`}
+      className={`flex aspect-[4/3] flex-col justify-end rounded-t-card p-4 text-white ${bannerClassName ?? 'bg-slate-700'}`}
     >
       <p className="text-h3 font-bold">{title}</p>
       <p className="text-sm opacity-90">{instructorName}</p>

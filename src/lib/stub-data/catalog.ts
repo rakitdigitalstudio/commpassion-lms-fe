@@ -53,4 +53,18 @@ export const catalogCourses: CatalogCourse[] = [
     durationLabel: '18h 30m',
     price: 149000,
   },
+  {
+    // Deliberately absent from `purchasedCourses` — gives
+    // /courses/negosiasi-percaya-diri a real, navigable "not enrolled"
+    // scenario for Ticket #23's access-denied path (see STUBBED_DATA.md).
+    slug: 'negosiasi-percaya-diri',
+    title: 'Negosiasi dengan Percaya Diri',
+    instructorName: 'Lenna Tan',
+    imageSrc: courseCoverTipsTrik,
+    rating: 4.8,
+    reviewCount: 12,
+    moduleCount: 6,
+    durationLabel: '18h 30m',
+    price: 149000,
+  },
 ]
