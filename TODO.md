@@ -489,6 +489,44 @@ in this file. `getCourseDetail`'s `enrolled` check currently reads
 internals should need to change to call the real endpoint — call sites
 (`useGetCourseDetailQuery`, `CourseDetail.tsx`) shouldn't.
 
+## Ticket #53 — Explore page: public catalog, gate Buy Now behind registration: done
+
+**Status:** done.
+
+`Explore.tsx` previously branched hard on auth: a guest got a generic
+"under construction" `EmptyState` (see the "Restored /explore" entry
+above) instead of the real catalog. Per your instruction, `/explore` is
+the storefront and must always show the real course list:
+
+- Removed the guest branch entirely — `catalogCourses` now renders (search
+  input, sort button, grid) regardless of auth state.
+- Signed-in: unchanged, still wrapped in `AppShell` (sidebar/topbar).
+- Signed-out: a bare header (just the logo, linking to `/login`) instead
+  of `AppShell` — per your instruction, no sidebar/topbar for a guest,
+  since that shell stays scoped to authenticated screens (Ticket #7).
+- `CourseCard`'s catalog `Buy Now` button had no `onClick` at all (a dead
+  button, same class of bug as Purchases' cards before the #23/#24
+  session) — added `onBuyClick` to `CatalogCourseCardProps` and wired it
+  in `Explore.tsx`: logged-out goes to `/register` (registration required
+  to buy, per your instruction); logged-in goes to `/courses/:slug` as the
+  closest real next step, since Ticket #22's checkout flow doesn't exist
+  yet — revisit this hand-off once #22 is built.
+- **"Return to this course after signing up" chain**: added
+  `src/lib/auth-location-state.ts` (`AuthLocationState`, `{ justRegistered,
+  returnTo }`) and threaded `returnTo` through `Explore` → `Register` →
+  `Login`'s `location.state`, including their cross-links ("Sign in"/"Sign
+  up"), so a guest who clicks Buy Now lands back on that course after
+  registering and signing in, instead of the generic `/dashboard`.
+  `useLoginForm`/`useRegisterForm` both updated; `Login.tsx`/`Register.tsx`
+  pass `returnTo` through their own cross-page links.
+- Removed the now-unused `common.underConstruction.*` i18n keys
+  (`en.json`/`id.json`) — nothing references them anymore.
+
+**Not built** (out of scope, not asked for): search/sort on Explore are
+still non-functional stub UI (Ticket #20's own scope, blocked on the
+"Most Popular" sort field question flagged there) — this ticket only
+touched the auth-gating/layout/Buy Now wiring around them.
+
 ## Ticket #13 — Dashboard, My Purchases, Explore Courses: done
 
 Built out all three previously-placeholder pages against Figma (nodes
