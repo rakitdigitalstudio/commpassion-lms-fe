@@ -1,16 +1,16 @@
 import { useTranslation } from 'react-i18next'
 
-import { BellIcon, ChevronDownIcon, SearchIcon } from '@/components/icons'
+import { ChevronDownIcon, SearchIcon } from '@/components/icons'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
 const LOCALES = ['en', 'id'] as const
 
 /**
- * Notification bell is still a visual placeholder — a notifications
- * feature is its own scope, not this ticket's (#41). The language control
- * is real now: it cycles between the two supported locales (no dropdown
- * menu component exists yet, so a toggle-on-click stands in for one — see
- * TODO.md). The user dropdown is real: it reads from AuthContext.
+ * Notification bell removed (no notifications feature exists — was a
+ * visual-only placeholder). The language control is real: it cycles
+ * between the two supported locales (no dropdown menu component exists
+ * yet, so a toggle-on-click stands in for one — see TODO.md). The user
+ * dropdown is real: it reads from UserAuthenticationContext.
  */
 export function Topbar() {
   const { user } = useUserAuthenticationContext()
@@ -41,11 +41,6 @@ export function Topbar() {
         >
           {i18n.language}
           <ChevronDownIcon className="h-4 w-4" />
-        </button>
-
-        <button type="button" className="relative rounded-full border border-border p-2">
-          <BellIcon className="h-5 w-5 text-muted" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" />
         </button>
 
         <button type="button" className="flex items-center gap-2">
