@@ -11,6 +11,8 @@ import { Purchases } from '@/pages/Purchases'
 import { Register } from '@/pages/Register'
 import { ResetPassword } from '@/pages/ResetPassword'
 import { Settings } from '@/pages/Settings'
+import { SettingsProfile } from '@/pages/SettingsProfile'
+import { SettingsSecurity } from '@/pages/SettingsSecurity'
 import { StyleGuide } from '@/pages/StyleGuide'
 import { GuestOnlyRoute } from '@/routes/GuestOnlyRoute'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
@@ -48,7 +50,18 @@ export const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <Dashboard /> },
       { path: '/purchases', element: <Purchases /> },
-      { path: '/settings', element: <Settings /> },
+      {
+        // Route-based tab state (Ticket #26) — switching tabs is just a
+        // client-side route change under the shared <Settings/> shell,
+        // no full reload.
+        path: '/settings',
+        element: <Settings />,
+        children: [
+          { index: true, element: <Navigate to="profile" replace /> },
+          { path: 'profile', element: <SettingsProfile /> },
+          { path: 'security', element: <SettingsSecurity /> },
+        ],
+      },
       { path: '/courses/:courseId', element: <CourseDetail /> },
     ],
   },

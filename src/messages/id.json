@@ -146,5 +146,44 @@
     "subtitle": "Temukan kursus pilihan dari instruktur kelas atas.",
     "searchPlaceholder": "Cari berdasarkan judul kursus atau instruktur",
     "mostPopular": "Paling Populer"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "subtitle": "Kelola akun, keamanan, dan preferensi Anda.",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Keamanan"
+    },
+    "saveChanges": "Simpan Perubahan",
+    "profile": {
+      "publicProfileTitle": "Profil Publik",
+      "publicProfileSubtitle": "Informasi ini mungkin terlihat oleh pelajar dan instruktur lain.",
+      "photoLabel": "Foto",
+      "photoHint": "JPG atau PNG, maks 2 MB.",
+      "uploadPhoto": "Unggah Foto Baru",
+      "removePhoto": "Hapus Foto",
+      "fullNameLabel": "Nama Lengkap",
+      "firstNamePlaceholder": "Masukkan Nama Depan Anda",
+      "lastNamePlaceholder": "Masukkan Nama Belakang Anda",
+      "jobTitleLabel": "Jabatan",
+      "jobTitlePlaceholder": "Jabatan Anda Saat Ini",
+      "companyLabel": "Perusahaan",
+      "companyPlaceholder": "Perusahaan Anda Saat Ini",
+      "accountDetailsTitle": "Detail Akun",
+      "accountDetailsSubtitle": "Informasi akun pribadi Anda. Tidak ditampilkan secara publik.",
+      "emailLabel": "Email",
+      "emailHint": "Digunakan untuk masuk.",
+      "emailPlaceholder": "Masukkan Email Anda"
+    },
+    "security": {
+      "changePasswordTitle": "Ubah Kata Sandi",
+      "changePasswordSubtitle": "Gunakan kata sandi yang kuat dan unik yang tidak Anda gunakan di tempat lain.",
+      "currentPasswordLabel": "Kata Sandi Saat Ini",
+      "currentPasswordPlaceholder": "Masukkan Kata Sandi Anda Saat Ini",
+      "newPasswordLabel": "Kata Sandi Baru",
+      "newPasswordPlaceholder": "Masukkan Kata Sandi Baru Anda",
+      "confirmPasswordLabel": "Konfirmasi Kata Sandi",
+      "confirmPasswordPlaceholder": "Konfirmasi Kata Sandi Baru Anda"
+    }
   }
 }
