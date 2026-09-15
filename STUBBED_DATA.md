@@ -131,3 +131,25 @@ keys in `src/messages/{en,id}.json`), per the repo's existing convention.
 Stub **content** — course titles, instructor names, stat labels, activity
 descriptions — is left as plain stub data, not i18n keys, since it stands
 in for future CMS/API content rather than app copy.
+
+## Settings (Ticket #26 — shell only)
+
+`src/pages/Settings.tsx` is the tab-nav shell (Profile/Security, route-based
+at `/settings/profile` and `/settings/security`, no full reload). Tab
+_content_ (`SettingsProfile.tsx`/`SettingsSecurity.tsx`) was built
+against the Figma file too (nodes 676-6826/6938) since it was already
+fully specced visually, but it's **not wired to anything real** — no
+`getProfile()`/`updateProfile()`/`changePassword()` API exists (blocked
+on SDS §6, same as everywhere else):
+
+- Profile tab's inputs are local/uncontrolled except Full Name and Email,
+  which prefill from the real authenticated `user` (the only real data
+  available). "Upload New Photo"/"Remove Photo" and "Save Changes" are
+  inert — no upload pipeline or update endpoint exists.
+- Security tab's password-rule checklist is fully live (reuses
+  `passwordRules` from `src/lib/password-rules.ts`, same as
+  Register/ResetPassword), but "Save Changes" doesn't call anything —
+  there's no `changePassword()` client function yet.
+- The profile photo avatar reuses Topbar's initials-circle treatment
+  rather than a stock photo, matching the app's existing avoidance of a
+  hardcoded fake user photo.

@@ -146,5 +146,44 @@
     "subtitle": "Discover curated courses from top-class instructors.",
     "searchPlaceholder": "Search by course title or instructors",
     "mostPopular": "Most Popular"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account, security, and preferences.",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security"
+    },
+    "saveChanges": "Save Changes",
+    "profile": {
+      "publicProfileTitle": "Public Profile",
+      "publicProfileSubtitle": "This information may be visible to other learners and instructors.",
+      "photoLabel": "Photo",
+      "photoHint": "JPG or PNG, max 2 MB.",
+      "uploadPhoto": "Upload New Photo",
+      "removePhoto": "Remove Photo",
+      "fullNameLabel": "Full Name",
+      "firstNamePlaceholder": "Input Your First Name",
+      "lastNamePlaceholder": "Input Your Last Name",
+      "jobTitleLabel": "Job Title",
+      "jobTitlePlaceholder": "Your Current Job Title",
+      "companyLabel": "Company",
+      "companyPlaceholder": "Your Current Company",
+      "accountDetailsTitle": "Account Details",
+      "accountDetailsSubtitle": "Your private account information. Not shown publicly.",
+      "emailLabel": "Email",
+      "emailHint": "Used for login.",
+      "emailPlaceholder": "Input Your Email"
+    },
+    "security": {
+      "changePasswordTitle": "Change Password",
+      "changePasswordSubtitle": "Use a strong, unique password you don't use elsewhere.",
+      "currentPasswordLabel": "Current Password",
+      "currentPasswordPlaceholder": "Input Your Current Password",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Input Your New Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm Your New Password"
+    }
   }
 }
