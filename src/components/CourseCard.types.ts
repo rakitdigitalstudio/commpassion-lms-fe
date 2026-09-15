@@ -20,6 +20,7 @@ export interface CatalogCourseCardProps extends CourseCardBase {
   durationLabel?: string
   rating?: number
   reviewCount?: number
+  onBuyClick?: () => void
 }
 
 export interface PurchasedCourseCardProps extends CourseCardBase {

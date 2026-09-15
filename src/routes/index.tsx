@@ -65,10 +65,10 @@ export const router = createBrowserRouter([
       { path: '/courses/:courseId', element: <CourseDetail /> },
     ],
   },
-  // Public catalog browsing, outside the shell — no mockup shows an
-  // authenticated /explore with sidebar/topbar (Ticket #7 only covers
-  // "authenticated screens"), and it's reachable while logged out (login
-  // page's "Explore Online Courses" CTA). Revisit alongside Ticket #20.
+  // Public catalog browsing, outside the router-level AppShell — Explore
+  // itself renders AppShell for a signed-in visitor and bare guest chrome
+  // otherwise (Ticket #53), so it can't be a plain child of the
+  // ProtectedRoute-wrapped AppShell route above like the others.
   { path: '/explore', element: <Explore /> },
   // Reachable regardless of auth state (e.g. a mailed link opened in a
   // session that's already logged in elsewhere) — not guest-gated.

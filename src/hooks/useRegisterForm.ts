@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
 import { EmailAlreadyRegisteredError, register } from '@/lib/api/auth'
 import { isPasswordValid } from '@/lib/password-rules'
+import type { AuthLocationState } from '@/lib/auth-location-state'
 
 /**
  * Per your decision: register() does not log the user in — success
@@ -13,6 +14,8 @@ import { isPasswordValid } from '@/lib/password-rules'
  */
 export function useRegisterForm() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = (location.state as AuthLocationState | null)?.returnTo
   const passwordVisibility = usePasswordVisibility()
   const confirmPasswordVisibility = usePasswordVisibility()
 
@@ -32,7 +35,10 @@ export function useRegisterForm() {
   } = useAsyncAction(
     async () => {
       await register({ fullName, email, password })
-      navigate('/login', { replace: true, state: { justRegistered: true } })
+      navigate('/login', {
+        replace: true,
+        state: { justRegistered: true, returnTo } satisfies AuthLocationState,
+      })
     },
     (submitError) =>
       submitError instanceof EmailAlreadyRegisteredError
@@ -71,5 +77,6 @@ export function useRegisterForm() {
     error: validationError ?? error,
     isSubmitting,
     submit,
+    returnTo,
   } as const
 }

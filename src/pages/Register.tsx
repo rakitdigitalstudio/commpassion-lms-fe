@@ -9,6 +9,7 @@ import { ComingSoonNotice } from '@/components/ComingSoonNotice'
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/icons'
 import { Logo } from '@/components/Logo'
 import { useRegisterForm } from '@/hooks/useRegisterForm'
+import type { AuthLocationState } from '@/lib/auth-location-state'
 import { IS_COMING_SOON } from '@/lib/config'
 import { passwordRules } from '@/lib/password-rules'
 
@@ -34,6 +35,7 @@ export function Register() {
     error,
     isSubmitting,
     submit,
+    returnTo,
   } = useRegisterForm()
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -182,7 +184,11 @@ export function Register() {
 
         <p className="text-center text-sm">
           {t('auth.register.haveAccount')}{' '}
-          <Link to="/login" className="text-primary font-medium">
+          <Link
+            to="/login"
+            state={{ returnTo } satisfies AuthLocationState}
+            className="text-primary font-medium"
+          >
             {t('auth.register.signIn')}
           </Link>
         </p>
