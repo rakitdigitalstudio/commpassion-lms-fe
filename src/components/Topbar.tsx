@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
-import { ChevronDownIcon, SearchIcon } from '@/components/icons'
+import { ChevronDownIcon, LogoutIcon, SearchIcon } from '@/components/icons'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
 const LOCALES = ['en', 'id'] as const
@@ -13,13 +15,23 @@ const LOCALES = ['en', 'id'] as const
  * dropdown is real: it reads from UserAuthenticationContext.
  */
 export function Topbar() {
-  const { user } = useUserAuthenticationContext()
+  const { user, logout } = useUserAuthenticationContext()
   const { i18n } = useTranslation()
+  const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   function cycleLocale() {
     const current = LOCALES.indexOf(i18n.language as (typeof LOCALES)[number])
     const next = LOCALES[(current + 1) % LOCALES.length]
     void i18n.changeLanguage(next)
+  }
+
+  // Same explicit-navigate pattern as Sidebar's logout button — don't rely
+  // on ProtectedRoute's reactive redirect once `user` goes null.
+  async function handleLogout() {
+    setMenuOpen(false)
+    await logout()
+    navigate('/login', { replace: true })
   }
 
   return (
@@ -43,13 +55,42 @@ export function Topbar() {
           <ChevronDownIcon className="h-4 w-4" />
         </button>
 
-        <button type="button" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-            {user?.fullName.charAt(0) ?? '?'}
-          </span>
-          <span className="text-sm font-medium">{user?.fullName ?? 'Guest'}</span>
-          <ChevronDownIcon className="h-4 w-4 text-muted" />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex items-center gap-2"
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+              {user?.fullName.charAt(0) ?? '?'}
+            </span>
+            <span className="text-sm font-medium">{user?.fullName ?? 'Guest'}</span>
+            <ChevronDownIcon className="h-4 w-4 text-muted" />
+          </button>
+
+          {menuOpen ? (
+            <>
+              {/* Click-away layer — sits under the menu, above everything else. */}
+              <button
+                type="button"
+                aria-hidden="true"
+                tabIndex={-1}
+                onClick={() => setMenuOpen(false)}
+                className="fixed inset-0 z-10 cursor-default"
+              />
+              <div className="absolute top-full right-0 z-20 mt-2 w-44 overflow-hidden rounded-card border border-border bg-background shadow-card">
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm font-medium text-muted hover:bg-border/50"
+                >
+                  <LogoutIcon className="h-4 w-4 shrink-0" />
+                  Logout
+                </button>
+              </div>
+            </>
+          ) : null}
+        </div>
       </div>
     </header>
   )

@@ -141,6 +141,19 @@
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
     "browseCourses": "Jelajahi Kursus"
   },
+  "courseDetail": {
+    "breadcrumbRoot": "Pembelian Saya",
+    "browseMore": "Jelajahi Lebih Banyak Kursus",
+    "learningProgress": "Progres Belajar",
+    "doneCount": "{{completed}}/{{total}} Selesai",
+    "markAsDone": "Tandai Selesai",
+    "markingAsDone": "Menandai selesai…",
+    "videoDuration": "Durasi Video",
+    "byInstructor": "Oleh {{name}}",
+    "accessDeniedHeading": "Anda belum terdaftar di kursus ini",
+    "accessDeniedSubtext": "Beli kursus ini untuk membuka pelajarannya dan mulai belajar.",
+    "backToPurchases": "Kembali ke Pembelian Saya"
+  },
   "explore": {
     "title": "Jelajahi Kursus Online",
     "subtitle": "Temukan kursus pilihan dari instruktur kelas atas.",
