@@ -4,7 +4,8 @@ import { PlayIcon } from '@/components/icons'
 
 interface LessonVideoPlayerProps {
   youtubeVideoId: string
-  posterSrc: string
+  /** Optional — Strapi courses can have no cover image. */
+  posterSrc?: string
   posterAlt: string
 }
 
@@ -14,7 +15,11 @@ interface LessonVideoPlayerProps {
  * `youtubeVideoId` change so switching lessons always starts back at the
  * poster instead of leaving a stale iframe playing.
  */
-export function LessonVideoPlayer({ youtubeVideoId, posterSrc, posterAlt }: LessonVideoPlayerProps) {
+export function LessonVideoPlayer({
+  youtubeVideoId,
+  posterSrc,
+  posterAlt,
+}: LessonVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
   if (playing) {
@@ -38,9 +43,9 @@ export function LessonVideoPlayer({ youtubeVideoId, posterSrc, posterAlt }: Less
       // Matches the stub cover art's native 4:3 — unlike aspect-video, this
       // doesn't crop the banner's logo/caption text, and stays a fixed
       // framing regardless of viewport width (see CourseCoverImage).
-      className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl"
+      className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted/20"
     >
-      <img src={posterSrc} alt={posterAlt} className="h-full w-full object-cover" />
+      {posterSrc && <img src={posterSrc} alt={posterAlt} className="h-full w-full object-cover" />}
       <span className="absolute inset-0 flex items-center justify-center">
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 transition-transform group-hover:scale-105">
           <PlayIcon className="h-8 w-8 text-foreground" />

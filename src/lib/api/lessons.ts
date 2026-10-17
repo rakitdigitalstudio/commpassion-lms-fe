@@ -1,5 +1,5 @@
 import type { Lesson } from '@/lib/stub-data/lessons'
-import { lessonsByCourseSlug } from '@/lib/stub-data/lessons'
+import { lessonsByCourseId } from '@/lib/stub-data/lessons'
 
 /**
  * PROVISIONAL lessons client (see TODO.md's Ticket #3 entry — `getLesson`
@@ -12,16 +12,13 @@ import { lessonsByCourseSlug } from '@/lib/stub-data/lessons'
 export async function getLessons(courseId: string): Promise<Lesson[]> {
   await new Promise((resolve) => setTimeout(resolve, 150))
 
-  return lessonsByCourseSlug[courseId] ?? []
+  return lessonsByCourseId[courseId] ?? []
 }
 
-export async function markLessonComplete(
-  courseId: string,
-  lessonId: string,
-): Promise<Lesson[]> {
+export async function markLessonComplete(courseId: string, lessonId: string): Promise<Lesson[]> {
   await new Promise((resolve) => setTimeout(resolve, 150))
 
-  const lessons = lessonsByCourseSlug[courseId]
+  const lessons = lessonsByCourseId[courseId]
   if (!lessons) return []
 
   const lesson = lessons.find((current) => current.id === lessonId)

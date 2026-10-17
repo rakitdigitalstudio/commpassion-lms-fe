@@ -1,7 +1,7 @@
 import type { Status } from '@/components/StatusBadge'
 
 interface CourseCardBase {
-  slug: string
+  courseId: string
   title: string
   instructorName: string
   /** Real cover photo (preferred — see STUBBED_DATA.md). Falls back to `bannerClassName` when omitted. */

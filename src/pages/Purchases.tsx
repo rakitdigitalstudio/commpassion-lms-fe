@@ -98,9 +98,9 @@ export function Purchases() {
           <div className="grid grid-cols-3 gap-6">
             {visibleCourses.map((course) => (
               <CourseCard
-                key={course.slug}
+                key={course.courseId}
                 variant="purchased"
-                slug={course.slug}
+                courseId={course.courseId}
                 title={course.title}
                 instructorName={course.instructorName}
                 imageSrc={course.imageSrc}
@@ -113,7 +113,7 @@ export function Purchases() {
                 // Routes every CTA (Continue/Start/View Certificate) to the
                 // course detail page — no dedicated certificate page exists
                 // yet, so "View Certificate" lands there too for now.
-                onCtaClick={() => navigate(`/courses/${course.slug}`)}
+                onCtaClick={() => navigate(`/courses/${course.courseId}`)}
               />
             ))}
           </div>

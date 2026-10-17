@@ -17,7 +17,7 @@ export interface User {
    * shape. Distinguishes the Dashboard's "New User"/"Existing User" Figma
    * states (empty stats + autoplaying intro video vs. populated stats).
    * The mock backend sets this true for freshly registered accounts and
-   * false for the seeded demo account — real detection logic is the
+   * false for the seeded mock account — real detection logic is the
    * backend's call once it exists.
    */
   isNewUser: boolean

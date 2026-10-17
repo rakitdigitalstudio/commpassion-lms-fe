@@ -7,6 +7,10 @@ interface ImportMetaEnv {
   readonly VITE_IS_COMING_SOON: string
   /** When "true", the whole app shows the Maintenance page instead of routing normally. See README "Maintenance page". */
   readonly VITE_MAINTENANCE_MODE: string
+  /** Golang API base URL. Empty = same origin. */
+  readonly VITE_API_URL?: string
+  /** Strapi base URL for the public course catalog. */
+  readonly VITE_STRAPI_URL?: string
 }
 
 interface ImportMeta {

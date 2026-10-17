@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
-import { InvalidCredentialsError } from '@/lib/api/auth'
+import { InvalidCredentialsError } from '@/api/auth/service/auth'
 import type { AuthLocationState } from '@/lib/auth-location-state'
 
 /**

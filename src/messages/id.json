@@ -9,6 +9,9 @@
       "heading": "Halaman tidak ditemukan",
       "body": "Halaman yang Anda cari tidak ada atau mungkin telah dipindahkan.",
       "backHome": "Kembali ke Beranda"
+    },
+    "errors": {
+      "generic": "Terjadi kesalahan. Silakan coba lagi."
     }
   },
   "auth": {

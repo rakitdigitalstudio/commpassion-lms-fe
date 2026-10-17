@@ -5,6 +5,6 @@
  */
 export interface AuthLocationState {
   justRegistered?: boolean
-  /** Path to send the user to after a successful login, e.g. `/courses/:slug`. */
+  /** Path to send the user to after a successful login, e.g. `/courses/:courseId`. */
   returnTo?: string
 }

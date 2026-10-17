@@ -1,7 +1,7 @@
 /**
  * Central query-key factory. Every useApiQuery call gets its key from here
- * instead of a hand-written array, so invalidation (see useApiMutation's
- * `invalidateKeys`) can't drift out of sync with the keys queries actually
+ * instead of a hand-written array, so invalidation (useApiMutation's `invalidateKeys`,
+ * useQueryCache's helpers) can't drift out of sync with the keys queries actually
  * use.
  *
  * Add a branch here per resource as its API client function lands
@@ -15,8 +15,9 @@ export const queryKeys = {
   me: () => [...queryKeys.auth(), 'me'] as const,
 
   courses: () => [...queryKeys.all, 'courses'] as const,
-  course: (slug: string) => [...queryKeys.courses(), slug] as const,
-  lessons: (slug: string) => [...queryKeys.course(slug), 'lessons'] as const,
+  courseList: () => [...queryKeys.courses(), 'list'] as const,
+  course: (courseId: string) => [...queryKeys.courses(), courseId] as const,
+  lessons: (courseId: string) => [...queryKeys.course(courseId), 'lessons'] as const,
 
   userCourses: () => [...queryKeys.all, 'user', 'courses'] as const,
   userStats: () => [...queryKeys.all, 'user', 'stats'] as const,

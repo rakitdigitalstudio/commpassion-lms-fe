@@ -4,16 +4,16 @@ import type {
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
-} from '@/lib/api/auth.types'
+} from '@/api/auth/types'
+import { API_ENDPOINTS, HTTP_METHOD } from '@/api/core/endpoints'
+import { apiUrl, getCsrfToken } from '@/api/core/http'
 
 /**
- * PROVISIONAL Golang auth client (see auth.types.ts). Endpoint paths match
+ * PROVISIONAL Golang auth client (see src/api/auth/types.ts). Endpoint paths match
  * SDS §5; CSRF header injection + credentials:'include' match Ticket #3's
  * requirement for the Golang client wrapper. Intercepted by the MSW
  * handlers in src/mocks/handlers.ts until a real backend exists.
  */
-
-const API_URL = import.meta.env.VITE_API_URL ?? ''
 
 /** Thrown by getMe() specifically for "no session" (401), so callers can
  * treat "not logged in" as a normal resolved state instead of an error. */
@@ -29,25 +29,11 @@ export class InvalidResetTokenError extends Error {}
 /** Thrown by register() on a 409 (email already registered). */
 export class EmailAlreadyRegisteredError extends Error {}
 
-async function getCsrfToken(): Promise<string> {
-  const res = await fetch(`${API_URL}/api/v1/auth/csrf`, {
-    credentials: 'include',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch CSRF token: ${res.status}`)
-  }
-
-  const { csrfToken } = (await res.json()) as { csrfToken: string }
-
-  return csrfToken
-}
-
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(`${API_URL}/api/v1/auth/login`, {
-    method: 'POST',
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.login), {
+    method: HTTP_METHOD.POST,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -75,8 +61,8 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
 export async function register(payload: RegisterPayload): Promise<void> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(`${API_URL}/api/v1/auth/register`, {
-    method: 'POST',
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.register), {
+    method: HTTP_METHOD.POST,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -95,7 +81,7 @@ export async function register(payload: RegisterPayload): Promise<void> {
 }
 
 export async function getMe(): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/api/v1/auth/me`, {
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.me), {
     credentials: 'include',
   })
 
@@ -113,8 +99,8 @@ export async function getMe(): Promise<AuthResponse> {
 export async function logout(): Promise<void> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(`${API_URL}/api/v1/auth/logout`, {
-    method: 'POST',
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.logout), {
+    method: HTTP_METHOD.POST,
     credentials: 'include',
     headers: { 'X-CSRF-Token': csrfToken },
   })
@@ -133,8 +119,8 @@ export async function logout(): Promise<void> {
 export async function forgotPassword(payload: ForgotPasswordPayload): Promise<void> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
-    method: 'POST',
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.forgotPassword), {
+    method: HTTP_METHOD.POST,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -151,8 +137,8 @@ export async function forgotPassword(payload: ForgotPasswordPayload): Promise<vo
 export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
-    method: 'POST',
+  const res = await fetch(apiUrl(API_ENDPOINTS.auth.resetPassword), {
+    method: HTTP_METHOD.POST,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

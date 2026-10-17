@@ -1,7 +1,7 @@
 import { getLessons, markLessonComplete } from '@/lib/api/lessons'
-import { useApiMutation } from '@/hooks/useApiMutation'
-import { useApiQuery } from '@/hooks/useApiQuery'
-import { queryKeys } from '@/lib/query-keys'
+import { useApiMutation } from '@/api/core/useApiMutation'
+import { useApiQuery } from '@/api/core/useApiQuery'
+import { queryKeys } from '@/api/core/query-keys'
 
 export function useLessons(courseId: string) {
   return useApiQuery(queryKeys.lessons(courseId), () => getLessons(courseId))

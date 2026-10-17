@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { forgotPassword } from '@/lib/api/auth'
+import { useForgotPasswordMutation } from '@/api/auth/mutations/useForgotPasswordMutation'
 
 /**
  * Always ends in the same "submitted" state regardless of whether the
@@ -9,19 +9,13 @@ import { forgotPassword } from '@/lib/api/auth'
  */
 export function useForgotPasswordForm() {
   const [email, setEmail] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const { mutate: handleForgotPassword, isPending: isSubmitting } = useForgotPasswordMutation()
 
-  async function submit() {
-    setIsSubmitting(true)
-    try {
-      await forgotPassword({ email })
-    } catch {
-      // Intentionally ignored — see the note above.
-    } finally {
-      setIsSubmitting(false)
-      setIsSubmitted(true)
-    }
+  function submit() {
+    // onSettled, not onSuccess — an error is intentionally treated the
+    // same as success, see the note above.
+    handleForgotPassword({ email }, { onSettled: () => setIsSubmitted(true) })
   }
 
   return { email, setEmail, isSubmitting, isSubmitted, submit } as const

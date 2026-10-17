@@ -1,4 +1,5 @@
 import { RouterProvider } from 'react-router-dom'
+import { Toaster } from 'sonner'
 
 import { UserAuthenticationProvider } from '@/context/UserAuthenticationContext'
 import { MAINTENANCE_MODE } from '@/lib/config'
@@ -18,6 +19,7 @@ function App() {
     <QueryProvider>
       <UserAuthenticationProvider>
         <RouterProvider router={router} />
+        <Toaster position="top-right" richColors />
       </UserAuthenticationProvider>
     </QueryProvider>
   )

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+import { useRegisterMutation } from '@/api/auth/mutations/useRegisterMutation'
+import { EmailAlreadyRegisteredError } from '@/api/auth/service/auth'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
-import { EmailAlreadyRegisteredError, register } from '@/lib/api/auth'
 import { isPasswordValid } from '@/lib/password-rules'
 import type { AuthLocationState } from '@/lib/auth-location-state'
 
@@ -18,6 +19,7 @@ export function useRegisterForm() {
   const returnTo = (location.state as AuthLocationState | null)?.returnTo
   const passwordVisibility = usePasswordVisibility()
   const confirmPasswordVisibility = usePasswordVisibility()
+  const { mutateAsync: handleRegister } = useRegisterMutation()
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -34,7 +36,7 @@ export function useRegisterForm() {
     error,
   } = useAsyncAction(
     async () => {
-      await register({ fullName, email, password })
+      await handleRegister({ fullName, email, password })
       navigate('/login', {
         replace: true,
         state: { justRegistered: true, returnTo } satisfies AuthLocationState,

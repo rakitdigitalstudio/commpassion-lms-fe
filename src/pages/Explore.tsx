@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { useGetCoursesQuery } from '@/api/courses/queries/useGetCoursesQuery'
 import { AppShell } from '@/components/AppShell'
 import { CourseCard } from '@/components/CourseCard'
 import { FullPageLoader } from '@/components/FullPageLoader'
@@ -8,7 +9,6 @@ import { FilterIcon, SearchIcon } from '@/components/icons'
 import { Logo } from '@/components/Logo'
 import { PageHeader } from '@/components/PageHeader'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
-import { catalogCourses } from '@/lib/stub-data/catalog'
 
 /**
  * Public route (Ticket #53) — the storefront ("here's what we offer"), so
@@ -21,8 +21,9 @@ export function Explore() {
   const { user, isLoading } = useUserAuthenticationContext()
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { data: courses = [], isLoading: isCoursesLoading } = useGetCoursesQuery()
 
-  if (isLoading) {
+  if (isLoading || isCoursesLoading) {
     return <FullPageLoader />
   }
 
@@ -49,25 +50,17 @@ export function Explore() {
       </div>
 
       <div className="grid grid-cols-3 gap-6">
-        {catalogCourses.map((course) => (
+        {courses.map((course) => (
           <CourseCard
-            key={course.slug}
+            key={course.courseId}
             variant="catalog"
-            slug={course.slug}
+            courseId={course.courseId}
             title={course.title}
             instructorName={course.instructorName}
             imageSrc={course.imageSrc}
-            rating={course.rating}
-            reviewCount={course.reviewCount}
-            moduleCount={course.moduleCount}
-            // Figma's catalog cards show "4/6 Module Videos" on every
-            // card regardless of course — read as a free-preview count,
-            // not a purchased/completed fraction. Reproduced as-is.
-            completedModules={4}
-            durationLabel={course.durationLabel}
             price={course.price}
             onBuyClick={() => {
-              const returnTo = `/courses/${course.slug}`
+              const returnTo = `/courses/${course.courseId}`
 
               if (!user) {
                 // Not registered yet — send them to sign up first, and

@@ -15,7 +15,7 @@ export interface Lesson {
 
 // Keyed the same way as `purchasedCourses` (src/lib/stub-data/purchases.ts)
 // so a course's lessons line up with its enrollment record.
-export const lessonsByCourseSlug: Record<string, Lesson[]> = {
+export const lessonsByCourseId: Record<string, Lesson[]> = {
   'fondasi-komunikasi': [
     {
       id: 'fondasi-komunikasi-1',

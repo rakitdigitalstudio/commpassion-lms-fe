@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
-import { InvalidResetTokenError, resetPassword } from '@/lib/api/auth'
+import { InvalidResetTokenError, resetPassword } from '@/api/auth/service/auth'
 import { isPasswordValid } from '@/lib/password-rules'
 
 export function useResetPasswordForm() {
