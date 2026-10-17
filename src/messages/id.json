@@ -10,10 +10,8 @@
       "body": "Halaman yang Anda cari tidak ada atau mungkin telah dipindahkan.",
       "backHome": "Kembali ke Beranda"
     },
-    "underConstruction": {
-      "heading": "Masih dalam pengembangan",
-      "body": "Halaman ini belum siap. Silakan cek kembali nanti.",
-      "backToLogin": "Kembali ke Halaman Masuk"
+    "errors": {
+      "generic": "Terjadi kesalahan. Silakan coba lagi."
     }
   },
   "auth": {
@@ -140,6 +138,19 @@
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
     "browseCourses": "Jelajahi Kursus"
+  },
+  "courseDetail": {
+    "breadcrumbRoot": "Pembelian Saya",
+    "browseMore": "Jelajahi Lebih Banyak Kursus",
+    "learningProgress": "Progres Belajar",
+    "doneCount": "{{completed}}/{{total}} Selesai",
+    "markAsDone": "Tandai Selesai",
+    "markingAsDone": "Menandai selesai…",
+    "videoDuration": "Durasi Video",
+    "byInstructor": "Oleh {{name}}",
+    "accessDeniedHeading": "Anda belum terdaftar di kursus ini",
+    "accessDeniedSubtext": "Beli kursus ini untuk membuka pelajarannya dan mulai belajar.",
+    "backToPurchases": "Kembali ke Pembelian Saya"
   },
   "explore": {
     "title": "Jelajahi Kursus Online",

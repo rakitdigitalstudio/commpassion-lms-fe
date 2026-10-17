@@ -55,7 +55,7 @@ export function CourseCard(props: CourseCardProps) {
             ) : null}
             <div className="flex items-center gap-3">
               <p className="flex-1 font-bold">{formatIdr(props.price)}</p>
-              <Button variant="accent" className="w-[120px]">
+              <Button variant="accent" className="w-[120px]" onClick={props.onBuyClick}>
                 Buy Now
               </Button>
             </div>

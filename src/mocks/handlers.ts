@@ -6,8 +6,8 @@ import type {
   RegisterPayload,
   ResetPasswordPayload,
   User,
-} from '@/lib/api/auth.types'
-import { DEMO_ACCOUNT_CREDENTIALS, DEMO_USER } from '@/lib/demo-account'
+} from '@/api/auth/types'
+import { API_ENDPOINTS } from '@/api/core/endpoints'
 
 /**
  * MSW request handlers.
@@ -27,7 +27,7 @@ interface MockAccount {
   password: string
 }
 
-// Seeded demo account — an "existing" user with purchase history (see
+// Seeded mock account — an "existing" user with purchase history (see
 // src/lib/stub-data/), so logging in with it exercises the Dashboard's
 // populated state out of the box. Ticket #13: a fresh sign-up gets
 // isNewUser: true instead, so the New User dashboard is reachable via the
@@ -48,17 +48,6 @@ const accounts = new Map<string, MockAccount>([
       },
     },
   ],
-  // TEMPORARY demo account (see src/lib/demo-account.ts / STUBBED_DATA.md).
-  // useLoginMutation resolves it client-side before this handler ever
-  // runs, but it's seeded here too so /me and /logout behave normally
-  // for it whenever mocks happen to be on.
-  [
-    DEMO_ACCOUNT_CREDENTIALS.email,
-    {
-      password: DEMO_ACCOUNT_CREDENTIALS.password,
-      user: DEMO_USER,
-    },
-  ],
 ])
 
 // In-memory only — resets on every full page reload, since there's no real
@@ -67,9 +56,11 @@ const accounts = new Map<string, MockAccount>([
 let currentUserEmail: string | null = null
 
 export const handlers: HttpHandler[] = [
-  http.get('*/api/v1/auth/csrf', () => HttpResponse.json({ csrfToken: 'mock-csrf-token' })),
+  http.get(`*${API_ENDPOINTS.auth.csrf}`, () =>
+    HttpResponse.json({ csrfToken: 'mock-csrf-token' }),
+  ),
 
-  http.post('*/api/v1/auth/login', async ({ request }) => {
+  http.post(`*${API_ENDPOINTS.auth.login}`, async ({ request }) => {
     const body = (await request.json()) as Partial<LoginPayload>
     const account = body.email ? accounts.get(body.email) : undefined
 
@@ -81,7 +72,7 @@ export const handlers: HttpHandler[] = [
     return HttpResponse.json<AuthResponse>({ user: account.user })
   }),
 
-  http.get('*/api/v1/auth/me', () => {
+  http.get(`*${API_ENDPOINTS.auth.me}`, () => {
     const account = currentUserEmail ? accounts.get(currentUserEmail) : undefined
 
     if (!account) {
@@ -90,7 +81,7 @@ export const handlers: HttpHandler[] = [
     return HttpResponse.json<AuthResponse>({ user: account.user })
   }),
 
-  http.post('*/api/v1/auth/logout', () => {
+  http.post(`*${API_ENDPOINTS.auth.logout}`, () => {
     currentUserEmail = null
     return new HttpResponse(null, { status: 204 })
   }),
@@ -99,7 +90,7 @@ export const handlers: HttpHandler[] = [
   // AuthResponse. 409 if the email is already "registered". Marked
   // isNewUser: true so signing in with it afterward shows the Dashboard's
   // New User state.
-  http.post('*/api/v1/auth/register', async ({ request }) => {
+  http.post(`*${API_ENDPOINTS.auth.register}`, async ({ request }) => {
     const body = (await request.json()) as Partial<RegisterPayload>
 
     if (body.email && accounts.has(body.email)) {
@@ -128,11 +119,11 @@ export const handlers: HttpHandler[] = [
 
   // Always the same response regardless of whether the email exists —
   // don't leak account existence, per Ticket #11's acceptance criteria.
-  http.post('*/api/v1/auth/forgot-password', () => new HttpResponse(null, { status: 204 })),
+  http.post(`*${API_ENDPOINTS.auth.forgotPassword}`, () => new HttpResponse(null, { status: 204 })),
 
   // Mock reset token for exercising Ticket #11's reset-password form:
   // any token except "invalid" (or empty) succeeds.
-  http.post('*/api/v1/auth/reset-password', async ({ request }) => {
+  http.post(`*${API_ENDPOINTS.auth.resetPassword}`, async ({ request }) => {
     const body = (await request.json()) as Partial<ResetPasswordPayload>
 
     if (!body.token || body.token === 'invalid') {

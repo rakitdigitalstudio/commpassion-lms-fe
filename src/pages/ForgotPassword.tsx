@@ -22,7 +22,7 @@ export function ForgotPassword() {
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
-    void submit()
+    submit()
   }
 
   return (

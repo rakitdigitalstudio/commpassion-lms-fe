@@ -9,6 +9,7 @@ import { ComingSoonNotice } from '@/components/ComingSoonNotice'
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from '@/components/icons'
 import { Logo } from '@/components/Logo'
 import { useLoginForm } from '@/hooks/useLoginForm'
+import type { AuthLocationState } from '@/lib/auth-location-state'
 import { IS_COMING_SOON } from '@/lib/config'
 
 export function Login() {
@@ -25,6 +26,7 @@ export function Login() {
     isSubmitting,
     submit,
     showRegisteredNotice,
+    returnTo,
   } = useLoginForm()
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -122,13 +124,22 @@ export function Login() {
           </Link>
         </div>
 
-        <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full"
+          disabled={isSubmitting || IS_COMING_SOON}
+        >
           {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
         </Button>
 
         <p className="text-center text-sm">
           {t('auth.login.noAccount')}{' '}
-          <Link to="/register" className="text-primary font-medium">
+          <Link
+            to="/register"
+            state={{ returnTo } satisfies AuthLocationState}
+            className="text-primary font-medium"
+          >
             {t('auth.login.signUp')}
           </Link>
         </p>

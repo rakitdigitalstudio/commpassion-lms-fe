@@ -155,19 +155,34 @@ All server data — Strapi and the Golang API alike, once the client modules
 in Ticket #3 land (blocked, see `TODO.md`) — goes through
 [TanStack Query](https://tanstack.com/query), not raw `fetch`/`useEffect`.
 
-- **Never call `useQuery`/`useMutation` directly.** Use the wrapper hooks
-  in `src/hooks/`: `useApiQuery` for reads, `useApiMutation` for writes.
-  They exist so app-wide defaults (`staleTime`, `retry`, cache
-  invalidation — see `src/lib/query-client.ts`) live in one place instead
-  of being repeated, and drifting, at every call site.
-- **Query keys come from `src/lib/query-keys.ts`.** Don't hand-write a key
-  array inline — add a branch to the `queryKeys` factory instead. This is
-  what keeps `useApiMutation`'s `invalidateKeys` in sync with the queries
-  it's supposed to invalidate.
-- **One hook per resource.** Wrap each API client function in its own
-  named hook (e.g. `useCourses()`, `useUserStats()`) rather than calling
-  `useApiQuery` ad hoc inside components. Put the hook next to the
-  component(s) that use it, or in `src/hooks/` if it's shared.
+- **Never call `useQuery`/`useMutation`/`useQueryClient` directly** (lint
+  enforces it outside `src/api/core/`). TanStack has broken its API every
+  major, so it's isolated behind `src/api/core/`:
+  - `useApiQuery(queryKey, queryFn, options)` for reads
+  - `useApiMutation(mutationFn, options)` for writes
+  - `useQueryCache()` for cache access — `invalidate`, `refetch`,
+    `setData`, `getData`, `cancel`, `remove`, `reset`. It's the only
+    place `useQueryClient()` is called.
+- **Query keys come from `src/api/core/query-keys.ts`.** Don't hand-write a
+  key array inline — add a branch to the `queryKeys` factory instead.
+- **Folder structure: one folder per backend domain** under `src/api/`
+  (named after the route group, e.g. `auth` for `/api/v1/auth/*`):
+
+  ```
+  src/api/<domain>/
+    types.ts
+    service/<domain>.ts      # pure fetch functions + typed errors, no React
+    queries/useGet<Thing>Query.ts
+    mutations/use<Verb><Thing>Mutation.ts
+  ```
+
+  One hook per file. Every domain hook takes an optional last `options`
+  argument (`ApiQueryOptions` / `ApiMutationOptions` from `src/api/core/`)
+  and forwards it, so call sites can pass `onSuccess`, `onError`,
+  `enabled`, `select`, etc. Form hooks (`useRegisterForm`, …) stay in
+  `src/hooks/` and consume these. Migration is in progress — some hooks
+  still live in `src/hooks/` (see #54 and its follow-up).
+
 - **Mutations declare `invalidateKeys`.** Any mutation that changes server
   state passes the query keys that should refetch afterward — don't
   manually refetch or reload the page instead.
@@ -178,17 +193,24 @@ in Ticket #3 land (blocked, see `TODO.md`) — goes through
   hook and let the component decide how to render it — don't catch and
   discard in the query/mutation function.
 
-Example, once a real API function exists:
+Example:
 
 ```ts
-// src/hooks/useCourses.ts
-import { getCourses } from '@/lib/api/strapi'
-import { useApiQuery } from '@/hooks/useApiQuery'
-import { queryKeys } from '@/lib/query-keys'
+// src/api/auth/mutations/useForgotPasswordMutation.ts
+import { forgotPassword } from '@/api/auth/service/auth'
+import type { ForgotPasswordPayload } from '@/api/auth/types'
+import { useApiMutation, type ApiMutationOptions } from '@/api/core/useApiMutation'
 
-export function useCourses() {
-  return useApiQuery(queryKeys.courses(), getCourses)
+export function useForgotPasswordMutation(
+  options?: ApiMutationOptions<void, ForgotPasswordPayload>,
+) {
+  return useApiMutation(forgotPassword, options)
 }
+
+// call site
+const { mutate: handleForgotPassword } = useForgotPasswordMutation({
+  onError: (error) => reportError(error),
+})
 ```
 
 At the call site, destructure only what's needed and rename it to what

@@ -1,8 +1,7 @@
-import { useGetMeQuery } from '@/hooks/useGetMeQuery'
+import { useGetUserDataQuery } from '@/hooks/useGetUserDataQuery'
 import { useLoginMutation } from '@/hooks/useLoginMutation'
 import { useLogoutMutation } from '@/hooks/useLogoutMutation'
-import type { LoginPayload, User } from '@/lib/api/auth.types'
-import { clearDemoSession, isDemoAccountEmail, saveDemoSession } from '@/lib/demo-account'
+import type { LoginPayload, User } from '@/api/auth/types'
 
 export interface UserAuthenticationValue {
   user: User | null
@@ -14,13 +13,13 @@ export interface UserAuthenticationValue {
 
 /**
  * Actual auth logic — composes the per-resource query/mutation hooks
- * (useGetMeQuery/useLoginMutation/useLogoutMutation, per README "Data
+ * (useGetUserDataQuery/useLoginMutation/useLogoutMutation, per README "Data
  * fetching") into the single value UserAuthenticationContext exposes. Kept
  * separate from that context so the context file only ever has to wire
  * `const value = useUserAuthentication()` into a provider.
  */
 export function useUserAuthentication(): UserAuthenticationValue {
-  const { data: user, isLoading } = useGetMeQuery()
+  const { data: user, isLoading } = useGetUserDataQuery()
   const { mutateAsync: handleLogin } = useLoginMutation()
   const { mutateAsync: handleLogout } = useLogoutMutation()
 
@@ -28,17 +27,9 @@ export function useUserAuthentication(): UserAuthenticationValue {
     user: user ?? null,
     isLoading,
     login: async (payload) => {
-      const { user: loggedInUser } = await handleLogin(payload)
-
-      // Clear first so switching from the demo account to a real one (or
-      // vice versa) never leaves a stale session shadowing the new one.
-      clearDemoSession()
-      if (isDemoAccountEmail(payload.email)) {
-        saveDemoSession(loggedInUser)
-      }
+      await handleLogin(payload)
     },
     logout: async () => {
-      clearDemoSession()
       await handleLogout()
     },
   }

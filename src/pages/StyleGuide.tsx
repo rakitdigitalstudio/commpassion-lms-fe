@@ -140,7 +140,7 @@ export function StyleGuide() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <CourseCard
             variant="purchased"
-            slug="fondasi-komunikasi"
+            courseId="fondasi-komunikasi"
             title="Fondasi Komunikasi"
             instructorName="Indra Herlambang"
             bannerClassName="bg-indigo-600"
@@ -153,7 +153,7 @@ export function StyleGuide() {
           />
           <CourseCard
             variant="purchased"
-            slug="art-of-mc"
+            courseId="art-of-mc"
             title="The Art of MC"
             instructorName="Nadia Mulya"
             bannerClassName="bg-pink-600"
@@ -166,7 +166,7 @@ export function StyleGuide() {
           />
           <CourseCard
             variant="catalog"
-            slug="how-to-be-a-great-mc"
+            courseId="how-to-be-a-great-mc"
             title="How to Be A Great MC"
             instructorName="Indra Herlambang"
             instructorRole="MC | TV Host | Writer"

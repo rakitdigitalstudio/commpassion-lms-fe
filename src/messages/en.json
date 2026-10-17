@@ -10,10 +10,8 @@
       "body": "The page you're looking for doesn't exist or may have been moved.",
       "backHome": "Back to Home"
     },
-    "underConstruction": {
-      "heading": "Still under construction",
-      "body": "This page isn't ready yet. Check back soon.",
-      "backToLogin": "Back to Sign In"
+    "errors": {
+      "generic": "Something went wrong. Please try again."
     }
   },
   "auth": {
@@ -140,6 +138,19 @@
     "emptyHeading": "Your learning journey starts here",
     "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
     "browseCourses": "Browse Courses"
+  },
+  "courseDetail": {
+    "breadcrumbRoot": "My Purchases",
+    "browseMore": "Browse More Courses",
+    "learningProgress": "Learning Progress",
+    "doneCount": "{{completed}}/{{total}} Done",
+    "markAsDone": "Mark as Done",
+    "markingAsDone": "Marking as Done…",
+    "videoDuration": "Video Duration",
+    "byInstructor": "By {{name}}",
+    "accessDeniedHeading": "You're not enrolled in this course",
+    "accessDeniedSubtext": "Purchase this course to unlock its lessons and start learning.",
+    "backToPurchases": "Back to My Purchases"
   },
   "explore": {
     "title": "Explore Online Courses",

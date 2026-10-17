@@ -13,3 +13,9 @@ export const IS_COMING_SOON = import.meta.env.VITE_IS_COMING_SOON === 'true'
 
 /** When true, the whole app shows the Maintenance page instead of routing normally. See README "Maintenance page". */
 export const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
+
+/** Strapi base URL — public course catalog (Ticket #29). */
+export const STRAPI_URL = import.meta.env.VITE_STRAPI_URL ?? 'http://localhost:1337'
+
+/** Golang API base URL. Empty means same-origin (e.g. MSW or a dev proxy). */
+export const API_URL = import.meta.env.VITE_API_URL ?? ''

@@ -451,6 +451,82 @@ commit before continuing (confirmed with you first). No idea what caused
 it (editor undo, a discarded hunk, etc.) — noting here only so it isn't
 mistaken for an intentional change later; not something to fix in code.
 
+## Tickets #23/#24 — Course video page + lesson sidebar/navigation: done
+
+**Status:** done, built against Figma node `676-6533`.
+
+Replaced the `CourseDetail.tsx` placeholder (from Ticket #7) with the real
+video/lesson page: `Breadcrumb` (new, reusable), the course title/instructor
+header, `LessonVideoPlayer` (new — poster + play overlay that swaps to an
+embedded YouTube iframe), the "Mark as Done" action, and a right-hand
+"Learning Progress" panel built from `CourseModuleItem` (new, reusable per
+your request — not one-off markup).
+
+**Enrollment/access-denied gate, per your instruction:** driven entirely by
+the course-detail fetch, not a separate client-side membership check.
+`src/lib/api/courses.ts` (new) exports a `getCourseDetail(courseId)` stub
+client (`PROVISIONAL`, same shape as `auth.ts` — see below) returning
+`{ ..., enrolled: boolean }`; `useGetCourseDetailQuery` wraps it, and the
+page renders the access-denied `EmptyState` purely off `data.enrolled ===
+false`. Added `catalogCourses['negosiasi-percaya-diri']`
+(`src/lib/stub-data/catalog.ts`) — deliberately absent from
+`purchasedCourses` — so `/courses/negosiasi-percaya-diri` is a real,
+navigable "not enrolled" scenario (#23's explicit todo).
+
+**Lessons, per your instruction ("stub data only"):** `src/lib/stub-data/lessons.ts`
+(new stub data, `getLesson`/lesson-list still unbuilt per this file's
+Ticket #3 entry) + `src/lib/api/lessons.ts` (new `PROVISIONAL` client:
+`getLessons`, `markLessonComplete`), wired through `useApiQuery`/
+`useApiMutation` like every other write in this app. "Mark as Done", per
+your instruction, fires through `useMarkLessonComplete` (invalidates
+`queryKeys.lessons(courseId)`) and its `onSuccess` auto-advances the
+selected lesson to the next incomplete one.
+
+**Not built** (out of scope, not asked for): a real `getLesson`/enrollment
+backend — both still blocked on SDS §6 exactly like every other resource
+in this file. `getCourseDetail`'s `enrolled` check currently reads
+`purchasedCourses` internally; once §6 lands, only that function's
+internals should need to change to call the real endpoint — call sites
+(`useGetCourseDetailQuery`, `CourseDetail.tsx`) shouldn't.
+
+## Ticket #53 — Explore page: public catalog, gate Buy Now behind registration: done
+
+**Status:** done.
+
+`Explore.tsx` previously branched hard on auth: a guest got a generic
+"under construction" `EmptyState` (see the "Restored /explore" entry
+above) instead of the real catalog. Per your instruction, `/explore` is
+the storefront and must always show the real course list:
+
+- Removed the guest branch entirely — `catalogCourses` now renders (search
+  input, sort button, grid) regardless of auth state.
+- Signed-in: unchanged, still wrapped in `AppShell` (sidebar/topbar).
+- Signed-out: a bare header (just the logo, linking to `/login`) instead
+  of `AppShell` — per your instruction, no sidebar/topbar for a guest,
+  since that shell stays scoped to authenticated screens (Ticket #7).
+- `CourseCard`'s catalog `Buy Now` button had no `onClick` at all (a dead
+  button, same class of bug as Purchases' cards before the #23/#24
+  session) — added `onBuyClick` to `CatalogCourseCardProps` and wired it
+  in `Explore.tsx`: logged-out goes to `/register` (registration required
+  to buy, per your instruction); logged-in goes to `/courses/:slug` as the
+  closest real next step, since Ticket #22's checkout flow doesn't exist
+  yet — revisit this hand-off once #22 is built.
+- **"Return to this course after signing up" chain**: added
+  `src/lib/auth-location-state.ts` (`AuthLocationState`, `{ justRegistered,
+  returnTo }`) and threaded `returnTo` through `Explore` → `Register` →
+  `Login`'s `location.state`, including their cross-links ("Sign in"/"Sign
+  up"), so a guest who clicks Buy Now lands back on that course after
+  registering and signing in, instead of the generic `/dashboard`.
+  `useLoginForm`/`useRegisterForm` both updated; `Login.tsx`/`Register.tsx`
+  pass `returnTo` through their own cross-page links.
+- Removed the now-unused `common.underConstruction.*` i18n keys
+  (`en.json`/`id.json`) — nothing references them anymore.
+
+**Not built** (out of scope, not asked for): search/sort on Explore are
+still non-functional stub UI (Ticket #20's own scope, blocked on the
+"Most Popular" sort field question flagged there) — this ticket only
+touched the auth-gating/layout/Buy Now wiring around them.
+
 ## Ticket #13 — Dashboard, My Purchases, Explore Courses: done
 
 Built out all three previously-placeholder pages against Figma (nodes

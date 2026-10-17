@@ -23,5 +23,32 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    // TanStack Query is isolated behind src/api/core/ so a breaking major
+    // only touches that folder — see README "Data fetching".
+    files: ['**/*.{ts,tsx}'],
+    ignores: ['src/api/core/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@tanstack/react-query',
+              importNames: [
+                'useQuery',
+                'useMutation',
+                'useQueryClient',
+                'useSuspenseQuery',
+                'useInfiniteQuery',
+                'QueryClient',
+              ],
+              message: 'Use useApiQuery/useApiMutation/useQueryCache from src/api/core/ instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
   eslintConfigPrettier,
 )

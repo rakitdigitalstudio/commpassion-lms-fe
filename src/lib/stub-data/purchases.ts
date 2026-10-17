@@ -9,7 +9,7 @@ import type { Status } from '@/components/StatusBadge'
  * where the cover images came from.
  */
 export interface PurchasedCourse {
-  slug: string
+  courseId: string
   title: string
   instructorName: string
   imageSrc: string
@@ -24,7 +24,7 @@ export interface PurchasedCourse {
 
 export const purchasedCourses: PurchasedCourse[] = [
   {
-    slug: 'fondasi-komunikasi',
+    courseId: 'fondasi-komunikasi',
     title: 'Fondasi Komunikasi: Berani Bicara, Pede Tanpa Nerveous',
     instructorName: 'Indra Herlambang',
     imageSrc: courseCoverFondasiKomunikasi,
@@ -36,7 +36,7 @@ export const purchasedCourses: PurchasedCourse[] = [
     ctaLabel: 'Continue Course',
   },
   {
-    slug: 'art-of-mc',
+    courseId: 'art-of-mc',
     title: 'The Art of MC: How To Be A Great MC',
     instructorName: 'Nadia Mulya',
     imageSrc: courseCoverArtOfMc,
@@ -48,7 +48,7 @@ export const purchasedCourses: PurchasedCourse[] = [
     ctaLabel: 'View Certificate',
   },
   {
-    slug: 'tips-trik-gugup',
+    courseId: 'tips-trik-gugup',
     title: 'Tips & Trik: Cara Mengatasi Rasa Gugup',
     instructorName: 'Lenna Tan',
     imageSrc: courseCoverTipsTrik,

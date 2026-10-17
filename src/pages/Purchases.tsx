@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/Button'
 import { CourseCard } from '@/components/CourseCard'
@@ -16,6 +16,7 @@ type Filter = 'all' | 'in-progress' | 'completed'
 export function Purchases() {
   const [filter, setFilter] = useState<Filter>('all')
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const inProgressCount = purchasedCourses.filter((c) => c.status === 'in-progress').length
   const completedCount = purchasedCourses.filter((c) => c.status === 'completed').length
@@ -97,9 +98,9 @@ export function Purchases() {
           <div className="grid grid-cols-3 gap-6">
             {visibleCourses.map((course) => (
               <CourseCard
-                key={course.slug}
+                key={course.courseId}
                 variant="purchased"
-                slug={course.slug}
+                courseId={course.courseId}
                 title={course.title}
                 instructorName={course.instructorName}
                 imageSrc={course.imageSrc}
@@ -109,6 +110,10 @@ export function Purchases() {
                 status={course.status}
                 progress={course.progress}
                 ctaLabel={course.ctaLabel}
+                // Routes every CTA (Continue/Start/View Certificate) to the
+                // course detail page — no dedicated certificate page exists
+                // yet, so "View Certificate" lands there too for now.
+                onCtaClick={() => navigate(`/courses/${course.courseId}`)}
               />
             ))}
           </div>
