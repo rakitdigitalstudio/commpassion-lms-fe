@@ -128,7 +128,8 @@ export function Login() {
           type="submit"
           variant="primary"
           className="w-full"
-          disabled={isSubmitting || IS_COMING_SOON}
+          isLoading={isSubmitting}
+          disabled={IS_COMING_SOON}
         >
           {isSubmitting ? t('auth.login.submitting') : t('auth.login.submit')}
         </Button>

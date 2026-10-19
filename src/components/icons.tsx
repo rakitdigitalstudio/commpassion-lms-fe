@@ -216,3 +216,11 @@ export function PlayIcon(props: IconProps) {
     </Icon>
   )
 }
+
+export function SpinnerIcon({ className = '' }: IconProps) {
+  return (
+    <Icon className={`animate-spin ${className}`}>
+      <path d="M21 12a9 9 0 1 1-6.22-8.56" />
+    </Icon>
+  )
+}

@@ -177,7 +177,8 @@ export function Register() {
           type="submit"
           variant="primary"
           className="w-full"
-          disabled={isSubmitting || IS_COMING_SOON}
+          isLoading={isSubmitting}
+          disabled={IS_COMING_SOON}
         >
           {isSubmitting ? t('auth.register.submitting') : t('auth.register.submit')}
         </Button>
