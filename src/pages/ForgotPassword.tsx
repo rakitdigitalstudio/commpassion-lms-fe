@@ -62,7 +62,8 @@ export function ForgotPassword() {
             type="submit"
             variant="primary"
             className="w-full"
-            disabled={isSubmitting || IS_COMING_SOON}
+            isLoading={isSubmitting}
+            disabled={IS_COMING_SOON}
           >
             {isSubmitting ? t('auth.forgotPassword.submitting') : t('auth.forgotPassword.submit')}
           </Button>

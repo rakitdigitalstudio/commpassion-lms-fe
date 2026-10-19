@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react'
 
+import { SpinnerIcon } from '@/components/icons'
+
 /**
  * `success` isn't in Ticket #6's todo list (primary/accent/outline only)
  * but the Purchases mockup's "View Certificate" CTA is a distinct green
@@ -17,13 +19,27 @@ const variantClassName: Record<ButtonVariant, string> = {
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
+  /** Shows a spinner before the label and disables the button (Ticket #57). */
+  isLoading?: boolean
 }
 
-export function Button({ variant = 'primary', className = '', ...props }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  isLoading = false,
+  className = '',
+  disabled,
+  children,
+  ...props
+}: ButtonProps) {
   return (
     <button
-      className={`rounded-control px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variantClassName[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variantClassName[variant]} ${className}`}
+      disabled={disabled || isLoading}
+      aria-busy={isLoading || undefined}
       {...props}
-    />
+    >
+      {isLoading && <SpinnerIcon className="h-4 w-4 shrink-0" />}
+      {children}
+    </button>
   )
 }

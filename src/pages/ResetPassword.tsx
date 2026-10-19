@@ -143,7 +143,7 @@ export function ResetPassword() {
               </div>
             </div>
 
-            <Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" variant="primary" className="w-full" isLoading={isSubmitting}>
               {isSubmitting ? 'Resetting…' : 'Reset Password'}
             </Button>
           </form>

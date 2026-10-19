@@ -76,3 +76,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/*
+ * Tailwind v4's preflight resets <button> to cursor: default (v3 used
+ * pointer). Restore it globally so raw <button>s are covered too, not
+ * just <Button> (Ticket #57). Disabled ones keep Button's not-allowed.
+ */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+}
