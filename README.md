@@ -56,23 +56,27 @@ or in Vercel.
 
 ```json
 {
-  "rewrites": [
-    { "source": "/api/v1/:path*", "destination": "https://api.commpassion.id/api/v1/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
 ```
 
-- **`/api/v1/*` → the Golang API.** The production counterpart of the dev
-  proxy (`DEV_API_PROXY_TARGET`, see "Pointing local dev at the real
-  API"). The API's session and CSRF cookies are `SameSite=Strict` with no
-  `Domain`, so the browser must call it same-origin; through the rewrite,
-  the cookies are set for `lms.commpassion.id` and no API CORS change is
-  needed. Must stay **above** the catch-all.
-- **Everything else → `/index.html`.** Required for a client-side-routed
-  SPA: without it, a direct visit or refresh on any route other than `/`
-  (e.g. `/login`) 404s, because Vercel looks for a static file at that
-  exact path. Don't remove it.
+Required for a client-side-routed SPA: without it, a direct visit or
+refresh on any route other than `/` (e.g. `/login`) 404s, because Vercel
+looks for a static file at that exact path. Don't remove it.
+
+### Calling the Golang API
+
+Deployed builds call `https://api.commpassion.id` directly
+(`VITE_API_URL` in `.env.production`), with `credentials: 'include'`. The
+API's session and CSRF cookies are `SameSite=Strict`, which is fine here:
+`SameSite` compares **sites** (registrable domains), and `lms.` and `api.`
+are both `commpassion.id`. What this needs is the API's CORS allowlist:
+`CORS_ALLOWED_ORIGINS` in the core-office `.env` must include
+`https://lms.commpassion.id`, or the browser blocks every call.
+
+Local dev is the exception: `localhost` is a different site, so the cookies
+would be dropped. That's why `pnpm dev` keeps `VITE_API_URL` empty and
+proxies `/api/v1` through Vite (see "Pointing local dev at the real API").
 
 ### Environment variables
 
@@ -82,16 +86,17 @@ secret.
 
 | Where                                               | What                                                                                  | Why                                                                                          |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `.env.production` (committed)                       | `VITE_STRAPI_URL`, `VITE_API_URL` (empty), `VITE_USE_MOCKS=false`                     | Same for production and previews; changes go through a PR                                    |
+| `.env.production` (committed)                       | `VITE_STRAPI_URL`, `VITE_API_URL`, `VITE_USE_MOCKS=false`                             | Same for production and previews; changes go through a PR                                    |
 | Vercel dashboard (Settings → Environment Variables) | `VITE_IS_COMING_SOON`, `VITE_MAINTENANCE_MODE` when needed; per-environment overrides | Operational switches flipped without a PR. A dashboard value **overrides** `.env.production` |
 
 Vite reads `.env.production` for `vite build` (production mode), with
 higher priority than `.env.local`, so a local `pnpm build` produces the same
 bundle as Vercel. `pnpm dev` doesn't read it.
 
-To check a deployment: `curl -i https://lms.commpassion.id/api/v1/auth/me`
-should return `401` JSON (not HTML), and the built JS should contain
-`cms.commpassion.id`, never `localhost:1337`.
+To check a deployment: the built JS should contain `api.commpassion.id` and
+`cms.commpassion.id`, never `localhost:1337`, and
+`curl -sI https://api.commpassion.id/api/v1/auth/me -H 'Origin: https://lms.commpassion.id'`
+should show `access-control-allow-origin: https://lms.commpassion.id`.
 
 ## Project structure
 
@@ -294,8 +299,9 @@ at the network level so features can be built before either backend
 
 To see real enrolled courses, progress and lessons, turn mocks off and let
 the Vite dev server proxy `/api/v1` to a deployed Golang API. Its session
-cookies are `SameSite=Strict`, so the browser must see API calls as
-same-origin with `localhost`:
+cookies are `SameSite=Strict` and `localhost` is a different site from
+`commpassion.id`, so the browser must see API calls as same-origin with
+`localhost`:
 
 ```env
 VITE_USE_MOCKS=false
