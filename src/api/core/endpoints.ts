@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
 
 /** Strapi (commpassion-backoffice) content API paths — see strapiUrl(). */
 export const STRAPI_ENDPOINTS = {
+  siteConfig: '/api/site-config',
   courses: '/api/courses',
   course: (courseId: string) => `/api/courses/${encodeURIComponent(courseId)}`,
 } as const

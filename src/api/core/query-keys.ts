@@ -57,5 +57,5 @@ export const queryKeys = {
 
   certificates: () => [...queryKeys.all, QUERY_KEY.CERTIFICATES] as const,
 
-  siteConfig: () => [...queryKeys.all, QUERY_KEY.SITE_CONFIG] as const,
+  siteConfig: (locale: string) => [...queryKeys.all, QUERY_KEY.SITE_CONFIG, locale] as const,
 }

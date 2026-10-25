@@ -31,14 +31,8 @@
       "headlineLead": "Memimpin untuk",
       "headlineInspire": "Menginspirasi",
       "subtitle": "Bergabunglah dengan ribuan peserta yang mengubah cara mereka terhubung, berkomunikasi, dan memimpin.",
-      "stats": {
-        "voices": "Suara Diberdayakan",
-        "experiences": "Pengalaman Belajar",
-        "partnerships": "Mitra Terpercaya"
-      },
       "featuredCourse": "Kursus Unggulan",
-      "courseTitle": "How to Be A Great MC",
-      "courseMeta": "Oleh Indra Herlambang • 12 Video Modul"
+      "byInstructor": "Oleh {{name}}"
     },
     "login": {
       "heading": "Masuk ke akun Anda",

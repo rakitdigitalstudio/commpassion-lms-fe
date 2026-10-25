@@ -31,14 +31,8 @@
       "headlineLead": "Lead to",
       "headlineInspire": "Inspire",
       "subtitle": "Join thousands of learners transforming how they connect, communicate, and lead.",
-      "stats": {
-        "voices": "Voices Empowered",
-        "experiences": "Learning Experiences",
-        "partnerships": "Trusted Partnerships"
-      },
       "featuredCourse": "Featured Course",
-      "courseTitle": "How to Be A Great MC",
-      "courseMeta": "By Indra Herlambang • 12 Video Modules"
+      "byInstructor": "By {{name}}"
     },
     "login": {
       "heading": "Sign in to your account",
