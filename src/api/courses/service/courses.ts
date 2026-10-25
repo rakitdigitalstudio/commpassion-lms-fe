@@ -19,7 +19,7 @@ function toCourse(course: StrapiCourse): Course {
   return {
     courseId: course.documentId,
     title: course.title,
-    instructorName: course.instructor?.nameWithTitle || course.instructor?.name || '',
+    instructorName: course.instructor?.name ?? '',
     imageSrc: course.coverImage ? strapiUrl(course.coverImage.url) : undefined,
     price: course.price ?? 0,
   }
@@ -49,7 +49,6 @@ export async function getCourses({
   if (term) {
     params.set('filters[$or][0][title][$containsi]', term)
     params.set('filters[$or][1][instructor][name][$containsi]', term)
-    params.set('filters[$or][2][instructor][nameWithTitle][$containsi]', term)
   }
 
   const res = await fetch(`${strapiUrl(STRAPI_ENDPOINTS.courses)}?${params}`)

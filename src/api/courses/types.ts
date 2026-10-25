@@ -39,7 +39,7 @@ export interface StrapiCourse {
   title: string
   price: number | null
   coverImage: { url: string } | null
-  instructor: { name: string; nameWithTitle: string | null } | null
+  instructor: { name: string } | null
   /** Only present when populated (getCourseLessons). */
   lessons?: StrapiLesson[]
 }
