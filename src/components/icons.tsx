@@ -26,15 +26,6 @@ function Icon({ className, children }: IconProps & { children: ReactNode }) {
   )
 }
 
-export function LogoIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="M3 10v4a1 1 0 0 0 1 1h2l7 4V5L6 9H4a1 1 0 0 0-1 1Z" />
-      <path d="M18 8a4 4 0 0 1 0 8M21 5a8 8 0 0 1 0 14" />
-    </Icon>
-  )
-}
-
 export function DashboardIcon(props: IconProps) {
   return (
     <Icon {...props}>

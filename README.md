@@ -299,9 +299,7 @@ flags here, not inline in a component.
 `src/components/Logo.tsx`) and `public/favicon.ico` are copied from
 `compassion-landing-page` (`src/assets/compassion-logo-blue.png` and
 `src/app/favicon.ico`) — the real brand wordmark/icon, not a placeholder.
-`Sidebar` still uses the small hand-authored `LogoIcon` (from
-`src/components/icons.tsx`) instead, since the sidebar mockup shows a
-plain icon + separate "CommPassion" text, not the full wordmark.
+`Sidebar` shows the same logo, small, next to its "CommPassion" text.
 
 ## Forms
 

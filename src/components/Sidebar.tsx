@@ -1,13 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 
-import {
-  CartIcon,
-  DashboardIcon,
-  GlobeIcon,
-  LogoIcon,
-  LogoutIcon,
-  SettingsIcon,
-} from '@/components/icons'
+import { CartIcon, DashboardIcon, GlobeIcon, LogoutIcon, SettingsIcon } from '@/components/icons'
+import { Logo } from '@/components/Logo'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
 const navItems = [
@@ -39,7 +33,7 @@ export function Sidebar() {
   return (
     <aside className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-border bg-background">
       <div className="flex items-center gap-2 p-6">
-        <LogoIcon className="h-8 w-8 shrink-0 text-primary" />
+        <Logo className="h-8 w-auto shrink-0" />
         <div>
           <p className="font-bold leading-tight">CommPassion</p>
           <p className="text-xs leading-tight text-muted">E-Learning Dashboard</p>
