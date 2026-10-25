@@ -74,6 +74,25 @@ or in Vercel.
   (e.g. `/login`) 404s, because Vercel looks for a static file at that
   exact path. Don't remove it.
 
+### Environment variables
+
+`VITE_*` values are inlined into the JS bundle **at build time**, so a
+change only takes effect on the next deployment, and none of them can be
+secret.
+
+| Where                                               | What                                                                                  | Why                                                                                          |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `.env.production` (committed)                       | `VITE_STRAPI_URL`, `VITE_API_URL` (empty), `VITE_USE_MOCKS=false`                     | Same for production and previews; changes go through a PR                                    |
+| Vercel dashboard (Settings → Environment Variables) | `VITE_IS_COMING_SOON`, `VITE_MAINTENANCE_MODE` when needed; per-environment overrides | Operational switches flipped without a PR. A dashboard value **overrides** `.env.production` |
+
+Vite reads `.env.production` for `vite build` (production mode), with
+higher priority than `.env.local`, so a local `pnpm build` produces the same
+bundle as Vercel. `pnpm dev` doesn't read it.
+
+To check a deployment: `curl -i https://lms.commpassion.id/api/v1/auth/me`
+should return `401` JSON (not HTML), and the built JS should contain
+`cms.commpassion.id`, never `localhost:1337`.
+
 ## Project structure
 
 ```
