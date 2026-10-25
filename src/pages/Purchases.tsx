@@ -2,14 +2,15 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { useGetUserCoursesQuery } from '@/api/user/queries/useGetUserCoursesQuery'
 import { Button } from '@/components/Button'
 import { CourseCard } from '@/components/CourseCard'
 import { EmptyState } from '@/components/EmptyState'
 import { FilterChip } from '@/components/FilterChip'
+import { FullPageLoader } from '@/components/FullPageLoader'
 import { InboxIcon, PlusIcon } from '@/components/icons'
 import { PageHeader } from '@/components/PageHeader'
 import { StatCard } from '@/components/StatCard'
-import { purchasedCourses } from '@/lib/stub-data/purchases'
 
 type Filter = 'all' | 'in-progress' | 'completed'
 
@@ -17,6 +18,7 @@ export function Purchases() {
   const [filter, setFilter] = useState<Filter>('all')
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { data: purchasedCourses = [], isLoading } = useGetUserCoursesQuery()
 
   const inProgressCount = purchasedCourses.filter((c) => c.status === 'in-progress').length
   const completedCount = purchasedCourses.filter((c) => c.status === 'completed').length
@@ -25,9 +27,14 @@ export function Purchases() {
   const visibleCourses = useMemo(() => {
     if (filter === 'all') return purchasedCourses
     return purchasedCourses.filter((course) => course.status === filter)
-  }, [filter])
+  }, [filter, purchasedCourses])
 
   const hasCourses = purchasedCourses.length > 0
+
+  // Without this, the empty state would flash before the courses load.
+  if (isLoading) {
+    return <FullPageLoader />
+  }
 
   return (
     <div className="flex flex-col gap-6">

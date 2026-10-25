@@ -26,27 +26,6 @@ export const newUserStatLabels = [
   'My Certificates',
 ] as const
 
-export interface LearningProgressItem {
-  title: string
-  progress: number
-  /** CSS color for both the percentage text and the bar fill (decorative rotation, not a Status). */
-  color: string
-}
-
-export const learningProgress: LearningProgressItem[] = [
-  {
-    title: 'Fondasi Komunikasi: Berani Bicara, Pede Tanpa Nervous',
-    progress: 60,
-    color: 'var(--color-primary)',
-  },
-  { title: 'The Art of MC: How to be Great MC', progress: 80, color: 'var(--color-warning)' },
-  {
-    title: 'Tips & Trik: Mengatasi Rasa Gugup',
-    progress: 0,
-    color: 'var(--color-success)',
-  },
-]
-
 export interface RecentActivityItem {
   description: string
   timeAgo: string

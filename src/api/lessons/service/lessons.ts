@@ -1,12 +1,11 @@
-import type { Lesson } from '@/lib/stub-data/lessons'
+import type { Lesson } from '@/api/lessons/types'
 import { lessonsByCourseId } from '@/lib/stub-data/lessons'
 
 /**
  * PROVISIONAL lessons client (see TODO.md's Ticket #3 entry — `getLesson`
  * is listed there as an unbuilt Golang client function, blocked on SDS
- * §6). Mutates the in-memory stub store directly, same "good enough to
- * exercise the real interaction, not a real backend" shape as the demo
- * account in STUBBED_DATA.md.
+ * §6). Mutates the in-memory stub store directly, "good enough to
+ * exercise the real interaction, not a real backend" — see STUBBED_DATA.md.
  */
 
 export async function getLessons(courseId: string): Promise<Lesson[]> {

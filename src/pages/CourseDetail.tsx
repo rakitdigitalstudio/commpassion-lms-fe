@@ -11,16 +11,17 @@ import { FullPageLoader } from '@/components/FullPageLoader'
 import { LockIcon, PlusIcon } from '@/components/icons'
 import { LessonVideoPlayer } from '@/components/LessonVideoPlayer'
 import { Progress } from '@/components/Progress'
-import { useGetCourseDetailQuery } from '@/hooks/useGetCourseDetailQuery'
-import { useLessons, useMarkLessonComplete } from '@/hooks/useLessons'
+import { useGetCourseDetailQuery } from '@/api/courses/queries/useGetCourseDetailQuery'
+import { useMarkLessonCompleteMutation } from '@/api/lessons/mutations/useMarkLessonCompleteMutation'
+import { useGetLessonsQuery } from '@/api/lessons/queries/useGetLessonsQuery'
 
 export function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
   const { t } = useTranslation()
 
   const courseQuery = useGetCourseDetailQuery(courseId ?? '')
-  const lessonsQuery = useLessons(courseId ?? '')
-  const markComplete = useMarkLessonComplete(courseId ?? '')
+  const lessonsQuery = useGetLessonsQuery(courseId ?? '')
+  const markComplete = useMarkLessonCompleteMutation(courseId ?? '')
 
   const lessons = lessonsQuery.data ?? []
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)

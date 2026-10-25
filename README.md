@@ -180,8 +180,8 @@ in Ticket #3 land (blocked, see `TODO.md`) — goes through
   argument (`ApiQueryOptions` / `ApiMutationOptions` from `src/api/core/`)
   and forwards it, so call sites can pass `onSuccess`, `onError`,
   `enabled`, `select`, etc. Form hooks (`useRegisterForm`, …) stay in
-  `src/hooks/` and consume these. Migration is in progress — some hooks
-  still live in `src/hooks/` (see #54 and its follow-up).
+  `src/hooks/` and consume these. Every query/mutation in the app lives
+  under `src/api/` (#54, #55).
 
 - **Mutations declare `invalidateKeys`.** Any mutation that changes server
   state passes the query keys that should refetch afterward — don't
@@ -275,7 +275,7 @@ anywhere without prop-drilling). Route guards in `src/routes/`:
 - `<GuestOnlyRoute>` — redirects to `/dashboard` if there already is one
   (wraps `/login`)
 
-**`src/lib/api/auth.ts` / `auth.types.ts` are PROVISIONAL** — built from
+**`src/api/auth/service/auth.ts` / `src/api/auth/types.ts` are PROVISIONAL** — built from
 usual login/getMe/logout conventions and the SDS §4 `users` columns, not
 from SDS §6 (which we don't have — see `TODO.md`). The `User` shape and
 `{ user }` response envelope may not match the real backend; re-confirm
