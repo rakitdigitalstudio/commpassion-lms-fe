@@ -13,7 +13,12 @@
     "errors": {
       "generic": "Something went wrong. Please try again."
     },
-    "searchCourses": "Search courses..."
+    "searchCourses": "Search courses...",
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page"
+    }
   },
   "auth": {
     "comingSoon": {
@@ -157,7 +162,10 @@
     "searchPlaceholder": "Search by course title or instructors",
     "noResultsHeading": "No courses match “{{query}}”",
     "noResultsSubtext": "Try a different course title or instructor name.",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "searching": "Searching…",
+    "emptyHeading": "No courses yet",
+    "emptySubtext": "New courses are on their way. Check back soon."
   },
   "settings": {
     "title": "Settings",

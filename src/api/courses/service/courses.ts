@@ -1,6 +1,13 @@
-import type { Course, CourseDetail, StrapiCourse, StrapiLesson } from '@/api/courses/types'
+import type {
+  Course,
+  CourseDetail,
+  CourseListParams,
+  StrapiCourse,
+  StrapiLesson,
+} from '@/api/courses/types'
 import { API_ENDPOINTS, STRAPI_ENDPOINTS } from '@/api/core/endpoints'
 import { getApiData, strapiUrl } from '@/api/core/http'
+import type { Page, StrapiPagination } from '@/api/core/pagination'
 import type { UserCourseResponse } from '@/api/user/types'
 
 export class CourseNotFoundError extends Error {}
@@ -19,20 +26,44 @@ function toCourse(course: StrapiCourse): Course {
 }
 
 /**
- * The public catalog, read live from Strapi (public role — the backoffice
- * course controller already filters to published courses and strips
- * lesson video URLs for anonymous callers).
+ * One page of the public catalog, read live from Strapi (public role — the
+ * backoffice course controller already filters to published courses and
+ * strips lesson video URLs for anonymous callers). `search` is matched
+ * server-side, case-insensitively, against the title and the instructor's
+ * name; newest courses first so paging is stable.
  */
-export async function getCourses(): Promise<Course[]> {
-  const res = await fetch(`${strapiUrl(STRAPI_ENDPOINTS.courses)}?${COURSE_POPULATE}`)
+export async function getCourses({
+  search,
+  page,
+  pageSize,
+}: CourseListParams): Promise<Page<Course>> {
+  const params = new URLSearchParams({
+    'populate[0]': 'coverImage',
+    'populate[1]': 'instructor',
+    'sort[0]': 'createdAt:desc',
+    'pagination[page]': String(page),
+    'pagination[pageSize]': String(pageSize),
+  })
+
+  const term = search.trim()
+  if (term) {
+    params.set('filters[$or][0][title][$containsi]', term)
+    params.set('filters[$or][1][instructor][name][$containsi]', term)
+    params.set('filters[$or][2][instructor][nameWithTitle][$containsi]', term)
+  }
+
+  const res = await fetch(`${strapiUrl(STRAPI_ENDPOINTS.courses)}?${params}`)
 
   if (!res.ok) {
     throw new Error(`getCourses failed: ${res.status}`)
   }
 
-  const { data } = (await res.json()) as { data: StrapiCourse[] }
+  const { data, meta } = (await res.json()) as {
+    data: StrapiCourse[]
+    meta: { pagination: StrapiPagination }
+  }
 
-  return data.map(toCourse)
+  return { items: data.map(toCourse), ...meta.pagination }
 }
 
 /**

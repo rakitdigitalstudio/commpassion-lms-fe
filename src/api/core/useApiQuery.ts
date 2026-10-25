@@ -1,4 +1,9 @@
-import { useQuery, type QueryKey, type UseQueryOptions } from '@tanstack/react-query'
+import {
+  keepPreviousData as keepPreviousDataPlaceholder,
+  useQuery,
+  type QueryKey,
+  type UseQueryOptions,
+} from '@tanstack/react-query'
 
 /**
  * Options every domain query hook accepts and forwards (enabled, select,
@@ -10,6 +15,12 @@ export type ApiQueryOptions<TData, TKey extends QueryKey = QueryKey> = Omit<
 > & {
   /** Skip the global error toast — for screens that render the error themselves. */
   suppressErrorToast?: boolean
+  /**
+   * Keep showing the previous key's data while a new key loads (paging,
+   * searching) instead of dropping back to a loading state; the result's
+   * `isPlaceholderData` is true meanwhile.
+   */
+  keepPreviousData?: boolean
 }
 
 /**
@@ -23,11 +34,12 @@ export type ApiQueryOptions<TData, TKey extends QueryKey = QueryKey> = Omit<
 export function useApiQuery<TData, TKey extends QueryKey = QueryKey>(
   queryKey: TKey,
   queryFn: () => Promise<TData>,
-  { suppressErrorToast, ...options }: ApiQueryOptions<TData, TKey> = {},
+  { suppressErrorToast, keepPreviousData, ...options }: ApiQueryOptions<TData, TKey> = {},
 ) {
   return useQuery({
     queryKey,
     queryFn,
+    ...(keepPreviousData && { placeholderData: keepPreviousDataPlaceholder }),
     ...options,
     meta: { ...options.meta, suppressErrorToast },
   })

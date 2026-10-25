@@ -1,3 +1,5 @@
+import type { CourseListParams } from '@/api/courses/types'
+
 /**
  * Every segment a query key is built from. Enum-like for the same reason
  * as HTTP_METHOD (src/api/core/endpoints.ts): tsconfig's
@@ -39,7 +41,10 @@ export const queryKeys = {
   me: () => [...queryKeys.auth(), QUERY_KEY.ME] as const,
 
   courses: () => [...queryKeys.all, QUERY_KEY.COURSES] as const,
-  courseList: () => [...queryKeys.courses(), QUERY_KEY.LIST] as const,
+  courseList: (params?: CourseListParams) =>
+    params
+      ? ([...queryKeys.courses(), QUERY_KEY.LIST, params] as const)
+      : ([...queryKeys.courses(), QUERY_KEY.LIST] as const),
   course: (courseId: string) => [...queryKeys.courses(), courseId] as const,
   lessons: (courseId: string) => [...queryKeys.course(courseId), QUERY_KEY.LESSONS] as const,
   lessonVideo: (courseId: string, index: number) =>

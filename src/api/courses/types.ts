@@ -8,6 +8,14 @@ export interface Course {
   price: number
 }
 
+/** What /explore asks the catalog for. `search` matches title or instructor. */
+export interface CourseListParams {
+  search: string
+  /** 1-based. */
+  page: number
+  pageSize: number
+}
+
 export interface CourseDetail {
   courseId: string
   title: string
