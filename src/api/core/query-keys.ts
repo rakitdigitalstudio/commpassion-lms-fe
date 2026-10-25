@@ -1,4 +1,27 @@
 /**
+ * Every segment a query key is built from. Enum-like for the same reason
+ * as HTTP_METHOD (src/api/core/endpoints.ts): tsconfig's
+ * `erasableSyntaxOnly` disallows TS `enum`. Segments are reused across
+ * branches (e.g. COURSES for both the catalog and the user's courses) —
+ * the prefix before them is what keeps keys distinct.
+ */
+export const QUERY_KEY = {
+  API: 'api',
+  AUTH: 'auth',
+  ME: 'me',
+  COURSES: 'courses',
+  LIST: 'list',
+  LESSONS: 'lessons',
+  USER: 'user',
+  STATS: 'stats',
+  ACTIVITIES: 'activities',
+  CERTIFICATES: 'certificates',
+  SITE_CONFIG: 'site-config',
+} as const
+
+export type QueryKeySegment = (typeof QUERY_KEY)[keyof typeof QUERY_KEY]
+
+/**
  * Central query-key factory. Every useApiQuery call gets its key from here
  * instead of a hand-written array, so invalidation (useApiMutation's `invalidateKeys`,
  * useQueryCache's helpers) can't drift out of sync with the keys queries actually
@@ -9,21 +32,22 @@
  * per resource, params only on the leaf.
  */
 export const queryKeys = {
-  all: ['api'] as const,
+  all: [QUERY_KEY.API] as const,
 
-  auth: () => [...queryKeys.all, 'auth'] as const,
-  me: () => [...queryKeys.auth(), 'me'] as const,
+  auth: () => [...queryKeys.all, QUERY_KEY.AUTH] as const,
+  me: () => [...queryKeys.auth(), QUERY_KEY.ME] as const,
 
-  courses: () => [...queryKeys.all, 'courses'] as const,
-  courseList: () => [...queryKeys.courses(), 'list'] as const,
+  courses: () => [...queryKeys.all, QUERY_KEY.COURSES] as const,
+  courseList: () => [...queryKeys.courses(), QUERY_KEY.LIST] as const,
   course: (courseId: string) => [...queryKeys.courses(), courseId] as const,
-  lessons: (courseId: string) => [...queryKeys.course(courseId), 'lessons'] as const,
+  lessons: (courseId: string) => [...queryKeys.course(courseId), QUERY_KEY.LESSONS] as const,
 
-  userCourses: () => [...queryKeys.all, 'user', 'courses'] as const,
-  userStats: () => [...queryKeys.all, 'user', 'stats'] as const,
-  userActivities: () => [...queryKeys.all, 'user', 'activities'] as const,
+  user: () => [...queryKeys.all, QUERY_KEY.USER] as const,
+  userCourses: () => [...queryKeys.user(), QUERY_KEY.COURSES] as const,
+  userStats: () => [...queryKeys.user(), QUERY_KEY.STATS] as const,
+  userActivities: () => [...queryKeys.user(), QUERY_KEY.ACTIVITIES] as const,
 
-  certificates: () => [...queryKeys.all, 'certificates'] as const,
+  certificates: () => [...queryKeys.all, QUERY_KEY.CERTIFICATES] as const,
 
-  siteConfig: () => [...queryKeys.all, 'site-config'] as const,
+  siteConfig: () => [...queryKeys.all, QUERY_KEY.SITE_CONFIG] as const,
 }
