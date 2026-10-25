@@ -12,7 +12,8 @@
     },
     "errors": {
       "generic": "Terjadi kesalahan. Silakan coba lagi."
-    }
+    },
+    "searchCourses": "Cari kursus..."
   },
   "auth": {
     "comingSoon": {
@@ -154,7 +155,9 @@
     "title": "Jelajahi Kursus Online",
     "subtitle": "Temukan kursus pilihan dari instruktur kelas atas.",
     "searchPlaceholder": "Cari berdasarkan judul kursus atau instruktur",
-    "mostPopular": "Paling Populer"
+    "noResultsHeading": "Tidak ada kursus yang cocok dengan “{{query}}”",
+    "noResultsSubtext": "Coba judul kursus atau nama instruktur lain.",
+    "clearSearch": "Hapus pencarian"
   },
   "settings": {
     "title": "Pengaturan",

@@ -12,7 +12,8 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
-    }
+    },
+    "searchCourses": "Search courses..."
   },
   "auth": {
     "comingSoon": {
@@ -154,7 +155,9 @@
     "title": "Explore Online Courses",
     "subtitle": "Discover curated courses from top-class instructors.",
     "searchPlaceholder": "Search by course title or instructors",
-    "mostPopular": "Most Popular"
+    "noResultsHeading": "No courses match “{{query}}”",
+    "noResultsSubtext": "Try a different course title or instructor name.",
+    "clearSearch": "Clear search"
   },
   "settings": {
     "title": "Settings",
