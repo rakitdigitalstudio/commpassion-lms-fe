@@ -12,6 +12,12 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    },
+    "searchCourses": "Search courses...",
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page"
     }
   },
   "auth": {
@@ -25,14 +31,8 @@
       "headlineLead": "Lead to",
       "headlineInspire": "Inspire",
       "subtitle": "Join thousands of learners transforming how they connect, communicate, and lead.",
-      "stats": {
-        "voices": "Voices Empowered",
-        "experiences": "Learning Experiences",
-        "partnerships": "Trusted Partnerships"
-      },
       "featuredCourse": "Featured Course",
-      "courseTitle": "How to Be A Great MC",
-      "courseMeta": "By Indra Herlambang • 12 Video Modules"
+      "byInstructor": "By {{name}}"
     },
     "login": {
       "heading": "Sign in to your account",
@@ -101,20 +101,13 @@
     "subtitle": "Here's what's happening with your learning today.",
     "stats": {
       "learningList": "My Learning List",
-      "skillsUnlocked": "Skills Unlocked",
-      "hoursLearned": "Hours Learned",
-      "certificates": "My Certificates"
-    },
-    "introVideo": {
-      "title": "Introduction Video",
-      "badge": "Recommended for New Learners",
-      "description": "Get direct guidance on interactive learning, and a warm welcome from our professional instructors.",
-      "show": "Show Video",
-      "hide": "Hide Video"
+      "certificates": "My Certificates",
+      "certificatesInReview": "Certificates In Review"
     },
     "learningProgress": "Learning Progress",
     "viewAll": "View All",
     "recentActivity": "Recent Activity",
+    "noActivity": "No activity yet.",
     "courseProgress": "Course Progress",
     "emptyHeading": "Your learning journey starts here",
     "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
@@ -128,12 +121,17 @@
     "stats": {
       "learningList": "My Learning List",
       "inProgress": "Learning In Progress",
-      "skillsUnlocked": "Skills Unlocked"
+      "completed": "Completed"
     },
     "filters": {
       "all": "All Courses",
       "inProgress": "In Progress",
       "completed": "Completed"
+    },
+    "cta": {
+      "start": "Start Course",
+      "continue": "Continue Course",
+      "viewCertificate": "View Certificate"
     },
     "emptyHeading": "Your learning journey starts here",
     "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
@@ -156,7 +154,12 @@
     "title": "Explore Online Courses",
     "subtitle": "Discover curated courses from top-class instructors.",
     "searchPlaceholder": "Search by course title or instructors",
-    "mostPopular": "Most Popular"
+    "noResultsHeading": "No courses match “{{query}}”",
+    "noResultsSubtext": "Try a different course title or instructor name.",
+    "clearSearch": "Clear search",
+    "searching": "Searching…",
+    "emptyHeading": "No courses yet",
+    "emptySubtext": "New courses are on their way. Check back soon."
   },
   "settings": {
     "title": "Settings",

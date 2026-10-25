@@ -24,7 +24,7 @@ export function CourseCoverImage({
   bannerClassName,
 }: CourseCoverImageProps) {
   if (imageSrc) {
-    // aspect-[4/3] matches the stub cover art's native ratio — unlike a
+    // aspect-[4/3] matches the course cover art's native ratio — unlike a
     // fixed h-52 + w-full, the crop framing doesn't shift (cropping out the
     // banner's logo/caption text) as the card's width changes with the
     // viewport; it just scales.
@@ -50,23 +50,15 @@ export function CourseCoverImage({
 interface CourseStatsRowProps {
   moduleCount: number
   completedModules: number
-  durationLabel: string
 }
 
-export function CourseStatsRow({
-  moduleCount,
-  completedModules,
-  durationLabel,
-}: CourseStatsRowProps) {
+export function CourseStatsRow({ moduleCount, completedModules }: CourseStatsRowProps) {
   return (
     <>
       <hr className="w-full border-border" />
-      <div className="flex w-full items-center justify-between text-sm text-muted">
-        <span>
-          {completedModules}/{moduleCount} Module Videos
-        </span>
-        <span>{durationLabel}</span>
-      </div>
+      <p className="w-full text-sm text-muted">
+        {completedModules}/{moduleCount} Module Videos
+      </p>
     </>
   )
 }

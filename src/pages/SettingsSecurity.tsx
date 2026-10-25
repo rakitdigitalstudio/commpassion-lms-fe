@@ -7,8 +7,8 @@ import { SectionCard } from '@/components/SectionCard'
 import { passwordRules } from '@/lib/password-rules'
 
 /**
- * Settings > Security tab content (Ticket #28). No `changePassword()` API
- * exists yet (blocked on SDS §6, see STUBBED_DATA.md), so "Save Changes"
+ * Settings > Security tab content (Ticket #28). The Golang API has no
+ * change-password endpoint (see STUBBED_DATA.md), so "Save Changes"
  * doesn't persist anything — the password-rules checklist is still fully
  * live against local state, reusing the same `passwordRules` list as
  * Register/ResetPassword.

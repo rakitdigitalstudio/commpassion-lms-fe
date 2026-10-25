@@ -2,32 +2,45 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 
+import { useGetUserCoursesQuery } from '@/api/user/queries/useGetUserCoursesQuery'
 import { Button } from '@/components/Button'
 import { CourseCard } from '@/components/CourseCard'
 import { EmptyState } from '@/components/EmptyState'
 import { FilterChip } from '@/components/FilterChip'
+import { FullPageLoader } from '@/components/FullPageLoader'
 import { InboxIcon, PlusIcon } from '@/components/icons'
 import { PageHeader } from '@/components/PageHeader'
 import { StatCard } from '@/components/StatCard'
-import { purchasedCourses } from '@/lib/stub-data/purchases'
+import type { CourseProgressStatus } from '@/api/user/types'
 
 type Filter = 'all' | 'in-progress' | 'completed'
+
+const CTA_LABEL_KEYS: Record<CourseProgressStatus, string> = {
+  'not-started': 'purchases.cta.start',
+  'in-progress': 'purchases.cta.continue',
+  completed: 'purchases.cta.viewCertificate',
+}
 
 export function Purchases() {
   const [filter, setFilter] = useState<Filter>('all')
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { data: purchasedCourses = [], isLoading } = useGetUserCoursesQuery()
 
   const inProgressCount = purchasedCourses.filter((c) => c.status === 'in-progress').length
   const completedCount = purchasedCourses.filter((c) => c.status === 'completed').length
-  const skillsUnlocked = completedCount
 
   const visibleCourses = useMemo(() => {
     if (filter === 'all') return purchasedCourses
     return purchasedCourses.filter((course) => course.status === filter)
-  }, [filter])
+  }, [filter, purchasedCourses])
 
   const hasCourses = purchasedCourses.length > 0
+
+  // Without this, the empty state would flash before the courses load.
+  if (isLoading) {
+    return <FullPageLoader />
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,8 +77,8 @@ export function Purchases() {
           className="flex-1"
         />
         <StatCard
-          label={t('purchases.stats.skillsUnlocked')}
-          value={skillsUnlocked}
+          label={t('purchases.stats.completed')}
+          value={completedCount}
           color="success"
           icon={<span className="text-4xl">🏆</span>}
           className="flex-1"
@@ -104,12 +117,11 @@ export function Purchases() {
                 title={course.title}
                 instructorName={course.instructorName}
                 imageSrc={course.imageSrc}
-                moduleCount={course.moduleCount}
-                completedModules={course.completedModules}
-                durationLabel={course.durationLabel}
+                moduleCount={course.totalLessons}
+                completedModules={course.completedLessons}
                 status={course.status}
                 progress={course.progress}
-                ctaLabel={course.ctaLabel}
+                ctaLabel={t(CTA_LABEL_KEYS[course.status])}
                 // Routes every CTA (Continue/Start/View Certificate) to the
                 // course detail page — no dedicated certificate page exists
                 // yet, so "View Certificate" lands there too for now.

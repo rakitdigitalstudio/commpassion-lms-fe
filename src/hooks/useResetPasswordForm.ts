@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { useResetPasswordMutation } from '@/api/auth/mutations/useResetPasswordMutation'
+import { InvalidResetTokenError } from '@/api/auth/service/auth'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
-import { InvalidResetTokenError, resetPassword } from '@/api/auth/service/auth'
 import { isPasswordValid } from '@/lib/password-rules'
 
 export function useResetPasswordForm() {
@@ -17,6 +18,7 @@ export function useResetPasswordForm() {
 
   const passwordVisibility = usePasswordVisibility()
   const confirmPasswordVisibility = usePasswordVisibility()
+  const { mutateAsync: handleResetPassword } = useResetPasswordMutation()
 
   const {
     run: submitReset,
@@ -27,7 +29,7 @@ export function useResetPasswordForm() {
       if (!token) {
         throw new InvalidResetTokenError('Missing reset token')
       }
-      await resetPassword({ token, password })
+      await handleResetPassword({ token, password })
       setIsSuccess(true)
     },
     (submitError) =>

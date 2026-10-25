@@ -12,6 +12,12 @@
     },
     "errors": {
       "generic": "Terjadi kesalahan. Silakan coba lagi."
+    },
+    "searchCourses": "Cari kursus...",
+    "pagination": {
+      "label": "Navigasi halaman",
+      "previous": "Halaman sebelumnya",
+      "next": "Halaman berikutnya"
     }
   },
   "auth": {
@@ -25,14 +31,8 @@
       "headlineLead": "Memimpin untuk",
       "headlineInspire": "Menginspirasi",
       "subtitle": "Bergabunglah dengan ribuan peserta yang mengubah cara mereka terhubung, berkomunikasi, dan memimpin.",
-      "stats": {
-        "voices": "Suara Diberdayakan",
-        "experiences": "Pengalaman Belajar",
-        "partnerships": "Mitra Terpercaya"
-      },
       "featuredCourse": "Kursus Unggulan",
-      "courseTitle": "How to Be A Great MC",
-      "courseMeta": "Oleh Indra Herlambang • 12 Video Modul"
+      "byInstructor": "Oleh {{name}}"
     },
     "login": {
       "heading": "Masuk ke akun Anda",
@@ -101,20 +101,13 @@
     "subtitle": "Berikut yang terjadi dengan pembelajaran Anda hari ini.",
     "stats": {
       "learningList": "Daftar Belajar Saya",
-      "skillsUnlocked": "Keterampilan Terbuka",
-      "hoursLearned": "Jam Belajar",
-      "certificates": "Sertifikat Saya"
-    },
-    "introVideo": {
-      "title": "Video Perkenalan",
-      "badge": "Direkomendasikan untuk Pelajar Baru",
-      "description": "Dapatkan panduan langsung tentang pembelajaran interaktif, dan sambutan hangat dari instruktur profesional kami.",
-      "show": "Tampilkan Video",
-      "hide": "Sembunyikan Video"
+      "certificates": "Sertifikat Saya",
+      "certificatesInReview": "Sertifikat Sedang Ditinjau"
     },
     "learningProgress": "Progres Belajar",
     "viewAll": "Lihat Semua",
     "recentActivity": "Aktivitas Terbaru",
+    "noActivity": "Belum ada aktivitas.",
     "courseProgress": "Progres Kursus",
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
@@ -128,12 +121,17 @@
     "stats": {
       "learningList": "Daftar Belajar Saya",
       "inProgress": "Belajar Sedang Berlangsung",
-      "skillsUnlocked": "Keterampilan Terbuka"
+      "completed": "Selesai"
     },
     "filters": {
       "all": "Semua Kursus",
       "inProgress": "Sedang Berlangsung",
       "completed": "Selesai"
+    },
+    "cta": {
+      "start": "Mulai Kursus",
+      "continue": "Lanjutkan Kursus",
+      "viewCertificate": "Lihat Sertifikat"
     },
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
@@ -156,7 +154,12 @@
     "title": "Jelajahi Kursus Online",
     "subtitle": "Temukan kursus pilihan dari instruktur kelas atas.",
     "searchPlaceholder": "Cari berdasarkan judul kursus atau instruktur",
-    "mostPopular": "Paling Populer"
+    "noResultsHeading": "Tidak ada kursus yang cocok dengan “{{query}}”",
+    "noResultsSubtext": "Coba judul kursus atau nama instruktur lain.",
+    "clearSearch": "Hapus pencarian",
+    "searching": "Mencari…",
+    "emptyHeading": "Belum ada kursus",
+    "emptySubtext": "Kursus baru sedang disiapkan. Kunjungi lagi nanti."
   },
   "settings": {
     "title": "Pengaturan",

@@ -7,8 +7,7 @@ import { useUserAuthenticationContext } from '@/context/UserAuthenticationContex
 
 /**
  * Settings > Profile tab content (Ticket #27). Inputs are local-only —
- * no `getProfile()`/`updateProfile()` API exists yet (blocked on SDS §6,
- * same as everywhere else — see STUBBED_DATA.md), so "Save Changes"
+ * the Golang API has no profile endpoint (see STUBBED_DATA.md), so "Save Changes"
  * doesn't persist anything. Prefilled fields are limited to what the
  * real auth session already has (fullName); the rest match the Figma's
  * empty-placeholder state.

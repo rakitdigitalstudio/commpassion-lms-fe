@@ -1,7 +1,10 @@
 import { useTranslation } from 'react-i18next'
 
-import courseImage from '@/assets/course-placeholder-mc.png'
-import { Progress } from '@/components/Progress'
+import { useGetCoursesQuery } from '@/api/courses/queries/useGetCoursesQuery'
+import { useGetSiteConfigQuery } from '@/api/site-config/queries/useGetSiteConfigQuery'
+
+/** The newest course in the catalog — the same first item Explore shows. */
+const FEATURED_COURSE_PARAMS = { search: '', page: 1, pageSize: 1 }
 
 interface PromoStatProps {
   value: string
@@ -17,16 +20,29 @@ function PromoStat({ value, label }: PromoStatProps) {
   )
 }
 
+/** "5000" → "5000+" as in the design; counts the editor already suffixed are left alone. */
+function formatAchievementCount(count: string): string {
+  const trimmed = count.trim()
+  return trimmed.endsWith('+') ? trimmed : `${trimmed}+`
+}
+
 /**
  * Promo panel shared by Login, Register, and Forgot Password (right box
- * of AuthLayout). Copy/stats are hardcoded per the mockup — Ticket #9
- * flags this exact question ("confirm with Irene whether this is
- * hardcoded or should eventually come from Strapi site_config") —
- * unresolved, see TODO.md. The course image (565x424 in Figma) is the
- * placeholder photo provided in Ticket #41, not final course artwork.
+ * of AuthLayout). The headline is app copy (i18n); the stats are Strapi
+ * Site Config `achievements` and the featured course is the catalog's
+ * first course. Either section is simply left out while loading, if
+ * Strapi is unreachable, or if there's nothing to show — a sign-in page
+ * shouldn't toast or block on marketing content.
  */
 export function AuthPromoPanel() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const { data: siteConfig } = useGetSiteConfigQuery(i18n.language, { suppressErrorToast: true })
+  const { data: featured } = useGetCoursesQuery(FEATURED_COURSE_PARAMS, {
+    suppressErrorToast: true,
+  })
+
+  const achievements = siteConfig?.achievements ?? []
+  const course = featured?.items[0]
 
   return (
     <div className="hidden items-center lg:flex">
@@ -40,28 +56,38 @@ export function AuthPromoPanel() {
         </h2>
         <p className="mt-4 max-w-md opacity-90">{t('auth.promo.subtitle')}</p>
 
-        <div className="mt-8 flex gap-8">
-          <PromoStat value="5000+" label={t('auth.promo.stats.voices')} />
-          <PromoStat value="150+" label={t('auth.promo.stats.experiences')} />
-          <PromoStat value="50+" label={t('auth.promo.stats.partnerships')} />
-        </div>
-
-        <div className="mt-8 overflow-hidden rounded-card shadow-promo">
-          <div className="relative aspect-[565/424]">
-            <img src={courseImage} alt="" className="h-full w-full object-cover" />
-            <span className="bg-accent text-foreground absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-semibold">
-              {t('auth.promo.featuredCourse')}
-            </span>
+        {achievements.length > 0 ? (
+          <div className="mt-8 flex gap-8">
+            {achievements.map((achievement) => (
+              <PromoStat
+                key={achievement.title}
+                value={formatAchievementCount(achievement.count)}
+                label={achievement.title}
+              />
+            ))}
           </div>
-          <div className="bg-primary p-4">
-            <p className="font-semibold">{t('auth.promo.courseTitle')}</p>
-            <p className="text-sm opacity-90">{t('auth.promo.courseMeta')}</p>
-            <div className="mt-3 flex items-center gap-3">
-              <Progress value={20} color="#078CB580" className="flex-1" />
-              <span className="text-xs opacity-90">20%</span>
+        ) : null}
+
+        {course ? (
+          <div className="mt-8 overflow-hidden rounded-card shadow-promo">
+            <div className="relative aspect-[565/424] bg-primary/40">
+              {course.imageSrc ? (
+                <img src={course.imageSrc} alt="" className="h-full w-full object-cover" />
+              ) : null}
+              <span className="bg-accent text-foreground absolute top-4 left-4 rounded-full px-3 py-1 text-xs font-semibold">
+                {t('auth.promo.featuredCourse')}
+              </span>
+            </div>
+            <div className="bg-primary p-4">
+              <p className="font-semibold">{course.title}</p>
+              {course.instructorName ? (
+                <p className="text-sm opacity-90">
+                  {t('auth.promo.byInstructor', { name: course.instructorName })}
+                </p>
+              ) : null}
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   )

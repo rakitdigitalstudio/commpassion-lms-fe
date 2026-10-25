@@ -1,6 +1,6 @@
-import { useGetUserDataQuery } from '@/hooks/useGetUserDataQuery'
-import { useLoginMutation } from '@/hooks/useLoginMutation'
-import { useLogoutMutation } from '@/hooks/useLogoutMutation'
+import { useLoginMutation } from '@/api/auth/mutations/useLoginMutation'
+import { useLogoutMutation } from '@/api/auth/mutations/useLogoutMutation'
+import { useGetUserDataQuery } from '@/api/auth/queries/useGetUserDataQuery'
 import type { LoginPayload, User } from '@/api/auth/types'
 
 export interface UserAuthenticationValue {

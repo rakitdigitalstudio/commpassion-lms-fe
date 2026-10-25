@@ -1,40 +1,53 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+import { useGetUserActivitiesQuery } from '@/api/user/queries/useGetUserActivitiesQuery'
+import { useGetUserCoursesQuery } from '@/api/user/queries/useGetUserCoursesQuery'
+import { useGetUserStatsQuery } from '@/api/user/queries/useGetUserStatsQuery'
 import { ActivityItem } from '@/components/ActivityItem'
 import { Button } from '@/components/Button'
 import { EmptyState } from '@/components/EmptyState'
+import { FullPageLoader } from '@/components/FullPageLoader'
 import { InboxIcon } from '@/components/icons'
-import { IntroductionVideoCard } from '@/components/IntroductionVideoCard'
 import { PageHeader } from '@/components/PageHeader'
 import { Progress } from '@/components/Progress'
 import { SectionCard } from '@/components/SectionCard'
 import { StatCard } from '@/components/StatCard'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
-import {
-  existingUserStats,
-  learningProgress,
-  newUserStatLabels,
-  recentActivity,
-} from '@/lib/stub-data/dashboard'
-import { siteConfig } from '@/lib/stub-data/site-config'
+import { formatTimeAgo } from '@/lib/format-time'
+
+/** Decorative per-row rotation for Learning Progress (not a Status). */
+const PROGRESS_COLORS = ['var(--color-primary)', 'var(--color-warning)', 'var(--color-success)']
+
+/** Recent Activity dot per activity type; unknown types fall back to warning. */
+const ACTIVITY_COLORS: Record<string, string> = {
+  enrolled: 'var(--color-primary)',
+  purchased: 'var(--color-success)',
+}
 
 /**
- * `isNewUser` comes from the authenticated user record itself (see
- * useUserAuthentication / STUBBED_DATA.md) — not a URL toggle. The mock
- * backend sets it true for a freshly registered account and false for the
- * seeded demo login, so both Figma states are reachable through the real
- * register -> login flow.
+ * A learner with no enrollments sees the New User state (Figma's empty
+ * state) — decided from /user/stats, so it holds for every real account.
  */
 export function Dashboard() {
   const { user } = useUserAuthenticationContext()
-  const { t } = useTranslation()
-  const isNewUser = user?.isNewUser ?? false
+  const { t, i18n } = useTranslation()
   const firstName = user?.fullName.split(' ')[0] ?? ''
 
-  // Stat labels/course/activity content are stub *data* (stand-ins for a
-  // future API response, see STUBBED_DATA.md) rather than app copy, so
-  // they aren't run through i18n like the surrounding chrome is.
+  const { data: stats, isLoading: isStatsLoading } = useGetUserStatsQuery()
+  const isNewUser = stats?.coursesEnrolled === 0
+
+  // A new user has nothing to list yet, so skip those requests entirely.
+  const enabled = stats !== undefined && !isNewUser
+  const { data: courses = [], isLoading: isCoursesLoading } = useGetUserCoursesQuery({ enabled })
+  const { data: activities = [], isLoading: isActivitiesLoading } = useGetUserActivitiesQuery({
+    enabled,
+  })
+
+  if (isStatsLoading || isCoursesLoading || isActivitiesLoading) {
+    return <FullPageLoader />
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -45,27 +58,28 @@ export function Dashboard() {
       />
 
       <div className="flex gap-5">
-        {isNewUser
-          ? newUserStatLabels.map((label) => (
-              <StatCard key={label} label={label} value={0} muted className="flex-1" />
-            ))
-          : existingUserStats.map((stat) => (
-              <StatCard
-                key={stat.label}
-                label={stat.label}
-                value={stat.value}
-                color={stat.color}
-                helperText={stat.helperText}
-                className="flex-1"
-              />
-            ))}
+        <StatCard
+          label={t('dashboard.stats.learningList')}
+          value={stats?.coursesEnrolled ?? 0}
+          color="primary"
+          muted={isNewUser}
+          className="flex-1"
+        />
+        <StatCard
+          label={t('dashboard.stats.certificates')}
+          value={stats?.certificatesCount ?? 0}
+          color="highlight"
+          muted={isNewUser}
+          className="flex-1"
+        />
+        <StatCard
+          label={t('dashboard.stats.certificatesInReview')}
+          value={stats?.certificatesInReview ?? 0}
+          color="warning"
+          muted={isNewUser}
+          className="flex-1"
+        />
       </div>
-
-      <IntroductionVideoCard
-        videoSrc={siteConfig.introVideo.videoSrc}
-        posterSrc={siteConfig.introVideo.posterSrc}
-        defaultOpen={isNewUser}
-      />
 
       {isNewUser ? (
         <SectionCard title={t('dashboard.courseProgress')}>
@@ -98,30 +112,38 @@ export function Dashboard() {
             className="flex-1"
           >
             <div className="flex flex-col gap-4">
-              {learningProgress.map((item) => (
-                <div key={item.title} className="flex flex-col gap-3">
-                  <div className="flex items-start justify-between gap-2 text-sm">
-                    <span className="font-medium">{item.title}</span>
-                    <span className="font-bold" style={{ color: item.color }}>
-                      {item.progress}%
-                    </span>
+              {courses.map((course, index) => {
+                const color = PROGRESS_COLORS[index % PROGRESS_COLORS.length]
+
+                return (
+                  <div key={course.courseId} className="flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-2 text-sm">
+                      <span className="font-medium">{course.title}</span>
+                      <span className="font-bold" style={{ color }}>
+                        {course.progress}%
+                      </span>
+                    </div>
+                    <Progress value={course.progress} color={color} />
                   </div>
-                  <Progress value={item.progress} color={item.color} />
-                </div>
-              ))}
+                )
+              })}
             </div>
           </SectionCard>
 
           <SectionCard title={t('dashboard.recentActivity')} className="flex-1">
             <div className="flex flex-col gap-4">
-              {recentActivity.map((activity) => (
-                <ActivityItem
-                  key={activity.description}
-                  description={activity.description}
-                  timeAgo={activity.timeAgo}
-                  dotColor={activity.dotColor}
-                />
-              ))}
+              {activities.length === 0 ? (
+                <p className="text-sm text-muted">{t('dashboard.noActivity')}</p>
+              ) : (
+                activities.map((activity) => (
+                  <ActivityItem
+                    key={activity.id}
+                    description={activity.description}
+                    timeAgo={formatTimeAgo(activity.timestamp, i18n.language)}
+                    dotColor={ACTIVITY_COLORS[activity.type] ?? 'var(--color-warning)'}
+                  />
+                ))
+              )}
             </div>
           </SectionCard>
         </div>
