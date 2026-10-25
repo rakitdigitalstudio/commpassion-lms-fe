@@ -2,7 +2,7 @@ import { CheckCircleIcon, PlayIcon } from '@/components/icons'
 
 interface CourseModuleItemProps {
   title: string
-  subtitle: string
+  subtitle?: string
   /** Whether this lesson has been marked done — drives the check-circle vs. play icon. */
   completed: boolean
   /** Whether this is the lesson currently loaded in the player — drives the highlight background. */
@@ -41,7 +41,7 @@ export function CourseModuleItem({
         )}
         {title}
       </span>
-      <span className="pl-8 text-xs text-muted">{subtitle}</span>
+      {subtitle ? <span className="pl-8 text-xs text-muted">{subtitle}</span> : null}
     </button>
   )
 }

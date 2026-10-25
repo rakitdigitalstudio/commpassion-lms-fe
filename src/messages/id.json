@@ -101,20 +101,13 @@
     "subtitle": "Berikut yang terjadi dengan pembelajaran Anda hari ini.",
     "stats": {
       "learningList": "Daftar Belajar Saya",
-      "skillsUnlocked": "Keterampilan Terbuka",
-      "hoursLearned": "Jam Belajar",
-      "certificates": "Sertifikat Saya"
-    },
-    "introVideo": {
-      "title": "Video Perkenalan",
-      "badge": "Direkomendasikan untuk Pelajar Baru",
-      "description": "Dapatkan panduan langsung tentang pembelajaran interaktif, dan sambutan hangat dari instruktur profesional kami.",
-      "show": "Tampilkan Video",
-      "hide": "Sembunyikan Video"
+      "certificates": "Sertifikat Saya",
+      "certificatesInReview": "Sertifikat Sedang Ditinjau"
     },
     "learningProgress": "Progres Belajar",
     "viewAll": "Lihat Semua",
     "recentActivity": "Aktivitas Terbaru",
+    "noActivity": "Belum ada aktivitas.",
     "courseProgress": "Progres Kursus",
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
@@ -128,12 +121,17 @@
     "stats": {
       "learningList": "Daftar Belajar Saya",
       "inProgress": "Belajar Sedang Berlangsung",
-      "skillsUnlocked": "Keterampilan Terbuka"
+      "completed": "Selesai"
     },
     "filters": {
       "all": "Semua Kursus",
       "inProgress": "Sedang Berlangsung",
       "completed": "Selesai"
+    },
+    "cta": {
+      "start": "Mulai Kursus",
+      "continue": "Lanjutkan Kursus",
+      "viewCertificate": "Lihat Sertifikat"
     },
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",

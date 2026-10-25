@@ -15,6 +15,20 @@ export const API_ENDPOINTS = {
     forgotPassword: '/api/v1/auth/forgot-password',
     resetPassword: '/api/v1/auth/reset-password',
   },
+  user: {
+    courses: '/api/v1/user/courses',
+    stats: '/api/v1/user/stats',
+    activities: '/api/v1/user/activities',
+    courseProgress: (courseId: string) =>
+      `/api/v1/user/courses/${encodeURIComponent(courseId)}/progress`,
+    completeLesson: (courseId: string, lessonKey: string) =>
+      `/api/v1/user/courses/${encodeURIComponent(courseId)}/lessons/${encodeURIComponent(lessonKey)}/complete`,
+  },
+  courses: {
+    /** Enrolled-only: the one place a lesson's video URL is served. */
+    lesson: (courseId: string, index: number) =>
+      `/api/v1/courses/${encodeURIComponent(courseId)}/lessons/${index}`,
+  },
 } as const
 
 /** Strapi (commpassion-backoffice) content API paths — see strapiUrl(). */

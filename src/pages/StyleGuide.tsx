@@ -118,20 +118,10 @@ export function StyleGuide() {
       <section>
         <h2 className="text-h2 font-semibold mb-4">Stat cards</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard label="My Learning List" value={8} color="primary" helperText="+1 this month" />
-          <StatCard
-            label="Skills Unlocked"
-            value={6}
-            color="accent"
-            helperText="75% completion rate"
-          />
-          <StatCard label="Hours Learned" value={40} color="success" helperText="+1 this month" />
-          <StatCard
-            label="My Certificates"
-            value={5}
-            color="highlight"
-            helperText="1 certificate in review"
-          />
+          <StatCard label="My Learning List" value={8} color="primary" />
+          <StatCard label="My Certificates" value={5} color="highlight" />
+          <StatCard label="Certificates In Review" value={1} color="warning" />
+          <StatCard label="My Learning List" value={0} muted />
         </div>
       </section>
 
@@ -146,7 +136,6 @@ export function StyleGuide() {
             bannerClassName="bg-indigo-600"
             completedModules={4}
             moduleCount={6}
-            durationLabel="18h 30m"
             status="in-progress"
             progress={60}
             ctaLabel="Continue Course"
@@ -159,7 +148,6 @@ export function StyleGuide() {
             bannerClassName="bg-pink-600"
             completedModules={6}
             moduleCount={6}
-            durationLabel="18h 30m"
             status="completed"
             progress={100}
             ctaLabel="View Certificate"
@@ -169,7 +157,6 @@ export function StyleGuide() {
             courseId="how-to-be-a-great-mc"
             title="How to Be A Great MC"
             instructorName="Indra Herlambang"
-            instructorRole="MC | TV Host | Writer"
             bannerClassName="bg-slate-700"
             price={499000}
           />

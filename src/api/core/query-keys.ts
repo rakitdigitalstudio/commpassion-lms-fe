@@ -12,6 +12,7 @@ export const QUERY_KEY = {
   COURSES: 'courses',
   LIST: 'list',
   LESSONS: 'lessons',
+  VIDEO: 'video',
   USER: 'user',
   STATS: 'stats',
   ACTIVITIES: 'activities',
@@ -41,6 +42,8 @@ export const queryKeys = {
   courseList: () => [...queryKeys.courses(), QUERY_KEY.LIST] as const,
   course: (courseId: string) => [...queryKeys.courses(), courseId] as const,
   lessons: (courseId: string) => [...queryKeys.course(courseId), QUERY_KEY.LESSONS] as const,
+  lessonVideo: (courseId: string, index: number) =>
+    [...queryKeys.lessons(courseId), QUERY_KEY.VIDEO, index] as const,
 
   user: () => [...queryKeys.all, QUERY_KEY.USER] as const,
   userCourses: () => [...queryKeys.user(), QUERY_KEY.COURSES] as const,

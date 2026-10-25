@@ -3,44 +3,63 @@ import { useState } from 'react'
 import { PlayIcon } from '@/components/icons'
 
 interface LessonVideoPlayerProps {
-  youtubeVideoId: string
+  /** Lesson `video_url` — undefined while it's still loading (play is disabled until then). */
+  videoUrl?: string
   /** Optional — Strapi courses can have no cover image. */
   posterSrc?: string
   posterAlt: string
 }
 
+/** YouTube watch/short/embed URL → video id; null for any other host. */
+function getYoutubeVideoId(url: string): string | null {
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/,
+  )
+
+  return match ? match[1] : null
+}
+
 /**
- * Poster + play overlay that swaps to an embedded YouTube player on click
- * (Ticket #24's "Embedded YouTube unlisted video player"). Re-mounts on
- * `youtubeVideoId` change so switching lessons always starts back at the
- * poster instead of leaving a stale iframe playing.
+ * Poster + play overlay that swaps to the lesson's video on click.
+ * `video_url` is whatever the backoffice stores: YouTube links are
+ * embedded, anything else (e.g. an .mp4 on the CDN) plays in a native
+ * <video>. Re-mounts on `videoUrl` change so switching lessons always
+ * starts back at the poster instead of leaving the old video playing.
  */
-export function LessonVideoPlayer({
-  youtubeVideoId,
-  posterSrc,
-  posterAlt,
-}: LessonVideoPlayerProps) {
+export function LessonVideoPlayer({ videoUrl, posterSrc, posterAlt }: LessonVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
-  if (playing) {
-    return (
+  if (playing && videoUrl) {
+    const youtubeVideoId = getYoutubeVideoId(videoUrl)
+
+    return youtubeVideoId ? (
       <iframe
-        key={youtubeVideoId}
+        key={videoUrl}
         className="aspect-video w-full rounded-2xl"
         src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`}
         title={posterAlt}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />
+    ) : (
+      <video
+        key={videoUrl}
+        className="aspect-video w-full rounded-2xl bg-black"
+        src={videoUrl}
+        title={posterAlt}
+        controls
+        autoPlay
+      />
     )
   }
 
   return (
     <button
-      key={youtubeVideoId}
+      key={videoUrl}
       type="button"
       onClick={() => setPlaying(true)}
-      // Matches the stub cover art's native 4:3 — unlike aspect-video, this
+      disabled={!videoUrl}
+      // Matches the cover art's native 4:3 — unlike aspect-video, this
       // doesn't crop the banner's logo/caption text, and stays a fixed
       // framing regardless of viewport width (see CourseCoverImage).
       className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted/20"

@@ -39,12 +39,10 @@ interface MockAccount {
   password: string
 }
 
-// Seeded mock account — an "existing" user with purchase history (see
-// src/lib/stub-data/), so logging in with it exercises the Dashboard's
-// populated state out of the box. Ticket #13: a fresh sign-up gets
-// is_new_user: true instead, so the New User dashboard is reachable via the
-// real register -> login flow rather than a URL toggle — see
-// STUBBED_DATA.md.
+// Seeded mock account for signing in without registering first. Mock
+// accounts never have enrollments (see the /user/* handlers below), so
+// every mock login sees the Dashboard's New User state; enrolled states
+// need the real API (README "Mocking (MSW)").
 const accounts = new Map<string, MockAccount>([
   [
     'marco.herbert@example.com',
@@ -55,7 +53,6 @@ const accounts = new Map<string, MockAccount>([
         email: 'marco.herbert@example.com',
         full_name: 'Marco Herbert',
         role: 'student',
-        is_new_user: false,
       },
     },
   ],
@@ -98,9 +95,7 @@ export const handlers: HttpHandler[] = [
   }),
 
   // Does NOT log the user in — matches register() not returning
-  // AuthResponse. 409 if the email is already "registered". Marked
-  // is_new_user: true so signing in with it afterward shows the
-  // Dashboard's New User state.
+  // AuthResponse. 409 if the email is already "registered".
   http.post(`*${API_ENDPOINTS.auth.register}`, async ({ request }) => {
     const body = (await request.json()) as Partial<RegisterRequest>
 
@@ -117,7 +112,6 @@ export const handlers: HttpHandler[] = [
       email: body.email,
       full_name: body.full_name,
       role: 'student',
-      is_new_user: true,
     }
     accounts.set(body.email, { password: body.password, user })
 
@@ -141,4 +135,15 @@ export const handlers: HttpHandler[] = [
 
     return okMessage('Password has been reset successfully')
   }),
+
+  // Learner data: no mock account is enrolled in anything, so these return
+  // the empty state rather than invented courses or numbers.
+  http.get(`*${API_ENDPOINTS.user.stats}`, () =>
+    ok(
+      { courses_enrolled: 0, certificates_count: 0, certificates_in_review: 0 },
+      'User statistics',
+    ),
+  ),
+  http.get(`*${API_ENDPOINTS.user.courses}`, () => ok([], 'User courses')),
+  http.get(`*${API_ENDPOINTS.user.activities}`, () => ok([], 'User activities')),
 ]

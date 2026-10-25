@@ -11,8 +11,15 @@ import { FullPageLoader } from '@/components/FullPageLoader'
 import { InboxIcon, PlusIcon } from '@/components/icons'
 import { PageHeader } from '@/components/PageHeader'
 import { StatCard } from '@/components/StatCard'
+import type { CourseProgressStatus } from '@/api/user/types'
 
 type Filter = 'all' | 'in-progress' | 'completed'
+
+const CTA_LABEL_KEYS: Record<CourseProgressStatus, string> = {
+  'not-started': 'purchases.cta.start',
+  'in-progress': 'purchases.cta.continue',
+  completed: 'purchases.cta.viewCertificate',
+}
 
 export function Purchases() {
   const [filter, setFilter] = useState<Filter>('all')
@@ -22,7 +29,6 @@ export function Purchases() {
 
   const inProgressCount = purchasedCourses.filter((c) => c.status === 'in-progress').length
   const completedCount = purchasedCourses.filter((c) => c.status === 'completed').length
-  const skillsUnlocked = completedCount
 
   const visibleCourses = useMemo(() => {
     if (filter === 'all') return purchasedCourses
@@ -71,8 +77,8 @@ export function Purchases() {
           className="flex-1"
         />
         <StatCard
-          label={t('purchases.stats.skillsUnlocked')}
-          value={skillsUnlocked}
+          label={t('purchases.stats.completed')}
+          value={completedCount}
           color="success"
           icon={<span className="text-4xl">🏆</span>}
           className="flex-1"
@@ -111,12 +117,11 @@ export function Purchases() {
                 title={course.title}
                 instructorName={course.instructorName}
                 imageSrc={course.imageSrc}
-                moduleCount={course.moduleCount}
-                completedModules={course.completedModules}
-                durationLabel={course.durationLabel}
+                moduleCount={course.totalLessons}
+                completedModules={course.completedLessons}
                 status={course.status}
                 progress={course.progress}
-                ctaLabel={course.ctaLabel}
+                ctaLabel={t(CTA_LABEL_KEYS[course.status])}
                 // Routes every CTA (Continue/Start/View Certificate) to the
                 // course detail page — no dedicated certificate page exists
                 // yet, so "View Certificate" lands there too for now.

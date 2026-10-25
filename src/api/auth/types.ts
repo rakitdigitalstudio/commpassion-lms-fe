@@ -8,13 +8,6 @@ export interface User {
   email: string
   fullName: string
   role: string
-  /**
-   * STUBBED (see STUBBED_DATA.md) — the Golang API has no such field yet,
-   * so it's false for every real account. Distinguishes the Dashboard's
-   * "New User"/"Existing User" Figma states. Only the MSW mock sends it
-   * (`is_new_user: true` for freshly registered accounts).
-   */
-  isNewUser: boolean
 }
 
 /** User as the Golang API sends it (internal/delivery/http/handler/user.go). */
@@ -23,8 +16,6 @@ export interface UserResponse {
   email: string
   full_name: string
   role: string
-  /** Mock-only, see User.isNewUser. */
-  is_new_user?: boolean
 }
 
 export interface LoginPayload {

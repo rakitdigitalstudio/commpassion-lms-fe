@@ -13,14 +13,19 @@ import { LessonVideoPlayer } from '@/components/LessonVideoPlayer'
 import { Progress } from '@/components/Progress'
 import { useGetCourseDetailQuery } from '@/api/courses/queries/useGetCourseDetailQuery'
 import { useMarkLessonCompleteMutation } from '@/api/lessons/mutations/useMarkLessonCompleteMutation'
+import { useGetLessonVideoQuery } from '@/api/lessons/queries/useGetLessonVideoQuery'
 import { useGetLessonsQuery } from '@/api/lessons/queries/useGetLessonsQuery'
+import { formatDuration } from '@/lib/format-time'
 
 export function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
   const { t } = useTranslation()
 
   const courseQuery = useGetCourseDetailQuery(courseId ?? '')
-  const lessonsQuery = useGetLessonsQuery(courseId ?? '')
+  const enrolled = courseQuery.data?.enrolled === true
+  // Lessons and videos are enrolled-only on the API, so don't ask before
+  // enrollment is confirmed.
+  const lessonsQuery = useGetLessonsQuery(courseId ?? '', { enabled: enrolled })
   const markComplete = useMarkLessonCompleteMutation(courseId ?? '')
 
   const lessons = lessonsQuery.data ?? []
@@ -32,8 +37,13 @@ export function CourseDetail() {
   // `lessons`, not independent state.
   const defaultLessonId = (lessons.find((lesson) => !lesson.completed) ?? lessons[0])?.id ?? null
   const effectiveLessonId = selectedLessonId ?? defaultLessonId
+  const selectedLesson = lessons.find((lesson) => lesson.id === effectiveLessonId)
 
-  if (courseQuery.isLoading || !courseId) {
+  const videoQuery = useGetLessonVideoQuery(courseId ?? '', selectedLesson?.index ?? 0, {
+    enabled: selectedLesson !== undefined,
+  })
+
+  if (courseQuery.isLoading || lessonsQuery.isLoading || !courseId) {
     return <FullPageLoader />
   }
 
@@ -89,16 +99,17 @@ export function CourseDetail() {
     )
   }
 
-  const selectedLesson = lessons.find((lesson) => lesson.id === effectiveLessonId)
   const completedCount = lessons.filter((lesson) => lesson.completed).length
-  const progressPercent = lessons.length === 0 ? 0 : Math.round((completedCount / lessons.length) * 100)
+  const progressPercent =
+    lessons.length === 0 ? 0 : Math.round((completedCount / lessons.length) * 100)
 
   const handleMarkAsDone = () => {
     if (!selectedLesson) return
 
     markComplete.mutate(selectedLesson.id, {
-      onSuccess: (updatedLessons) => {
-        const next = updatedLessons.find((lesson) => !lesson.completed)
+      onSuccess: (progress) => {
+        const finished = new Set(progress.finishedLessonKeys)
+        const next = lessons.find((lesson) => !finished.has(lesson.id))
         if (next) setSelectedLessonId(next.id)
       },
     })
@@ -130,7 +141,7 @@ export function CourseDetail() {
         <div className="flex flex-1 flex-col gap-5">
           {selectedLesson ? (
             <LessonVideoPlayer
-              youtubeVideoId={selectedLesson.youtubeVideoId}
+              videoUrl={videoQuery.data}
               posterSrc={course.imageSrc}
               posterAlt={selectedLesson.title}
             />
@@ -140,10 +151,15 @@ export function CourseDetail() {
             <Card className="flex items-center justify-between gap-6">
               <div>
                 <h2 className="text-h3 font-semibold">{selectedLesson.title}</h2>
-                <p className="text-sm">{selectedLesson.subtitle}</p>
-                <p className="mt-2 text-sm text-muted">
-                  {t('courseDetail.videoDuration')} <strong>{selectedLesson.durationLabel}</strong>
-                </p>
+                {selectedLesson.subtitle ? (
+                  <p className="text-sm">{selectedLesson.subtitle}</p>
+                ) : null}
+                {selectedLesson.durationSeconds ? (
+                  <p className="mt-2 text-sm text-muted">
+                    {t('courseDetail.videoDuration')}{' '}
+                    <strong>{formatDuration(selectedLesson.durationSeconds)}</strong>
+                  </p>
+                ) : null}
               </div>
               <Button
                 variant="accent"

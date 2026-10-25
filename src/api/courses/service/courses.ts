@@ -1,7 +1,7 @@
-import type { Course, CourseDetail, StrapiCourse } from '@/api/courses/types'
-import { STRAPI_ENDPOINTS } from '@/api/core/endpoints'
-import { strapiUrl } from '@/api/core/http'
-import { purchasedCourses } from '@/lib/stub-data/purchases'
+import type { Course, CourseDetail, StrapiCourse, StrapiLesson } from '@/api/courses/types'
+import { API_ENDPOINTS, STRAPI_ENDPOINTS } from '@/api/core/endpoints'
+import { getApiData, strapiUrl } from '@/api/core/http'
+import type { UserCourseResponse } from '@/api/user/types'
 
 export class CourseNotFoundError extends Error {}
 
@@ -12,7 +12,7 @@ function toCourse(course: StrapiCourse): Course {
   return {
     courseId: course.documentId,
     title: course.title,
-    instructorName: course.instructor?.name ?? '',
+    instructorName: course.instructor?.nameWithTitle || course.instructor?.name || '',
     imageSrc: course.coverImage ? strapiUrl(course.coverImage.url) : undefined,
     price: course.price ?? 0,
   }
@@ -36,34 +36,68 @@ export async function getCourses(): Promise<Course[]> {
 }
 
 /**
- * PROVISIONAL course-detail client. Course info comes from Strapi;
- * `enrolled` is still decided from the purchases stub (checked first, so
- * My Purchases' stub links keep working) until the Golang
- * /api/v1/user/courses query lands (#55). Call sites stay the same.
+ * Catalog entries for the given courseIds, keyed by courseId — used to
+ * decorate the Golang API's enrollment rows (which only carry id, title,
+ * status) with cover image and instructor. Unpublished or deleted courses
+ * are simply absent from the map.
  */
-export async function getCourseDetail(courseId: string): Promise<CourseDetail> {
-  const purchased = purchasedCourses.find((course) => course.courseId === courseId)
-  if (purchased) {
-    return {
-      courseId: purchased.courseId,
-      title: purchased.title,
-      instructorName: purchased.instructorName,
-      imageSrc: purchased.imageSrc,
-      enrolled: true,
-    }
+export async function getCoursesByIds(courseIds: string[]): Promise<Map<string, Course>> {
+  if (courseIds.length === 0) {
+    return new Map()
   }
 
-  const res = await fetch(`${strapiUrl(STRAPI_ENDPOINTS.course(courseId))}?${COURSE_POPULATE}`)
+  const filters = courseIds
+    .map((id, index) => `filters[documentId][$in][${index}]=${encodeURIComponent(id)}`)
+    .join('&')
+  const res = await fetch(
+    `${strapiUrl(STRAPI_ENDPOINTS.courses)}?${COURSE_POPULATE}&${filters}&pagination[pageSize]=${courseIds.length}`,
+  )
+
+  if (!res.ok) {
+    throw new Error(`getCoursesByIds failed: ${res.status}`)
+  }
+
+  const { data } = (await res.json()) as { data: StrapiCourse[] }
+
+  return new Map(data.map((course) => [course.documentId, toCourse(course)]))
+}
+
+async function fetchStrapiCourse(courseId: string, populate: string): Promise<StrapiCourse> {
+  const res = await fetch(`${strapiUrl(STRAPI_ENDPOINTS.course(courseId))}?${populate}`)
 
   if (res.status === 404) {
     throw new CourseNotFoundError(`No course found for id "${courseId}"`)
   }
 
   if (!res.ok) {
-    throw new Error(`getCourseDetail failed: ${res.status}`)
+    throw new Error(`Strapi course request failed: ${res.status}`)
   }
 
   const { data } = (await res.json()) as { data: StrapiCourse }
 
-  return { ...toCourse(data), enrolled: false }
+  return data
+}
+
+/**
+ * Course info from Strapi; `enrolled` from the learner's enrollments in
+ * the Golang API (Course Detail sits behind ProtectedRoute, so there's
+ * always a session).
+ */
+export async function getCourseDetail(courseId: string): Promise<CourseDetail> {
+  const [course, enrollments] = await Promise.all([
+    fetchStrapiCourse(courseId, COURSE_POPULATE),
+    getApiData<UserCourseResponse[]>(API_ENDPOINTS.user.courses),
+  ])
+
+  return {
+    ...toCourse(course),
+    enrolled: enrollments.some((enrollment) => enrollment.course_id === courseId),
+  }
+}
+
+/** The course's lessons in display order (Strapi), without video URLs. */
+export async function getCourseLessons(courseId: string): Promise<StrapiLesson[]> {
+  const course = await fetchStrapiCourse(courseId, 'populate[0]=lessons')
+
+  return course.lessons ?? []
 }

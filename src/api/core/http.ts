@@ -40,6 +40,29 @@ export const API_ERROR_CODE = {
 
 export type ApiErrorCode = (typeof API_ERROR_CODE)[keyof typeof API_ERROR_CODE]
 
+/** A non-2xx Golang API response, with its `error.code` when the body had one. */
+export class ApiError extends Error {
+  readonly status: number
+  readonly code: string | null
+
+  constructor(status: number, code: string | null) {
+    super(`API request failed: ${status}${code ? ` (${code})` : ''}`)
+    this.status = status
+    this.code = code
+  }
+}
+
+/** GETs a session-authenticated Golang endpoint and unwraps its `data`. */
+export async function getApiData<T>(path: string): Promise<T> {
+  const res = await fetch(apiUrl(path), { credentials: 'include' })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await readErrorCode(res))
+  }
+
+  return readData<T>(res)
+}
+
 /** Unwraps the `{ data, message }` envelope of a successful response. */
 export async function readData<T>(res: Response): Promise<T> {
   const { data } = (await res.json()) as ApiEnvelope<T>
