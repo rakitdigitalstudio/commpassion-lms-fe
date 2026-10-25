@@ -248,6 +248,23 @@ at the network level so features can be built before either backend
 - **Mock reset token:** any value except `"invalid"` or empty succeeds at
   `/reset-password?token=...`.
 
+### Pointing local dev at the real API
+
+To see real enrolled courses, progress and lessons, turn mocks off and let
+the Vite dev server proxy `/api/v1` to a deployed Golang API. Its session
+cookies are `SameSite=Strict`, so the browser must see API calls as
+same-origin with `localhost`:
+
+```env
+VITE_USE_MOCKS=false
+VITE_API_URL=
+DEV_API_PROXY_TARGET=https://api.commpassion.id
+VITE_STRAPI_URL=https://cms.commpassion.id
+```
+
+Restart `pnpm dev` after changing these. The proxy is dev-server only;
+builds ignore `DEV_API_PROXY_TARGET`.
+
 ## Auth
 
 `src/context/auth-context.ts` + `src/providers/AuthProvider.tsx` resolve
