@@ -46,12 +46,52 @@ interactively (that doesn't persist anywhere CI can see it).
 
 ## Deployment (Vercel)
 
-`vercel.json` rewrites every path to `/index.html` — required for a
-client-side-routed SPA on Vercel's static hosting. Without it, a direct
-visit or refresh on any route other than `/` (e.g. `/login`) 404s: Vercel
-looks for a matching static file/function for that exact path, finds
-none, and never gets a chance to hand off to React Router client-side.
-Don't remove this file.
+Vercel builds and hosts the app through its GitHub integration: every push
+to `master` deploys production (`lms.commpassion.id`), and every PR gets a
+preview deployment. There are no GitHub Actions in this repo, so GitHub
+secrets/variables never reach the build — build config lives in the repo
+or in Vercel.
+
+### `vercel.json`
+
+```json
+{
+  "rewrites": [
+    { "source": "/api/v1/:path*", "destination": "https://api.commpassion.id/api/v1/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+- **`/api/v1/*` → the Golang API.** The production counterpart of the dev
+  proxy (`DEV_API_PROXY_TARGET`, see "Pointing local dev at the real
+  API"). The API's session and CSRF cookies are `SameSite=Strict` with no
+  `Domain`, so the browser must call it same-origin; through the rewrite,
+  the cookies are set for `lms.commpassion.id` and no API CORS change is
+  needed. Must stay **above** the catch-all.
+- **Everything else → `/index.html`.** Required for a client-side-routed
+  SPA: without it, a direct visit or refresh on any route other than `/`
+  (e.g. `/login`) 404s, because Vercel looks for a static file at that
+  exact path. Don't remove it.
+
+### Environment variables
+
+`VITE_*` values are inlined into the JS bundle **at build time**, so a
+change only takes effect on the next deployment, and none of them can be
+secret.
+
+| Where                                               | What                                                                                  | Why                                                                                          |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `.env.production` (committed)                       | `VITE_STRAPI_URL`, `VITE_API_URL` (empty), `VITE_USE_MOCKS=false`                     | Same for production and previews; changes go through a PR                                    |
+| Vercel dashboard (Settings → Environment Variables) | `VITE_IS_COMING_SOON`, `VITE_MAINTENANCE_MODE` when needed; per-environment overrides | Operational switches flipped without a PR. A dashboard value **overrides** `.env.production` |
+
+Vite reads `.env.production` for `vite build` (production mode), with
+higher priority than `.env.local`, so a local `pnpm build` produces the same
+bundle as Vercel. `pnpm dev` doesn't read it.
+
+To check a deployment: `curl -i https://lms.commpassion.id/api/v1/auth/me`
+should return `401` JSON (not HTML), and the built JS should contain
+`cms.commpassion.id`, never `localhost:1337`.
 
 ## Project structure
 
