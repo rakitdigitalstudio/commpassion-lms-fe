@@ -4,15 +4,20 @@ import type {
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
+  User,
+  UserResponse,
 } from '@/api/auth/types'
 import { API_ENDPOINTS, HTTP_METHOD } from '@/api/core/endpoints'
-import { apiUrl, getCsrfToken } from '@/api/core/http'
+import { API_ERROR_CODE, apiUrl, getCsrfToken, readData, readErrorCode } from '@/api/core/http'
 
 /**
- * PROVISIONAL Golang auth client (see src/api/auth/types.ts). Endpoint paths match
- * SDS §5; CSRF header injection + credentials:'include' match Ticket #3's
+ * Golang auth client (commpassion-core-office, internal/delivery/http/handler).
+ * Every success body is a `{ data, message }` envelope and every error is
+ * `{ error: { message, code } }`, with snake_case fields — this module is
+ * where that wire format is translated, so callers only see `User` (#30).
+ * CSRF header injection + credentials:'include' match Ticket #3's
  * requirement for the Golang client wrapper. Intercepted by the MSW
- * handlers in src/mocks/handlers.ts until a real backend exists.
+ * handlers in src/mocks/handlers.ts when VITE_USE_MOCKS is on.
  */
 
 /** Thrown by getMe() specifically for "no session" (401), so callers can
@@ -23,11 +28,21 @@ export class UnauthenticatedError extends Error {}
  * show a generic "invalid credentials" message instead of a network error. */
 export class InvalidCredentialsError extends Error {}
 
-/** Thrown by resetPassword() on a 400/401 (invalid or expired token). */
+/** Thrown by resetPassword() when the API says `token_invalid` (invalid or expired token). */
 export class InvalidResetTokenError extends Error {}
 
 /** Thrown by register() on a 409 (email already registered). */
 export class EmailAlreadyRegisteredError extends Error {}
+
+function toUser(user: UserResponse): User {
+  return {
+    id: user.id,
+    email: user.email,
+    fullName: user.full_name,
+    role: user.role,
+    isNewUser: user.is_new_user ?? false,
+  }
+}
 
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
   const csrfToken = await getCsrfToken()
@@ -50,13 +65,13 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
     throw new Error(`Login failed: ${res.status}`)
   }
 
-  return res.json() as Promise<AuthResponse>
+  return { user: toUser(await readData<UserResponse>(res)) }
 }
 
 /**
  * Does NOT log the user in — per your decision, registration always
  * redirects to /login afterward rather than starting a session, so this
- * intentionally returns void instead of AuthResponse.
+ * intentionally returns void even though the API echoes the new user.
  */
 export async function register(payload: RegisterPayload): Promise<void> {
   const csrfToken = await getCsrfToken()
@@ -68,7 +83,11 @@ export async function register(payload: RegisterPayload): Promise<void> {
       'Content-Type': 'application/json',
       'X-CSRF-Token': csrfToken,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      full_name: payload.fullName,
+      email: payload.email,
+      password: payload.password,
+    }),
   })
 
   if (res.status === 409) {
@@ -93,7 +112,7 @@ export async function getMe(): Promise<AuthResponse> {
     throw new Error(`getMe failed: ${res.status}`)
   }
 
-  return res.json() as Promise<AuthResponse>
+  return { user: toUser(await readData<UserResponse>(res)) }
 }
 
 export async function logout(): Promise<void> {
@@ -147,7 +166,9 @@ export async function resetPassword(payload: ResetPasswordPayload): Promise<void
     body: JSON.stringify(payload),
   })
 
-  if (res.status === 400 || res.status === 401) {
+  // A 400 is also returned for a too-short password (`validation_error`),
+  // so branch on the code, not the status.
+  if (!res.ok && (await readErrorCode(res)) === API_ERROR_CODE.TOKEN_INVALID) {
     throw new InvalidResetTokenError('Invalid or expired reset link')
   }
 
