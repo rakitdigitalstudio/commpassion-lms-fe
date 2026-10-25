@@ -46,12 +46,33 @@ interactively (that doesn't persist anywhere CI can see it).
 
 ## Deployment (Vercel)
 
-`vercel.json` rewrites every path to `/index.html` — required for a
-client-side-routed SPA on Vercel's static hosting. Without it, a direct
-visit or refresh on any route other than `/` (e.g. `/login`) 404s: Vercel
-looks for a matching static file/function for that exact path, finds
-none, and never gets a chance to hand off to React Router client-side.
-Don't remove this file.
+Vercel builds and hosts the app through its GitHub integration: every push
+to `master` deploys production (`lms.commpassion.id`), and every PR gets a
+preview deployment. There are no GitHub Actions in this repo, so GitHub
+secrets/variables never reach the build — build config lives in the repo
+or in Vercel.
+
+### `vercel.json`
+
+```json
+{
+  "rewrites": [
+    { "source": "/api/v1/:path*", "destination": "https://api.commpassion.id/api/v1/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+- **`/api/v1/*` → the Golang API.** The production counterpart of the dev
+  proxy (`DEV_API_PROXY_TARGET`, see "Pointing local dev at the real
+  API"). The API's session and CSRF cookies are `SameSite=Strict` with no
+  `Domain`, so the browser must call it same-origin; through the rewrite,
+  the cookies are set for `lms.commpassion.id` and no API CORS change is
+  needed. Must stay **above** the catch-all.
+- **Everything else → `/index.html`.** Required for a client-side-routed
+  SPA: without it, a direct visit or refresh on any route other than `/`
+  (e.g. `/login`) 404s, because Vercel looks for a static file at that
+  exact path. Don't remove it.
 
 ## Project structure
 
