@@ -148,7 +148,11 @@
     "byInstructor": "Oleh {{name}}",
     "accessDeniedHeading": "Anda belum terdaftar di kursus ini",
     "accessDeniedSubtext": "Beli kursus ini untuk membuka pelajarannya dan mulai belajar.",
-    "backToPurchases": "Kembali ke Pembelian Saya"
+    "backToPurchases": "Kembali ke Pembelian Saya",
+    "lessons": "Pelajaran",
+    "lessonsLockedHint": "Beli kursus ini untuk membuka pelajarannya.",
+    "buyNow": "Beli Sekarang",
+    "checkoutComingSoon": "Pembayaran belum tersedia — coba lagi nanti."
   },
   "explore": {
     "title": "Jelajahi Kursus Online",

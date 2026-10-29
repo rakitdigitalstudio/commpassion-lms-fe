@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { Button } from '@/components/Button'
@@ -13,8 +14,10 @@ import { LessonVideoPlayer } from '@/components/LessonVideoPlayer'
 import { Progress } from '@/components/Progress'
 import { useGetCourseDetailQuery } from '@/api/courses/queries/useGetCourseDetailQuery'
 import { useMarkLessonCompleteMutation } from '@/api/lessons/mutations/useMarkLessonCompleteMutation'
+import { useGetLessonPreviewsQuery } from '@/api/lessons/queries/useGetLessonPreviewsQuery'
 import { useGetLessonVideoQuery } from '@/api/lessons/queries/useGetLessonVideoQuery'
 import { useGetLessonsQuery } from '@/api/lessons/queries/useGetLessonsQuery'
+import { formatIdr } from '@/lib/format-currency'
 import { formatDuration } from '@/lib/format-time'
 
 export function CourseDetail() {
@@ -22,10 +25,17 @@ export function CourseDetail() {
   const { t } = useTranslation()
 
   const courseQuery = useGetCourseDetailQuery(courseId ?? '')
+  const courseLoaded = courseQuery.data !== undefined
   const enrolled = courseQuery.data?.enrolled === true
   // Lessons and videos are enrolled-only on the API, so don't ask before
   // enrollment is confirmed.
   const lessonsQuery = useGetLessonsQuery(courseId ?? '', { enabled: enrolled })
+  // Not-enrolled preview (Ticket #69) reads lesson titles from Strapi only
+  // (no per-user progress, which requires enrollment) — see
+  // getLessonPreviews in lessons/service/lessons.ts.
+  const previewLessonsQuery = useGetLessonPreviewsQuery(courseId ?? '', {
+    enabled: courseLoaded && !enrolled,
+  })
   const markComplete = useMarkLessonCompleteMutation(courseId ?? '')
 
   const lessons = lessonsQuery.data ?? []
@@ -43,7 +53,7 @@ export function CourseDetail() {
     enabled: selectedLesson !== undefined,
   })
 
-  if (courseQuery.isLoading || lessonsQuery.isLoading || !courseId) {
+  if (courseQuery.isLoading || lessonsQuery.isLoading || previewLessonsQuery.isLoading || !courseId) {
     return <FullPageLoader />
   }
 
@@ -70,7 +80,15 @@ export function CourseDetail() {
 
   const course = courseQuery.data
 
+  const handleBuyNow = () => {
+    // Real checkout isn't wired up yet — Midtrans integration is Ticket
+    // #68, which this button hands off to once it lands.
+    toast.info(t('courseDetail.checkoutComingSoon'))
+  }
+
   if (!course.enrolled) {
+    const previewLessons = previewLessonsQuery.data ?? []
+
     return (
       <div className="flex flex-col gap-6">
         <Breadcrumb
@@ -79,22 +97,44 @@ export function CourseDetail() {
             { label: course.title },
           ]}
         />
-        <EmptyState
-          icon={
-            <span className="flex items-center justify-center rounded-full bg-warning/25 p-5">
-              <LockIcon className="h-10 w-10 text-warning" />
-            </span>
-          }
-          heading={t('courseDetail.accessDeniedHeading')}
-          subtext={t('courseDetail.accessDeniedSubtext')}
-          cta={
-            <Link to="/purchases">
-              <Button variant="primary" className="text-xs">
-                {t('courseDetail.backToPurchases')}
+
+        <Card>
+          <h1 className="text-h2 font-medium">{course.title}</h1>
+          <p className="text-muted">{t('courseDetail.byInstructor', { name: course.instructorName })}</p>
+        </Card>
+
+        <div className="flex flex-col items-stretch gap-6 lg:flex-row">
+          <div className="flex min-w-0 flex-1 flex-col gap-5">
+            <LessonVideoPlayer posterSrc={course.imageSrc} posterAlt={course.title} locked />
+
+            <Card className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+              <p className="text-h3 font-semibold">{formatIdr(course.price)}</p>
+              <Button variant="accent" className="w-full sm:w-auto" onClick={handleBuyNow}>
+                {t('courseDetail.buyNow')}
               </Button>
-            </Link>
-          }
-        />
+            </Card>
+          </div>
+
+          <Card className="flex w-full flex-col lg:w-[348px] lg:shrink-0">
+            <div className="shrink-0">
+              <h2 className="text-h3 font-semibold">{t('courseDetail.lessons')}</h2>
+              <p className="mt-1 text-sm text-muted">{t('courseDetail.lessonsLockedHint')}</p>
+              <hr className="my-4 border-border" />
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
+              {previewLessons.map((lesson) => (
+                <CourseModuleItem
+                  key={lesson.id}
+                  title={lesson.title}
+                  subtitle={lesson.subtitle}
+                  completed={false}
+                  active={false}
+                  locked
+                />
+              ))}
+            </div>
+          </Card>
+        </div>
       </div>
     )
   }

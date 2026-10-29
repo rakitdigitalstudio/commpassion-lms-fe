@@ -3,15 +3,12 @@ import { Card } from '@/components/Card'
 import { CourseCoverImage, CourseProgressRow, CourseStatsRow } from '@/components/CourseCardParts'
 import type { CourseCardProps } from '@/components/CourseCard.types'
 import type { Status } from '@/components/StatusBadge'
+import { formatIdr } from '@/lib/format-currency'
 
 const ctaVariantByStatus: Record<Status, ButtonVariant> = {
   'in-progress': 'primary',
   completed: 'success',
   'not-started': 'accent',
-}
-
-function formatIdr(amount: number): string {
-  return `Rp ${amount.toLocaleString('id-ID')}`
 }
 
 /**
