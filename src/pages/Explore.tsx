@@ -108,7 +108,7 @@ export function Explore() {
   } else {
     results = (
       <div
-        className={`grid grid-cols-3 gap-6 transition-opacity ${isSearching ? 'opacity-50' : ''}`}
+        className={`grid grid-cols-1 gap-6 transition-opacity sm:grid-cols-2 lg:grid-cols-3 ${isSearching ? 'opacity-50' : ''}`}
         aria-busy={isSearching}
       >
         {courses.map((course) => (

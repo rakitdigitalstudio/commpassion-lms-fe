@@ -37,7 +37,7 @@ export function SettingsSecurity() {
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
           />
-          <ul className="space-y-1 pl-[180px]">
+          <ul className="space-y-1 sm:pl-[180px]">
             {passwordRules.map((rule) => {
               const isMet = rule.test(newPassword)
               return (

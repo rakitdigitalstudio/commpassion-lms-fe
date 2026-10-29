@@ -57,7 +57,7 @@ export function Dashboard() {
         subtitle={t('dashboard.subtitle')}
       />
 
-      <div className="flex gap-5">
+      <div className="flex flex-col gap-5 sm:flex-row">
         <StatCard
           label={t('dashboard.stats.learningList')}
           value={stats?.coursesEnrolled ?? 0}
@@ -101,7 +101,7 @@ export function Dashboard() {
           />
         </SectionCard>
       ) : (
-        <div className="flex gap-6">
+        <div className="flex flex-col gap-6 lg:flex-row">
           <SectionCard
             title={t('dashboard.learningProgress')}
             action={

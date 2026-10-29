@@ -19,9 +19,9 @@ export function PasswordField({ label, className = '', ...props }: PasswordField
   const visibility = usePasswordVisibility()
 
   return (
-    <div className="flex w-full items-center gap-3">
-      <label className="w-[168px] shrink-0 text-sm font-medium">{label}</label>
-      <div className="relative flex-1">
+    <div className="flex w-full flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+      <label className="text-sm font-medium sm:w-[168px] sm:shrink-0">{label}</label>
+      <div className="relative sm:flex-1">
         <LockIcon className="text-muted-2 pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <input
           type={visibility.inputType}

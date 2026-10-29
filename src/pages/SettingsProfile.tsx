@@ -23,7 +23,7 @@ export function SettingsProfile() {
         title={t('settings.profile.publicProfileTitle')}
         subtitle={t('settings.profile.publicProfileSubtitle')}
       >
-        <div className="flex items-center gap-5">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{t('settings.profile.photoLabel')}</p>
             <p className="text-sm text-muted">{t('settings.profile.photoHint')}</p>
@@ -45,19 +45,21 @@ export function SettingsProfile() {
 
         <hr className="border-border" />
 
-        <div className="flex w-full items-center gap-3">
-          <div className="w-[168px] shrink-0">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="sm:w-[168px] sm:shrink-0">
             <p className="text-sm font-medium">{t('settings.profile.fullNameLabel')}</p>
           </div>
-          <input
-            defaultValue={user?.fullName}
-            placeholder={t('settings.profile.firstNamePlaceholder')}
-            className="h-10 flex-1 rounded-control border border-muted-2 px-4 py-2 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none"
-          />
-          <input
-            placeholder={t('settings.profile.lastNamePlaceholder')}
-            className="h-10 flex-1 rounded-control border border-muted-2 px-4 py-2 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none"
-          />
+          <div className="flex flex-col gap-3 sm:flex-1 sm:flex-row">
+            <input
+              defaultValue={user?.fullName}
+              placeholder={t('settings.profile.firstNamePlaceholder')}
+              className="h-10 flex-1 rounded-control border border-muted-2 px-4 py-2 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none"
+            />
+            <input
+              placeholder={t('settings.profile.lastNamePlaceholder')}
+              className="h-10 flex-1 rounded-control border border-muted-2 px-4 py-2 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none"
+            />
+          </div>
         </div>
 
         <TextField

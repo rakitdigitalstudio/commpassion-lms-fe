@@ -26,8 +26,8 @@ export function Settings() {
     <div className="flex flex-col gap-6">
       <PageHeader title={t('settings.title')} subtitle={t('settings.subtitle')} />
 
-      <div className="flex items-start gap-5">
-        <Card className="flex w-60 shrink-0 flex-col gap-2">
+      <div className="flex flex-col items-stretch gap-5 lg:flex-row lg:items-start">
+        <Card className="flex w-full flex-col gap-2 lg:w-60 lg:shrink-0">
           {tabs.map((tab) => (
             <NavLink key={tab.to} to={tab.to} className={tabClassName}>
               <span aria-hidden="true">{tab.icon}</span>
