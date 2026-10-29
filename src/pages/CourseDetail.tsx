@@ -122,16 +122,20 @@ export function CourseDetail() {
               <hr className="my-4 border-border" />
             </div>
             <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-              {previewLessons.map((lesson) => (
-                <CourseModuleItem
-                  key={lesson.id}
-                  title={lesson.title}
-                  subtitle={lesson.subtitle}
-                  completed={false}
-                  active={false}
-                  locked
-                />
-              ))}
+              {previewLessons.length === 0 ? (
+                <p className="text-sm text-muted">{t('courseDetail.noLessonsYet')}</p>
+              ) : (
+                previewLessons.map((lesson) => (
+                  <CourseModuleItem
+                    key={lesson.id}
+                    title={lesson.title}
+                    subtitle={lesson.subtitle}
+                    completed={false}
+                    active={false}
+                    locked
+                  />
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -185,6 +189,10 @@ export function CourseDetail() {
               posterSrc={course.imageSrc}
               posterAlt={selectedLesson.title}
             />
+          ) : lessons.length === 0 ? (
+            <Card>
+              <p className="text-sm text-muted">{t('courseDetail.noLessonsYet')}</p>
+            </Card>
           ) : null}
 
           {selectedLesson ? (
@@ -232,16 +240,20 @@ export function CourseDetail() {
               column's height (see the row's items-stretch) instead of
               growing past it and scrolling the whole page. */}
           <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-            {lessons.map((lesson) => (
-              <CourseModuleItem
-                key={lesson.id}
-                title={lesson.title}
-                subtitle={lesson.subtitle}
-                completed={lesson.completed}
-                active={lesson.id === selectedLesson?.id}
-                onClick={() => setSelectedLessonId(lesson.id)}
-              />
-            ))}
+            {lessons.length === 0 ? (
+              <p className="text-sm text-muted">{t('courseDetail.noLessonsYet')}</p>
+            ) : (
+              lessons.map((lesson) => (
+                <CourseModuleItem
+                  key={lesson.id}
+                  title={lesson.title}
+                  subtitle={lesson.subtitle}
+                  completed={lesson.completed}
+                  active={lesson.id === selectedLesson?.id}
+                  onClick={() => setSelectedLessonId(lesson.id)}
+                />
+              ))
+            )}
           </div>
         </Card>
       </div>
