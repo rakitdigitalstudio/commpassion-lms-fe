@@ -40,18 +40,18 @@ export function Login() {
       <h1 className="text-display mt-6 font-bold">{t('auth.login.heading')}</h1>
       <p className="text-muted mt-2">{t('auth.login.subtitle')}</p>
 
-      {showRegisteredNotice ? (
-        <p className="bg-success/10 text-success rounded-control mt-6 p-3 text-sm">
-          {t('auth.login.registeredNotice')}
-        </p>
-      ) : null}
-
       <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
         {IS_COMING_SOON ? (
           <ComingSoonNotice />
         ) : error ? (
           <p role="alert" className="bg-warning/10 text-warning rounded-control p-3 text-sm">
             {t(error)}
+          </p>
+        ) : null}
+
+        {showRegisteredNotice ? (
+          <p className="bg-info/10 text-info rounded-control p-3 text-sm">
+            {t('auth.login.registeredNotice')}
           </p>
         ) : null}
 

@@ -49,7 +49,7 @@
       "signUp": "Daftar",
       "or": "atau",
       "exploreCourses": "Jelajahi Kursus Online",
-      "registeredNotice": "Akun berhasil dibuat! Silakan masuk.",
+      "registeredNotice": "Akun berhasil dibuat! Kami telah mengirimkan email konfirmasi ke kotak masuk Anda — verifikasi untuk mengaktifkan akun Anda.",
       "errorInvalidCredentials": "Email atau kata sandi salah. Silakan coba lagi.",
       "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
     },

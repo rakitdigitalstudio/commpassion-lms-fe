@@ -11,7 +11,7 @@ import type { AuthLocationState } from '@/lib/auth-location-state'
 /**
  * Per your decision: register() does not log the user in — success
  * redirects to /login with a "justRegistered" notice, and the user signs
- * in separately.
+ * in separately once verified.
  */
 export function useRegisterForm() {
   const navigate = useNavigate()
