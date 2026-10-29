@@ -9,8 +9,8 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 /** Fixed-width label (+ optional hint) beside an input — Settings' form-row shape. */
 export function TextField({ label, hint, className = '', ...props }: TextFieldProps) {
   return (
-    <div className="flex w-full items-center gap-3">
-      <div className="w-[168px] shrink-0">
+    <div className="flex w-full flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+      <div className="sm:w-[168px] sm:shrink-0">
         <p className="text-sm font-medium">{label}</p>
         {hint ? <p className="text-sm text-muted">{hint}</p> : null}
       </div>

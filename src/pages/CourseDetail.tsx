@@ -137,8 +137,8 @@ export function CourseDetail() {
         <p className="text-muted">{t('courseDetail.byInstructor', { name: course.instructorName })}</p>
       </Card>
 
-      <div className="flex items-stretch gap-6">
-        <div className="flex flex-1 flex-col gap-5">
+      <div className="flex flex-col items-stretch gap-6 lg:flex-row">
+        <div className="flex min-w-0 flex-1 flex-col gap-5">
           {selectedLesson ? (
             <LessonVideoPlayer
               videoUrl={videoQuery.data}
@@ -174,7 +174,7 @@ export function CourseDetail() {
           ) : null}
         </div>
 
-        <Card className="flex w-[348px] shrink-0 flex-col">
+        <Card className="flex w-full flex-col lg:w-[348px] lg:shrink-0">
           <div className="shrink-0">
             <div className="flex items-center justify-between">
               <h2 className="text-h3 font-semibold">{t('courseDetail.learningProgress')}</h2>

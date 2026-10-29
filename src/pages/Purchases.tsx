@@ -61,7 +61,7 @@ export function Purchases() {
         }
       />
 
-      <div className="flex gap-5">
+      <div className="flex flex-col gap-5 sm:flex-row">
         <StatCard
           label={t('purchases.stats.learningList')}
           value={purchasedCourses.length}
@@ -87,7 +87,7 @@ export function Purchases() {
 
       {hasCourses ? (
         <>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <FilterChip
               label={t('purchases.filters.all')}
               count={purchasedCourses.length}
@@ -108,7 +108,7 @@ export function Purchases() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleCourses.map((course) => (
               <CourseCard
                 key={course.courseId}
