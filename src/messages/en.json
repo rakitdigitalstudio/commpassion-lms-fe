@@ -49,7 +49,7 @@
       "signUp": "Sign up",
       "or": "or",
       "exploreCourses": "Explore Online Courses",
-      "registeredNotice": "Account created! Please sign in.",
+      "registeredNotice": "Account created! We've sent a confirmation email to your inbox — verify it to activate your account.",
       "errorInvalidCredentials": "Invalid email or password. Please try again.",
       "errorGeneric": "Something went wrong. Please try again."
     },
