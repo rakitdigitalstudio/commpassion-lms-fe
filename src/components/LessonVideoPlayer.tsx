@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { PlayIcon } from '@/components/icons'
+import { LockIcon, PlayIcon } from '@/components/icons'
 
 interface LessonVideoPlayerProps {
   /** Lesson `video_url` — undefined while it's still loading (play is disabled until then). */
@@ -8,6 +8,8 @@ interface LessonVideoPlayerProps {
   /** Optional — Strapi courses can have no cover image. */
   posterSrc?: string
   posterAlt: string
+  /** Course not purchased yet (Ticket #69) — shows a lock icon instead of play and never plays. */
+  locked?: boolean
 }
 
 /** YouTube watch/short/embed URL → video id; null for any other host. */
@@ -26,10 +28,15 @@ function getYoutubeVideoId(url: string): string | null {
  * <video>. Re-mounts on `videoUrl` change so switching lessons always
  * starts back at the poster instead of leaving the old video playing.
  */
-export function LessonVideoPlayer({ videoUrl, posterSrc, posterAlt }: LessonVideoPlayerProps) {
+export function LessonVideoPlayer({
+  videoUrl,
+  posterSrc,
+  posterAlt,
+  locked = false,
+}: LessonVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
-  if (playing && videoUrl) {
+  if (playing && videoUrl && !locked) {
     const youtubeVideoId = getYoutubeVideoId(videoUrl)
 
     return youtubeVideoId ? (
@@ -58,16 +65,21 @@ export function LessonVideoPlayer({ videoUrl, posterSrc, posterAlt }: LessonVide
       key={videoUrl}
       type="button"
       onClick={() => setPlaying(true)}
-      disabled={!videoUrl}
+      disabled={!videoUrl || locked}
       // Matches the cover art's native 4:3 — unlike aspect-video, this
       // doesn't crop the banner's logo/caption text, and stays a fixed
       // framing regardless of viewport width (see CourseCoverImage).
       className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted/20"
     >
       {posterSrc && <img src={posterSrc} alt={posterAlt} className="h-full w-full object-cover" />}
+      {locked ? <span className="absolute inset-0 bg-black/40" /> : null}
       <span className="absolute inset-0 flex items-center justify-center">
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 transition-transform group-hover:scale-105">
-          <PlayIcon className="h-8 w-8 text-foreground" />
+          {locked ? (
+            <LockIcon className="h-8 w-8 text-foreground" />
+          ) : (
+            <PlayIcon className="h-8 w-8 text-foreground" />
+          )}
         </span>
       </span>
     </button>

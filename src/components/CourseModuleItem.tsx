@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PlayIcon } from '@/components/icons'
+import { CheckCircleIcon, LockIcon, PlayIcon } from '@/components/icons'
 
 interface CourseModuleItemProps {
   title: string
@@ -8,6 +8,8 @@ interface CourseModuleItemProps {
   /** Whether this is the lesson currently loaded in the player — drives the highlight background. */
   active: boolean
   onClick?: () => void
+  /** Course not purchased yet (Ticket #69) — shows a lock icon and isn't clickable. */
+  locked?: boolean
 }
 
 /**
@@ -24,7 +26,32 @@ export function CourseModuleItem({
   completed,
   active,
   onClick,
+  locked = false,
 }: CourseModuleItemProps) {
+  const content = (
+    <>
+      <span className="flex items-center gap-2 text-sm font-medium">
+        {locked ? (
+          <LockIcon className="h-5 w-5 shrink-0 text-muted" />
+        ) : completed ? (
+          <CheckCircleIcon className="h-6 w-6 shrink-0 text-success" />
+        ) : (
+          <PlayIcon className="h-6 w-6 shrink-0 text-muted" />
+        )}
+        {title}
+      </span>
+      {subtitle ? <span className="pl-8 text-xs text-muted">{subtitle}</span> : null}
+    </>
+  )
+
+  if (locked) {
+    return (
+      <div className="flex w-full flex-col gap-1 rounded-control px-2 py-2 text-left text-muted">
+        {content}
+      </div>
+    )
+  }
+
   return (
     <button
       type="button"
@@ -33,15 +60,7 @@ export function CourseModuleItem({
         active ? 'bg-primary/25' : 'hover:bg-border/50'
       }`}
     >
-      <span className="flex items-center gap-2 text-sm font-medium">
-        {completed ? (
-          <CheckCircleIcon className="h-6 w-6 shrink-0 text-success" />
-        ) : (
-          <PlayIcon className="h-6 w-6 shrink-0 text-muted" />
-        )}
-        {title}
-      </span>
-      {subtitle ? <span className="pl-8 text-xs text-muted">{subtitle}</span> : null}
+      {content}
     </button>
   )
 }

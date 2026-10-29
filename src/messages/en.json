@@ -148,7 +148,11 @@
     "byInstructor": "By {{name}}",
     "accessDeniedHeading": "You're not enrolled in this course",
     "accessDeniedSubtext": "Purchase this course to unlock its lessons and start learning.",
-    "backToPurchases": "Back to My Purchases"
+    "backToPurchases": "Back to My Purchases",
+    "lessons": "Lessons",
+    "lessonsLockedHint": "Purchase this course to unlock its lessons.",
+    "buyNow": "Buy Now",
+    "checkoutComingSoon": "Checkout isn't available yet — check back soon."
   },
   "explore": {
     "title": "Explore Online Courses",

@@ -36,6 +36,26 @@ export async function getLessons(courseId: string): Promise<Lesson[]> {
   }))
 }
 
+/**
+ * Lesson titles/order for a course the learner hasn't purchased yet
+ * (CourseDetail.tsx's locked preview, Ticket #69) — Strapi only, so it
+ * works pre-enrollment. Doesn't call the Golang progress endpoint like
+ * getLessons() does, since that requires enrollment; every lesson is
+ * reported incomplete since there's no progress to report anyway.
+ */
+export async function getLessonPreviews(courseId: string): Promise<Lesson[]> {
+  const lessons = await getCourseLessons(courseId)
+
+  return lessons.map((lesson, index) => ({
+    id: lesson.lesson_key,
+    index,
+    title: lesson.title ?? '',
+    subtitle: lesson.subtitle ?? undefined,
+    durationSeconds: lesson.duration ?? undefined,
+    completed: false,
+  }))
+}
+
 export async function getLessonVideoUrl(courseId: string, index: number): Promise<string> {
   const lesson = await getApiData<LessonVideoResponse>(
     API_ENDPOINTS.courses.lesson(courseId, index),

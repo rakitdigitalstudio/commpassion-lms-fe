@@ -47,6 +47,8 @@ export const queryKeys = {
       : ([...queryKeys.courses(), QUERY_KEY.LIST] as const),
   course: (courseId: string) => [...queryKeys.courses(), courseId] as const,
   lessons: (courseId: string) => [...queryKeys.course(courseId), QUERY_KEY.LESSONS] as const,
+  /** Pre-purchase lesson titles (Strapi only, no per-user progress) — see CourseDetail.tsx's locked preview. */
+  lessonPreviews: (courseId: string) => [...queryKeys.lessons(courseId), 'preview'] as const,
   lessonVideo: (courseId: string, index: number) =>
     [...queryKeys.lessons(courseId), QUERY_KEY.VIDEO, index] as const,
 

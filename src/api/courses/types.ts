@@ -21,6 +21,8 @@ export interface CourseDetail {
   title: string
   instructorName: string
   imageSrc?: string
+  /** IDR */
+  price: number
   enrolled: boolean
 }
 
