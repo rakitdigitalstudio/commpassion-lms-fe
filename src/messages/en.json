@@ -151,6 +151,7 @@
     "backToPurchases": "Back to My Purchases",
     "lessons": "Lessons",
     "lessonsLockedHint": "Purchase this course to unlock its lessons.",
+    "noLessonsYet": "No lessons available yet.",
     "buyNow": "Buy Now",
     "checkoutComingSoon": "Checkout isn't available yet — check back soon."
   },
