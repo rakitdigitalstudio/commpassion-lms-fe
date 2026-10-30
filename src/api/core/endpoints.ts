@@ -29,6 +29,8 @@ export const API_ENDPOINTS = {
     lesson: (courseId: string, index: number) =>
       `/api/v1/courses/${encodeURIComponent(courseId)}/lessons/${index}`,
   },
+  /** Issues a Midtrans Snap token for a course purchase (TODO.md §5, Ticket #68). */
+  checkout: '/api/v1/checkout',
 } as const
 
 /** Strapi (commpassion-backoffice) content API paths — see strapiUrl(). */

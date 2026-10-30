@@ -153,7 +153,14 @@
     "lessonsLockedHint": "Beli kursus ini untuk membuka pelajarannya.",
     "noLessonsYet": "Belum ada pelajaran yang tersedia.",
     "buyNow": "Beli Sekarang",
-    "checkoutComingSoon": "Pembayaran belum tersedia — coba lagi nanti."
+    "startingCheckout": "Memulai pembayaran…",
+    "checkoutNotConfigured": "Pembayaran belum dikonfigurasi — coba lagi nanti.",
+    "checkoutSuccess": "Pembayaran berhasil! Anda telah terdaftar.",
+    "checkoutPending": "Pembayaran tertunda — status pendaftaran akan diperbarui setelah dikonfirmasi.",
+    "checkoutError": "Terjadi kesalahan saat checkout. Silakan coba lagi.",
+    "checkoutClosed": "Checkout ditutup sebelum pembayaran selesai.",
+    "checkoutAlreadyEnrolled": "Anda sudah terdaftar di kursus ini.",
+    "checkoutUnpublished": "Kursus ini belum tersedia untuk dibeli saat ini."
   },
   "explore": {
     "title": "Jelajahi Kursus Online",

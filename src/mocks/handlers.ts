@@ -146,4 +146,22 @@ export const handlers: HttpHandler[] = [
   ),
   http.get(`*${API_ENDPOINTS.user.courses}`, () => ok([], 'User courses')),
   http.get(`*${API_ENDPOINTS.user.activities}`, () => ok([], 'User activities')),
+
+  // No real sandbox key exists yet (Ticket #68), so this mock token won't
+  // actually open a Snap popup — it only exercises the request/error
+  // wiring. Two sentinel course ids (not reachable via the real catalog)
+  // trigger the error branches, since mock accounts never have real
+  // enrollments to test "already enrolled" against naturally.
+  http.post(`*${API_ENDPOINTS.checkout}`, async ({ request }) => {
+    const body = (await request.json()) as { course_id?: string }
+
+    if (body.course_id === 'already-enrolled') {
+      return fail(409, 'already_enrolled', 'already enrolled in this course')
+    }
+    if (body.course_id === 'unpublished-course') {
+      return fail(422, 'course_unpublished', 'course is not available for purchase')
+    }
+
+    return ok({ snap_token: 'mock-snap-token' }, 'Checkout initiated')
+  }),
 ]

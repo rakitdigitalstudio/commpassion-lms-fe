@@ -13,12 +13,17 @@ import { LockIcon, PlusIcon } from '@/components/icons'
 import { LessonVideoPlayer } from '@/components/LessonVideoPlayer'
 import { Progress } from '@/components/Progress'
 import { useGetCourseDetailQuery } from '@/api/courses/queries/useGetCourseDetailQuery'
+import { useCheckoutMutation } from '@/api/courses/mutations/useCheckoutMutation'
+import { CourseAlreadyEnrolledError, CourseUnpublishedError } from '@/api/courses/service/checkout'
+import { queryKeys } from '@/api/core/query-keys'
+import { useQueryCache } from '@/api/core/useQueryCache'
 import { useMarkLessonCompleteMutation } from '@/api/lessons/mutations/useMarkLessonCompleteMutation'
 import { useGetLessonPreviewsQuery } from '@/api/lessons/queries/useGetLessonPreviewsQuery'
 import { useGetLessonVideoQuery } from '@/api/lessons/queries/useGetLessonVideoQuery'
 import { useGetLessonsQuery } from '@/api/lessons/queries/useGetLessonsQuery'
 import { formatIdr } from '@/lib/format-currency'
 import { formatDuration } from '@/lib/format-time'
+import { loadMidtransSnap, MidtransNotConfiguredError } from '@/lib/midtrans'
 
 export function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -37,6 +42,8 @@ export function CourseDetail() {
     enabled: courseLoaded && !enrolled,
   })
   const markComplete = useMarkLessonCompleteMutation(courseId ?? '')
+  const checkoutMutation = useCheckoutMutation()
+  const queryCache = useQueryCache()
 
   const lessons = lessonsQuery.data ?? []
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
@@ -80,10 +87,57 @@ export function CourseDetail() {
 
   const course = courseQuery.data
 
+  // Enrollment is only final once the backend's Midtrans webhook lands
+  // (TODO.md §5 `/api/v1/webhook/midtrans`), so onSuccess/onPending both
+  // just ask the course + enrollment queries to refetch rather than
+  // assuming success means enrolled yet.
+  const refreshEnrollment = () => {
+    void queryCache.invalidate(queryKeys.course(courseId ?? ''))
+    void queryCache.invalidate(queryKeys.userCourses())
+  }
+
   const handleBuyNow = () => {
-    // Real checkout isn't wired up yet — Midtrans integration is Ticket
-    // #68, which this button hands off to once it lands.
-    toast.info(t('courseDetail.checkoutComingSoon'))
+    checkoutMutation.mutate(courseId ?? '', {
+      onSuccess: async ({ snapToken }) => {
+        try {
+          const snap = await loadMidtransSnap()
+          snap.pay(snapToken, {
+            onSuccess: () => {
+              toast.success(t('courseDetail.checkoutSuccess'))
+              refreshEnrollment()
+            },
+            onPending: () => {
+              toast.info(t('courseDetail.checkoutPending'))
+              refreshEnrollment()
+            },
+            onError: () => {
+              toast.error(t('courseDetail.checkoutError'))
+            },
+            onClose: () => {
+              toast.info(t('courseDetail.checkoutClosed'))
+            },
+          })
+        } catch (error) {
+          toast.info(
+            error instanceof MidtransNotConfiguredError
+              ? t('courseDetail.checkoutNotConfigured')
+              : t('courseDetail.checkoutError'),
+          )
+        }
+      },
+      onError: (error) => {
+        if (error instanceof CourseAlreadyEnrolledError) {
+          toast.info(t('courseDetail.checkoutAlreadyEnrolled'))
+          refreshEnrollment()
+          return
+        }
+        if (error instanceof CourseUnpublishedError) {
+          toast.error(t('courseDetail.checkoutUnpublished'))
+          return
+        }
+        toast.error(t('courseDetail.checkoutError'))
+      },
+    })
   }
 
   if (!course.enrolled) {
@@ -109,8 +163,13 @@ export function CourseDetail() {
 
             <Card className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
               <p className="text-h3 font-semibold">{formatIdr(course.price)}</p>
-              <Button variant="accent" className="w-full sm:w-auto" onClick={handleBuyNow}>
-                {t('courseDetail.buyNow')}
+              <Button
+                variant="accent"
+                className="w-full sm:w-auto"
+                onClick={handleBuyNow}
+                isLoading={checkoutMutation.isPending}
+              >
+                {checkoutMutation.isPending ? t('courseDetail.startingCheckout') : t('courseDetail.buyNow')}
               </Button>
             </Card>
           </div>

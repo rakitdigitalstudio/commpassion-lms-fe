@@ -16,6 +16,11 @@ export interface CourseListParams {
   pageSize: number
 }
 
+/** Response from POST /api/v1/checkout (SDS §6 — PROVISIONAL, no spec yet; Ticket #68). */
+export interface CheckoutResponse {
+  snapToken: string
+}
+
 export interface CourseDetail {
   courseId: string
   title: string
