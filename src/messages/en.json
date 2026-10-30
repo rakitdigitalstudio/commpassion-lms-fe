@@ -153,7 +153,14 @@
     "lessonsLockedHint": "Purchase this course to unlock its lessons.",
     "noLessonsYet": "No lessons available yet.",
     "buyNow": "Buy Now",
-    "checkoutComingSoon": "Checkout isn't available yet — check back soon."
+    "startingCheckout": "Starting checkout…",
+    "checkoutNotConfigured": "Payments aren't configured yet — check back soon.",
+    "checkoutSuccess": "Payment successful! You're enrolled.",
+    "checkoutPending": "Payment is pending — we'll update your enrollment once it's confirmed.",
+    "checkoutError": "Something went wrong with checkout. Please try again.",
+    "checkoutClosed": "Checkout was closed before payment finished.",
+    "checkoutAlreadyEnrolled": "You're already enrolled in this course.",
+    "checkoutUnpublished": "This course isn't available for purchase right now."
   },
   "explore": {
     "title": "Explore Online Courses",
