@@ -92,17 +92,21 @@ export async function getUserActivities(): Promise<UserActivity[]> {
 }
 
 /**
- * Dismisses the post-login introduction video — flips is_new_user false
- * server-side. Idempotent on the backend, so no special handling here for
- * calling it twice.
+ * Toggles the post-login introduction video: `false` dismisses it
+ * (Dashboard's "Hide Video"), `true` brings it back (Settings). Idempotent
+ * on the backend either way.
  */
-export async function completeOnboarding(): Promise<void> {
+export async function setIsNewUser(isNewUser: boolean): Promise<void> {
   const csrfToken = await getCsrfToken()
 
-  const res = await fetch(apiUrl(API_ENDPOINTS.user.onboardingComplete), {
+  const res = await fetch(apiUrl(API_ENDPOINTS.user.onboardingPreferences), {
     method: HTTP_METHOD.POST,
     credentials: 'include',
-    headers: { 'X-CSRF-Token': csrfToken },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+    },
+    body: JSON.stringify({ is_new_user: isNewUser }),
   })
 
   if (!res.ok) {

@@ -208,6 +208,12 @@
       "emailHint": "Digunakan untuk masuk.",
       "emailPlaceholder": "Masukkan Email Anda"
     },
+    "learning": {
+      "title": "Preferensi Belajar",
+      "subtitle": "Atur apa yang muncul untuk membantu Anda memulai.",
+      "introVideoLabel": "Tampilkan video pengenalan",
+      "introVideoHint": "Menampilkan kembali video selamat datang di Dashboard Anda saat masuk berikutnya."
+    },
     "security": {
       "changePasswordTitle": "Ubah Kata Sandi",
       "changePasswordSubtitle": "Gunakan kata sandi yang kuat dan unik yang tidak Anda gunakan di tempat lain.",

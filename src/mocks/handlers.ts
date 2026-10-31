@@ -149,14 +149,20 @@ export const handlers: HttpHandler[] = [
   http.get(`*${API_ENDPOINTS.user.courses}`, () => ok([], 'User courses')),
   http.get(`*${API_ENDPOINTS.user.activities}`, () => ok([], 'User activities')),
 
-  http.post(`*${API_ENDPOINTS.user.onboardingComplete}`, () => {
+  http.post(`*${API_ENDPOINTS.user.onboardingPreferences}`, async ({ request }) => {
+    const body = (await request.json()) as { is_new_user?: boolean }
+
+    if (typeof body.is_new_user !== 'boolean') {
+      return fail(400, 'validation_error', 'is_new_user is required')
+    }
+
     const account = currentUserEmail ? accounts.get(currentUserEmail) : undefined
 
     if (!account) {
       return fail(401, 'unauthorized', 'authentication required')
     }
-    account.user.is_new_user = false
-    return okMessage('Onboarding completed')
+    account.user.is_new_user = body.is_new_user
+    return okMessage('Onboarding preferences updated')
   }),
 
   // No real sandbox key exists yet (Ticket #68), so this mock token won't

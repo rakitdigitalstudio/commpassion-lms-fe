@@ -208,6 +208,12 @@
       "emailHint": "Used for login.",
       "emailPlaceholder": "Input Your Email"
     },
+    "learning": {
+      "title": "Learning Preferences",
+      "subtitle": "Control what shows up to help you get started.",
+      "introVideoLabel": "Show introduction video",
+      "introVideoHint": "Shows the welcome video on your Dashboard again next time you sign in."
+    },
     "security": {
       "changePasswordTitle": "Change Password",
       "changePasswordSubtitle": "Use a strong, unique password you don't use elsewhere.",

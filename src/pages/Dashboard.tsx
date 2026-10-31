@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-import { useCompleteOnboardingMutation } from '@/api/user/mutations/useCompleteOnboardingMutation'
+import { useSetIsNewUserMutation } from '@/api/user/mutations/useSetIsNewUserMutation'
 import { useGetUserActivitiesQuery } from '@/api/user/queries/useGetUserActivitiesQuery'
 import { useGetUserCoursesQuery } from '@/api/user/queries/useGetUserCoursesQuery'
 import { useGetUserStatsQuery } from '@/api/user/queries/useGetUserStatsQuery'
@@ -38,7 +38,7 @@ export function Dashboard() {
 
   const { data: stats, isLoading: isStatsLoading } = useGetUserStatsQuery()
   const isNewUser = stats?.coursesEnrolled === 0
-  const completeOnboarding = useCompleteOnboardingMutation()
+  const setIsNewUser = useSetIsNewUserMutation()
 
   // A new user has nothing to list yet, so skip those requests entirely.
   const enabled = stats !== undefined && !isNewUser
@@ -62,8 +62,8 @@ export function Dashboard() {
 
       {user?.isNewUser ? (
         <IntroductionVideoCard
-          onHide={() => completeOnboarding.mutate()}
-          isHiding={completeOnboarding.isPending}
+          onHide={() => setIsNewUser.mutate(false)}
+          isHiding={setIsNewUser.isPending}
         />
       ) : null}
 
