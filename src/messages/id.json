@@ -188,6 +188,7 @@
       "security": "Keamanan"
     },
     "saveChanges": "Simpan Perubahan",
+    "changesSaved": "Perubahan disimpan.",
     "profile": {
       "publicProfileTitle": "Profil Publik",
       "publicProfileSubtitle": "Informasi ini mungkin terlihat oleh pelajar dan instruktur lain.",

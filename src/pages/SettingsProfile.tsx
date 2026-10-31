@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 import { useSetIsNewUserMutation } from '@/api/user/mutations/useSetIsNewUserMutation'
 import { Button } from '@/components/Button'
@@ -13,12 +15,37 @@ import { useUserAuthenticationContext } from '@/context/UserAuthenticationContex
  * doesn't persist anything. Prefilled fields are limited to what the
  * real auth session already has (fullName); the rest match the Figma's
  * empty-placeholder state.
+ *
+ * The intro-video toggle is the one field that's actually real: it's held
+ * as local draft state (optimistic — flips immediately on click) and only
+ * sent to the API on "Save Changes", and only if it actually changed.
  */
 export function SettingsProfile() {
   const { t } = useTranslation()
   const { user } = useUserAuthenticationContext()
   const initial = user?.fullName.charAt(0) ?? '?'
   const setIsNewUser = useSetIsNewUserMutation()
+
+  const [introVideoEnabled, setIntroVideoEnabled] = useState(user?.isNewUser ?? false)
+  // Resets the local draft whenever the server value changes (e.g. the
+  // Dashboard's "Hide Video" ran in another tab) — adjusted during render
+  // rather than an effect, per React's docs on resetting state when a prop
+  // changes, so it doesn't cause an extra post-commit render.
+  const [syncedIsNewUser, setSyncedIsNewUser] = useState(user?.isNewUser)
+  if (user?.isNewUser !== syncedIsNewUser) {
+    setSyncedIsNewUser(user?.isNewUser)
+    setIntroVideoEnabled(user?.isNewUser ?? false)
+  }
+
+  const handleSaveChanges = () => {
+    if (introVideoEnabled !== (user?.isNewUser ?? false)) {
+      setIsNewUser.mutate(introVideoEnabled, {
+        onSuccess: () => toast.success(t('settings.changesSaved')),
+      })
+      return
+    }
+    toast.success(t('settings.changesSaved'))
+  }
 
   return (
     <>
@@ -97,15 +124,20 @@ export function SettingsProfile() {
             <p className="text-sm text-muted">{t('settings.learning.introVideoHint')}</p>
           </div>
           <Switch
-            checked={user?.isNewUser ?? false}
-            onChange={(checked) => setIsNewUser.mutate(checked)}
+            checked={introVideoEnabled}
+            onChange={setIntroVideoEnabled}
             disabled={setIsNewUser.isPending}
             aria-label={t('settings.learning.introVideoLabel')}
           />
         </div>
       </SectionCard>
 
-      <Button variant="primary" className="self-end">
+      <Button
+        variant="primary"
+        className="self-end"
+        onClick={handleSaveChanges}
+        isLoading={setIsNewUser.isPending}
+      >
         {t('settings.saveChanges')}
       </Button>
     </>
