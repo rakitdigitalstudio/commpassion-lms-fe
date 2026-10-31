@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { LockIcon, PlayIcon } from '@/components/icons'
+import { loadYoutubeIframeApi, type YoutubePlayer } from '@/lib/youtube'
 
 interface LessonVideoPlayerProps {
   /** Lesson `video_url` — undefined while it's still loading (play is disabled until then). */
@@ -10,6 +11,8 @@ interface LessonVideoPlayerProps {
   posterAlt: string
   /** Course not purchased yet (Ticket #69) — shows a lock icon instead of play and never plays. */
   locked?: boolean
+  /** Fires once per video, when playback reaches ~90% watched (or ends) — see useMarkLessonCompleteMutation. */
+  onNearlyFinished?: () => void
 }
 
 /** YouTube watch/short/embed URL → video id; null for any other host. */
@@ -19,6 +22,138 @@ function getYoutubeVideoId(url: string): string | null {
   )
 
   return match ? match[1] : null
+}
+
+const NEARLY_FINISHED_RATIO = 0.9
+
+/**
+ * Embedded YouTube player, wired to the IFrame Player API (not just a bare
+ * `<iframe src>`) so we can read `getCurrentTime()`/`getDuration()` and fire
+ * `onNearlyFinished` — a plain iframe exposes no playback state to the
+ * parent page. One instance per video (the caller keys this by videoId), so
+ * the "already fired" guard doesn't need to track video changes itself.
+ */
+function YoutubeLessonPlayer({
+  videoId,
+  title,
+  onNearlyFinished,
+}: {
+  videoId: string
+  title: string
+  onNearlyFinished?: () => void
+}) {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const onNearlyFinishedRef = useRef(onNearlyFinished)
+
+  useEffect(() => {
+    onNearlyFinishedRef.current = onNearlyFinished
+  }, [onNearlyFinished])
+
+  useEffect(() => {
+    let cancelled = false
+    let player: YoutubePlayer | null = null
+    let intervalId: ReturnType<typeof setInterval> | null = null
+    let fired = false
+
+    const stopPolling = () => {
+      if (intervalId !== null) {
+        clearInterval(intervalId)
+        intervalId = null
+      }
+    }
+
+    const fireOnce = () => {
+      if (fired) return
+      fired = true
+      stopPolling()
+      onNearlyFinishedRef.current?.()
+    }
+
+    void loadYoutubeIframeApi().then((YT) => {
+      if (cancelled || !iframeRef.current) return
+
+      player = new YT.Player(iframeRef.current, {
+        events: {
+          onStateChange: (event) => {
+            if (event.data === YT.PlayerState.ENDED) {
+              fireOnce()
+              return
+            }
+            if (event.data === YT.PlayerState.PLAYING) {
+              stopPolling()
+              intervalId = setInterval(() => {
+                const duration = player?.getDuration() ?? 0
+                const currentTime = player?.getCurrentTime() ?? 0
+                if (duration > 0 && currentTime / duration >= NEARLY_FINISHED_RATIO) {
+                  fireOnce()
+                }
+              }, 2000)
+            } else {
+              stopPolling()
+            }
+          },
+        },
+      })
+    })
+
+    return () => {
+      cancelled = true
+      stopPolling()
+      player?.destroy()
+    }
+  }, [])
+
+  return (
+    <iframe
+      ref={iframeRef}
+      className="aspect-video w-full rounded-2xl"
+      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1&origin=${window.location.origin}`}
+      title={title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+    />
+  )
+}
+
+/**
+ * Native `<video>` wrapped so its "already fired" guard lives per video
+ * instance (the caller keys this by videoUrl) instead of needing to track
+ * url changes itself — onTimeUpdate fires continuously, so without a guard
+ * crossing 90% would call onNearlyFinished on every tick, not once.
+ */
+function NativeLessonVideoPlayer({
+  videoUrl,
+  title,
+  onNearlyFinished,
+}: {
+  videoUrl: string
+  title: string
+  onNearlyFinished?: () => void
+}) {
+  const firedRef = useRef(false)
+
+  const fireOnce = () => {
+    if (firedRef.current) return
+    firedRef.current = true
+    onNearlyFinished?.()
+  }
+
+  return (
+    <video
+      className="aspect-video w-full rounded-2xl bg-black"
+      src={videoUrl}
+      title={title}
+      controls
+      autoPlay
+      onTimeUpdate={(event) => {
+        const el = event.currentTarget
+        if (el.duration > 0 && el.currentTime / el.duration >= NEARLY_FINISHED_RATIO) {
+          fireOnce()
+        }
+      }}
+      onEnded={fireOnce}
+    />
+  )
 }
 
 /**
@@ -33,6 +168,7 @@ export function LessonVideoPlayer({
   posterSrc,
   posterAlt,
   locked = false,
+  onNearlyFinished,
 }: LessonVideoPlayerProps) {
   const [playing, setPlaying] = useState(false)
 
@@ -40,22 +176,18 @@ export function LessonVideoPlayer({
     const youtubeVideoId = getYoutubeVideoId(videoUrl)
 
     return youtubeVideoId ? (
-      <iframe
+      <YoutubeLessonPlayer
         key={videoUrl}
-        className="aspect-video w-full rounded-2xl"
-        src={`https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1`}
+        videoId={youtubeVideoId}
         title={posterAlt}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
+        onNearlyFinished={onNearlyFinished}
       />
     ) : (
-      <video
+      <NativeLessonVideoPlayer
         key={videoUrl}
-        className="aspect-video w-full rounded-2xl bg-black"
-        src={videoUrl}
+        videoUrl={videoUrl}
         title={posterAlt}
-        controls
-        autoPlay
+        onNearlyFinished={onNearlyFinished}
       />
     )
   }

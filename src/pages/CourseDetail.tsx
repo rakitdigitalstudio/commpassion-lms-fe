@@ -207,7 +207,7 @@ export function CourseDetail() {
     lessons.length === 0 ? 0 : Math.round((completedCount / lessons.length) * 100)
 
   const handleMarkAsDone = () => {
-    if (!selectedLesson) return
+    if (!selectedLesson || selectedLesson.completed) return
 
     markComplete.mutate(selectedLesson.id, {
       onSuccess: (progress) => {
@@ -247,6 +247,7 @@ export function CourseDetail() {
               videoUrl={videoQuery.data}
               posterSrc={course.imageSrc}
               posterAlt={selectedLesson.title}
+              onNearlyFinished={handleMarkAsDone}
             />
           ) : lessons.length === 0 ? (
             <Card>
