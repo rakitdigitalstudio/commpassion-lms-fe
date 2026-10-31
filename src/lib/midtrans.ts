@@ -48,7 +48,7 @@ export function loadMidtransSnap(): Promise<MidtransSnap> {
   }
 
   if (!snapPromise) {
-    snapPromise = new Promise((resolve, reject) => {
+    snapPromise = new Promise<MidtransSnap>((resolve, reject) => {
       const script = document.createElement('script')
       script.src = MIDTRANS_IS_PRODUCTION ? SNAP_SRC_PRODUCTION : SNAP_SRC_SANDBOX
       script.setAttribute('data-client-key', MIDTRANS_CLIENT_KEY)
