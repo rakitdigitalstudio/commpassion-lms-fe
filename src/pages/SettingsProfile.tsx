@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next'
 
+import { useSetIsNewUserMutation } from '@/api/user/mutations/useSetIsNewUserMutation'
 import { Button } from '@/components/Button'
 import { SectionCard } from '@/components/SectionCard'
+import { Switch } from '@/components/Switch'
 import { TextField } from '@/components/TextField'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
 
@@ -16,6 +18,7 @@ export function SettingsProfile() {
   const { t } = useTranslation()
   const { user } = useUserAuthenticationContext()
   const initial = user?.fullName.charAt(0) ?? '?'
+  const setIsNewUser = useSetIsNewUserMutation()
 
   return (
     <>
@@ -82,6 +85,24 @@ export function SettingsProfile() {
           defaultValue={user?.email}
           placeholder={t('settings.profile.emailPlaceholder')}
         />
+      </SectionCard>
+
+      <SectionCard
+        title={t('settings.learning.title')}
+        subtitle={t('settings.learning.subtitle')}
+      >
+        <div className="flex items-center justify-between gap-5">
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-medium">{t('settings.learning.introVideoLabel')}</p>
+            <p className="text-sm text-muted">{t('settings.learning.introVideoHint')}</p>
+          </div>
+          <Switch
+            checked={user?.isNewUser ?? false}
+            onChange={(checked) => setIsNewUser.mutate(checked)}
+            disabled={setIsNewUser.isPending}
+            aria-label={t('settings.learning.introVideoLabel')}
+          />
+        </div>
       </SectionCard>
 
       <Button variant="primary" className="self-end">

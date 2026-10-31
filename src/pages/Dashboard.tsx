@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+import { useSetIsNewUserMutation } from '@/api/user/mutations/useSetIsNewUserMutation'
 import { useGetUserActivitiesQuery } from '@/api/user/queries/useGetUserActivitiesQuery'
 import { useGetUserCoursesQuery } from '@/api/user/queries/useGetUserCoursesQuery'
 import { useGetUserStatsQuery } from '@/api/user/queries/useGetUserStatsQuery'
@@ -9,6 +10,7 @@ import { Button } from '@/components/Button'
 import { EmptyState } from '@/components/EmptyState'
 import { FullPageLoader } from '@/components/FullPageLoader'
 import { InboxIcon } from '@/components/icons'
+import { IntroductionVideoCard } from '@/components/IntroductionVideoCard'
 import { PageHeader } from '@/components/PageHeader'
 import { Progress } from '@/components/Progress'
 import { SectionCard } from '@/components/SectionCard'
@@ -36,6 +38,7 @@ export function Dashboard() {
 
   const { data: stats, isLoading: isStatsLoading } = useGetUserStatsQuery()
   const isNewUser = stats?.coursesEnrolled === 0
+  const setIsNewUser = useSetIsNewUserMutation()
 
   // A new user has nothing to list yet, so skip those requests entirely.
   const enabled = stats !== undefined && !isNewUser
@@ -56,6 +59,13 @@ export function Dashboard() {
         })}
         subtitle={t('dashboard.subtitle')}
       />
+
+      {user?.isNewUser ? (
+        <IntroductionVideoCard
+          onHide={() => setIsNewUser.mutate(false)}
+          isHiding={setIsNewUser.isPending}
+        />
+      ) : null}
 
       <div className="flex flex-col gap-5 sm:flex-row">
         <StatCard

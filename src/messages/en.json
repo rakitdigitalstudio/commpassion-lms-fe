@@ -111,7 +111,14 @@
     "courseProgress": "Course Progress",
     "emptyHeading": "Your learning journey starts here",
     "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
-    "browseCourses": "Browse Courses"
+    "browseCourses": "Browse Courses",
+    "introVideo": {
+      "title": "Introduction Video",
+      "badge": "Recommended for New Learners",
+      "description": "Get direct guidance on interactive learning, and a warm welcome from our professional instructors.",
+      "hide": "Hide Video",
+      "videoNotAvailable": "The introduction video isn't available yet."
+    }
   },
   "purchases": {
     "title": "My Purchases",
@@ -200,6 +207,12 @@
       "emailLabel": "Email",
       "emailHint": "Used for login.",
       "emailPlaceholder": "Input Your Email"
+    },
+    "learning": {
+      "title": "Learning Preferences",
+      "subtitle": "Control what shows up to help you get started.",
+      "introVideoLabel": "Show introduction video",
+      "introVideoHint": "Shows the welcome video on your Dashboard again next time you sign in."
     },
     "security": {
       "changePasswordTitle": "Change Password",

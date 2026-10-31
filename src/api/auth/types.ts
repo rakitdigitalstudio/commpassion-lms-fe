@@ -8,6 +8,8 @@ export interface User {
   email: string
   fullName: string
   role: string
+  /** Drives the post-login introduction video — true until POST /api/v1/user/onboarding/complete. */
+  isNewUser: boolean
 }
 
 /** User as the Golang API sends it (internal/delivery/http/handler/user.go). */
@@ -16,6 +18,7 @@ export interface UserResponse {
   email: string
   full_name: string
   role: string
+  is_new_user: boolean
 }
 
 export interface LoginPayload {

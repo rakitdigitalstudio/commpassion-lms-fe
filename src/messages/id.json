@@ -111,7 +111,14 @@
     "courseProgress": "Progres Kursus",
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
-    "browseCourses": "Jelajahi Kursus"
+    "browseCourses": "Jelajahi Kursus",
+    "introVideo": {
+      "title": "Video Pengenalan",
+      "badge": "Direkomendasikan untuk Pelajar Baru",
+      "description": "Dapatkan panduan langsung tentang pembelajaran interaktif, dan sambutan hangat dari instruktur profesional kami.",
+      "hide": "Sembunyikan Video",
+      "videoNotAvailable": "Video pengenalan belum tersedia."
+    }
   },
   "purchases": {
     "title": "Pembelian Saya",
@@ -200,6 +207,12 @@
       "emailLabel": "Email",
       "emailHint": "Digunakan untuk masuk.",
       "emailPlaceholder": "Masukkan Email Anda"
+    },
+    "learning": {
+      "title": "Preferensi Belajar",
+      "subtitle": "Atur apa yang muncul untuk membantu Anda memulai.",
+      "introVideoLabel": "Tampilkan video pengenalan",
+      "introVideoHint": "Menampilkan kembali video selamat datang di Dashboard Anda saat masuk berikutnya."
     },
     "security": {
       "changePasswordTitle": "Ubah Kata Sandi",

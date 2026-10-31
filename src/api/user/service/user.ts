@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/api/core/endpoints'
-import { getApiData } from '@/api/core/http'
+import { API_ENDPOINTS, HTTP_METHOD } from '@/api/core/endpoints'
+import { apiUrl, ApiError, getApiData, getCsrfToken, readErrorCode } from '@/api/core/http'
 import { getCoursesByIds } from '@/api/courses/service/courses'
 import type { Course } from '@/api/courses/types'
 import type {
@@ -89,4 +89,27 @@ export async function getUserStats(): Promise<UserStats> {
 
 export async function getUserActivities(): Promise<UserActivity[]> {
   return getApiData<UserActivityResponse[]>(API_ENDPOINTS.user.activities)
+}
+
+/**
+ * Toggles the post-login introduction video: `false` dismisses it
+ * (Dashboard's "Hide Video"), `true` brings it back (Settings). Idempotent
+ * on the backend either way.
+ */
+export async function setIsNewUser(isNewUser: boolean): Promise<void> {
+  const csrfToken = await getCsrfToken()
+
+  const res = await fetch(apiUrl(API_ENDPOINTS.user.onboardingPreferences), {
+    method: HTTP_METHOD.POST,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken,
+    },
+    body: JSON.stringify({ is_new_user: isNewUser }),
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await readErrorCode(res))
+  }
 }

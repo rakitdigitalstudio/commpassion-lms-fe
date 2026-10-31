@@ -23,6 +23,8 @@ export const API_ENDPOINTS = {
       `/api/v1/user/courses/${encodeURIComponent(courseId)}/progress`,
     completeLesson: (courseId: string, lessonKey: string) =>
       `/api/v1/user/courses/${encodeURIComponent(courseId)}/lessons/${encodeURIComponent(lessonKey)}/complete`,
+    /** Toggles is_new_user either direction — body is `{ is_new_user: boolean }`. */
+    onboardingPreferences: '/api/v1/user/onboarding/preferences',
   },
   courses: {
     /** Enrolled-only: the one place a lesson's video URL is served. */
