@@ -111,7 +111,14 @@
     "courseProgress": "Course Progress",
     "emptyHeading": "Your learning journey starts here",
     "emptySubtext": "You haven't enrolled in any courses yet. Explore our catalog and find something that sparks your curiosity.",
-    "browseCourses": "Browse Courses"
+    "browseCourses": "Browse Courses",
+    "introVideo": {
+      "title": "Introduction Video",
+      "badge": "Recommended for New Learners",
+      "description": "Get direct guidance on interactive learning, and a warm welcome from our professional instructors.",
+      "hide": "Hide Video",
+      "videoNotAvailable": "The introduction video isn't available yet."
+    }
   },
   "purchases": {
     "title": "My Purchases",

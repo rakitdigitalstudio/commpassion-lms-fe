@@ -40,6 +40,7 @@ function toUser(user: UserResponse): User {
     email: user.email,
     fullName: user.full_name,
     role: user.role,
+    isNewUser: user.is_new_user,
   }
 }
 

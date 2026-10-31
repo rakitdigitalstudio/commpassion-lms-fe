@@ -30,3 +30,10 @@ export const MIDTRANS_CLIENT_KEY = import.meta.env.VITE_MIDTRANS_CLIENT_KEY ?? '
 
 /** Loads Snap.js from Midtrans's production host instead of sandbox. Off (sandbox) by default. */
 export const MIDTRANS_IS_PRODUCTION = import.meta.env.VITE_MIDTRANS_IS_PRODUCTION === 'true'
+
+/**
+ * Post-login introduction video URL shown to new users (Dashboard). Empty
+ * until the real video asset exists — the play button stays disabled with
+ * a clear message in that case, same pattern as MIDTRANS_CLIENT_KEY.
+ */
+export const INTRO_VIDEO_URL = import.meta.env.VITE_INTRO_VIDEO_URL ?? ''

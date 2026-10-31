@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/api/core/endpoints'
-import { getApiData } from '@/api/core/http'
+import { API_ENDPOINTS, HTTP_METHOD } from '@/api/core/endpoints'
+import { apiUrl, ApiError, getApiData, getCsrfToken, readErrorCode } from '@/api/core/http'
 import { getCoursesByIds } from '@/api/courses/service/courses'
 import type { Course } from '@/api/courses/types'
 import type {
@@ -89,4 +89,23 @@ export async function getUserStats(): Promise<UserStats> {
 
 export async function getUserActivities(): Promise<UserActivity[]> {
   return getApiData<UserActivityResponse[]>(API_ENDPOINTS.user.activities)
+}
+
+/**
+ * Dismisses the post-login introduction video — flips is_new_user false
+ * server-side. Idempotent on the backend, so no special handling here for
+ * calling it twice.
+ */
+export async function completeOnboarding(): Promise<void> {
+  const csrfToken = await getCsrfToken()
+
+  const res = await fetch(apiUrl(API_ENDPOINTS.user.onboardingComplete), {
+    method: HTTP_METHOD.POST,
+    credentials: 'include',
+    headers: { 'X-CSRF-Token': csrfToken },
+  })
+
+  if (!res.ok) {
+    throw new ApiError(res.status, await readErrorCode(res))
+  }
 }

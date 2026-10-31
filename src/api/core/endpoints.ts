@@ -23,6 +23,8 @@ export const API_ENDPOINTS = {
       `/api/v1/user/courses/${encodeURIComponent(courseId)}/progress`,
     completeLesson: (courseId: string, lessonKey: string) =>
       `/api/v1/user/courses/${encodeURIComponent(courseId)}/lessons/${encodeURIComponent(lessonKey)}/complete`,
+    /** Dismisses the post-login introduction video — flips is_new_user false. */
+    onboardingComplete: '/api/v1/user/onboarding/complete',
   },
   courses: {
     /** Enrolled-only: the one place a lesson's video URL is served. */

@@ -53,6 +53,7 @@ const accounts = new Map<string, MockAccount>([
         email: 'marco.herbert@example.com',
         full_name: 'Marco Herbert',
         role: 'student',
+        is_new_user: true,
       },
     },
   ],
@@ -112,6 +113,7 @@ export const handlers: HttpHandler[] = [
       email: body.email,
       full_name: body.full_name,
       role: 'student',
+      is_new_user: true,
     }
     accounts.set(body.email, { password: body.password, user })
 
@@ -146,6 +148,16 @@ export const handlers: HttpHandler[] = [
   ),
   http.get(`*${API_ENDPOINTS.user.courses}`, () => ok([], 'User courses')),
   http.get(`*${API_ENDPOINTS.user.activities}`, () => ok([], 'User activities')),
+
+  http.post(`*${API_ENDPOINTS.user.onboardingComplete}`, () => {
+    const account = currentUserEmail ? accounts.get(currentUserEmail) : undefined
+
+    if (!account) {
+      return fail(401, 'unauthorized', 'authentication required')
+    }
+    account.user.is_new_user = false
+    return okMessage('Onboarding completed')
+  }),
 
   // No real sandbox key exists yet (Ticket #68), so this mock token won't
   // actually open a Snap popup — it only exercises the request/error

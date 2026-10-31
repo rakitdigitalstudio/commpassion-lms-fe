@@ -111,7 +111,14 @@
     "courseProgress": "Progres Kursus",
     "emptyHeading": "Perjalanan belajar Anda dimulai di sini",
     "emptySubtext": "Anda belum mendaftar di kursus apa pun. Jelajahi katalog kami dan temukan sesuatu yang membangkitkan rasa ingin tahu Anda.",
-    "browseCourses": "Jelajahi Kursus"
+    "browseCourses": "Jelajahi Kursus",
+    "introVideo": {
+      "title": "Video Pengenalan",
+      "badge": "Direkomendasikan untuk Pelajar Baru",
+      "description": "Dapatkan panduan langsung tentang pembelajaran interaktif, dan sambutan hangat dari instruktur profesional kami.",
+      "hide": "Sembunyikan Video",
+      "videoNotAvailable": "Video pengenalan belum tersedia."
+    }
   },
   "purchases": {
     "title": "Pembelian Saya",
