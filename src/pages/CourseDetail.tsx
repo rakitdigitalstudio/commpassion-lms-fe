@@ -269,15 +269,17 @@ export function CourseDetail() {
                   </p>
                 ) : null}
               </div>
-              <Button
-                variant="accent"
-                disabled={selectedLesson.completed || markComplete.isPending}
-                onClick={handleMarkAsDone}
-              >
-                {markComplete.isPending
-                  ? t('courseDetail.markingAsDone')
-                  : t('courseDetail.markAsDone')}
-              </Button>
+              {selectedLesson.completed ? null : (
+                <Button
+                  variant="accent"
+                  disabled={markComplete.isPending}
+                  onClick={handleMarkAsDone}
+                >
+                  {markComplete.isPending
+                    ? t('courseDetail.markingAsDone')
+                    : t('courseDetail.markAsDone')}
+                </Button>
+              )}
             </Card>
           ) : null}
         </div>
