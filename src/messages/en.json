@@ -188,6 +188,7 @@
       "security": "Security"
     },
     "saveChanges": "Save Changes",
+    "changesSaved": "Changes saved.",
     "profile": {
       "publicProfileTitle": "Public Profile",
       "publicProfileSubtitle": "This information may be visible to other learners and instructors.",
