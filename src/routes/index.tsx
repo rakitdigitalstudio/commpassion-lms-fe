@@ -73,7 +73,10 @@ export const router = createBrowserRouter([
   // Reachable regardless of auth state (e.g. a mailed link opened in a
   // session that's already logged in elsewhere) — not guest-gated.
   { path: '/forgot-password', element: <ForgotPassword /> },
-  { path: '/reset-password', element: <ResetPassword /> },
+  // Renamed from /reset-password: the backend's emailed link now points
+  // at /change-password?t=<token> (Ticket #81). ResetPassword.tsx itself
+  // keeps its name — see its file comment.
+  { path: '/change-password', element: <ResetPassword /> },
   { path: '/style-guide', element: <StyleGuide /> },
   // Catch-all — must stay last. Public, not gated: an unmatched URL isn't
   // "protected content," so redirecting to /login first would be wrong.

@@ -6,6 +6,8 @@ import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
 
 interface PasswordFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label: string
+  /** Inline validation/API error shown under the field (Ticket #81's per-field error states). */
+  error?: string | null
 }
 
 /**
@@ -14,34 +16,41 @@ interface PasswordFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>,
  * hand-roll their own copy of this; not touched here to keep this
  * ticket's diff scoped to Settings).
  */
-export function PasswordField({ label, className = '', ...props }: PasswordFieldProps) {
+export function PasswordField({ label, error, className = '', ...props }: PasswordFieldProps) {
   const { t } = useTranslation()
   const visibility = usePasswordVisibility()
 
   return (
-    <div className="flex w-full flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-      <label className="text-sm font-medium sm:w-[168px] sm:shrink-0">{label}</label>
-      <div className="relative sm:flex-1">
-        <LockIcon className="text-muted-2 pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-        <input
-          type={visibility.inputType}
-          className={`h-10 w-full rounded-control border border-muted-2 py-2 pr-9 pl-9 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none ${className}`}
-          {...props}
-        />
-        <button
-          type="button"
-          onClick={visibility.toggle}
-          aria-label={t(
-            visibility.isVisible ? 'auth.passwordToggle.hide' : 'auth.passwordToggle.show',
-          )}
-          className="text-muted-2 absolute top-1/2 right-3 -translate-y-1/2"
-        >
-          {visibility.isVisible ? (
-            <EyeOffIcon className="h-4 w-4" />
-          ) : (
-            <EyeIcon className="h-4 w-4" />
-          )}
-        </button>
+    <div className="flex w-full flex-col gap-1 sm:flex-row sm:items-start sm:gap-3">
+      <label className="text-sm font-medium sm:w-[168px] sm:shrink-0 sm:pt-2">{label}</label>
+      <div className="flex flex-col gap-1 sm:flex-1">
+        <div className="relative">
+          <LockIcon className="text-muted-2 pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <input
+            type={visibility.inputType}
+            className={`h-10 w-full rounded-control border border-muted-2 py-2 pr-9 pl-9 text-sm placeholder:text-muted-2 focus:ring-2 focus:ring-primary/40 focus:outline-none ${className}`}
+            {...props}
+          />
+          <button
+            type="button"
+            onClick={visibility.toggle}
+            aria-label={t(
+              visibility.isVisible ? 'auth.passwordToggle.hide' : 'auth.passwordToggle.show',
+            )}
+            className="text-muted-2 absolute top-1/2 right-3 -translate-y-1/2"
+          >
+            {visibility.isVisible ? (
+              <EyeOffIcon className="h-4 w-4" />
+            ) : (
+              <EyeIcon className="h-4 w-4" />
+            )}
+          </button>
+        </div>
+        {error ? (
+          <p role="alert" className="text-warning text-xs">
+            {error}
+          </p>
+        ) : null}
       </div>
     </div>
   )

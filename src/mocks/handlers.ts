@@ -24,14 +24,24 @@ function okMessage(message: string, status = 200): Response {
   return HttpResponse.json({ message }, { status })
 }
 
-function fail(status: number, code: string, message: string): Response {
-  return HttpResponse.json<ApiErrorBody>({ error: { message, code } }, { status })
+function fail(
+  status: number,
+  code: string,
+  message: string,
+  headers?: Record<string, string>,
+): Response {
+  return HttpResponse.json<ApiErrorBody>({ error: { message, code } }, { status, headers })
 }
 
 interface RegisterRequest {
   full_name: string
   email: string
   password: string
+}
+
+interface ChangePasswordRequest {
+  current_password: string
+  new_password: string
 }
 
 interface MockAccount {
@@ -122,20 +132,64 @@ export const handlers: HttpHandler[] = [
 
   // Always the same response regardless of whether the email exists —
   // don't leak account existence, per Ticket #11's acceptance criteria.
-  http.post(`*${API_ENDPOINTS.auth.forgotPassword}`, () =>
-    okMessage('If the address exists, a reset link has been sent'),
-  ),
+  // The one exception, "ratelimited@example.com", exercises Ticket #81's
+  // 429 handling, which isn't account-existence information.
+  http.post(`*${API_ENDPOINTS.auth.forgotPassword}`, async ({ request }) => {
+    const body = (await request.json()) as { email?: string }
 
-  // Mock reset token for exercising Ticket #11's reset-password form:
-  // any token except "invalid" (or empty) succeeds.
+    if (body.email === 'ratelimited@example.com') {
+      return fail(429, API_ERROR_CODE.RATE_LIMITED, 'too many attempts', { 'Retry-After': '30' })
+    }
+
+    return okMessage('If the address exists, a reset link has been sent')
+  }),
+
+  // Mock reset token for exercising Ticket #81's /change-password form:
+  // "invalid" -> token_invalid (expired/used/malformed), "short" ->
+  // validation_error, "ratelimited" -> 429, anything else (non-empty)
+  // succeeds.
   http.post(`*${API_ENDPOINTS.auth.resetPassword}`, async ({ request }) => {
     const body = (await request.json()) as Partial<ResetPasswordPayload>
 
     if (!body.token || body.token === 'invalid') {
       return fail(400, API_ERROR_CODE.TOKEN_INVALID, 'reset token is invalid or expired')
     }
+    if (body.token === 'short') {
+      return fail(400, API_ERROR_CODE.VALIDATION_ERROR, 'password must be at least 12 characters')
+    }
+    if (body.token === 'ratelimited') {
+      return fail(429, API_ERROR_CODE.RATE_LIMITED, 'too many attempts', { 'Retry-After': '30' })
+    }
 
     return okMessage('Password has been reset successfully')
+  }),
+
+  // Mock for Ticket #81's logged-in change-password form. Branches on
+  // sentinel current_password values since mock accounts don't carry a
+  // session-scoped rate-limit counter: "wrongpass" -> invalid_current_
+  // password, "ratelimited" -> 429. A too-short new_password always
+  // returns validation_error, matching the real 12-character minimum.
+  http.post(`*${API_ENDPOINTS.auth.changePassword}`, async ({ request }) => {
+    const account = currentUserEmail ? accounts.get(currentUserEmail) : undefined
+
+    if (!account) {
+      return fail(401, 'unauthorized', 'authentication required')
+    }
+
+    const body = (await request.json()) as Partial<ChangePasswordRequest>
+
+    if (body.current_password === 'ratelimited') {
+      return fail(429, API_ERROR_CODE.RATE_LIMITED, 'too many attempts', { 'Retry-After': '30' })
+    }
+    if (body.current_password !== account.password) {
+      return fail(400, API_ERROR_CODE.INVALID_CURRENT_PASSWORD, 'current password is incorrect')
+    }
+    if (!body.new_password || body.new_password.length < 12) {
+      return fail(400, API_ERROR_CODE.VALIDATION_ERROR, 'password must be at least 12 characters')
+    }
+
+    account.password = body.new_password
+    return okMessage('Password has been changed')
   }),
 
   // Learner data: no mock account is enrolled in anything, so these return
