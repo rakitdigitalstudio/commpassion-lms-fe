@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 
 import { useChangePasswordMutation } from '@/api/auth/mutations/useChangePasswordMutation'
 import {
@@ -10,6 +9,7 @@ import {
   RateLimitedError,
   UnauthenticatedError,
 } from '@/api/auth/service/auth'
+import { useAppToast } from '@/hooks/useAppToast'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { isPasswordValid } from '@/lib/password-rules'
 
@@ -21,6 +21,7 @@ import { isPasswordValid } from '@/lib/password-rules'
  */
 export function useChangePasswordForm() {
   const { t } = useTranslation()
+  const toast = useAppToast()
   const navigate = useNavigate()
 
   const [currentPassword, setCurrentPassword] = useState('')
@@ -41,7 +42,7 @@ export function useChangePasswordForm() {
   const { run: submitChange, isSubmitting } = useAsyncAction(
     async () => {
       await handleChangePassword({ currentPassword, newPassword })
-      toast.success(t('settings.security.successMessage'))
+      toast.success('settings.security.successMessage')
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')

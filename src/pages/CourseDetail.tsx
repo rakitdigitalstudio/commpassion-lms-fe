@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
-import { toast } from 'sonner'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { Button } from '@/components/Button'
@@ -17,6 +16,7 @@ import { useCheckoutMutation } from '@/api/courses/mutations/useCheckoutMutation
 import { CourseAlreadyEnrolledError, CourseUnpublishedError } from '@/api/courses/service/checkout'
 import { queryKeys } from '@/api/core/query-keys'
 import { useQueryCache } from '@/api/core/useQueryCache'
+import { useAppToast } from '@/hooks/useAppToast'
 import { useMarkLessonCompleteMutation } from '@/api/lessons/mutations/useMarkLessonCompleteMutation'
 import { useGetLessonPreviewsQuery } from '@/api/lessons/queries/useGetLessonPreviewsQuery'
 import { useGetLessonVideoQuery } from '@/api/lessons/queries/useGetLessonVideoQuery'
@@ -28,6 +28,7 @@ import { loadMidtransSnap, MidtransNotConfiguredError } from '@/lib/midtrans'
 export function CourseDetail() {
   const { courseId } = useParams<{ courseId: string }>()
   const { t } = useTranslation()
+  const toast = useAppToast()
 
   const courseQuery = useGetCourseDetailQuery(courseId ?? '')
   const courseLoaded = courseQuery.data !== undefined
@@ -103,39 +104,39 @@ export function CourseDetail() {
           const snap = await loadMidtransSnap()
           snap.pay(snapToken, {
             onSuccess: () => {
-              toast.success(t('courseDetail.checkoutSuccess'))
+              toast.success('courseDetail.checkoutSuccess')
               refreshEnrollment()
             },
             onPending: () => {
-              toast.info(t('courseDetail.checkoutPending'))
+              toast.info('courseDetail.checkoutPending')
               refreshEnrollment()
             },
             onError: () => {
-              toast.error(t('courseDetail.checkoutError'))
+              toast.error('courseDetail.checkoutError')
             },
             onClose: () => {
-              toast.info(t('courseDetail.checkoutClosed'))
+              toast.info('courseDetail.checkoutClosed')
             },
           })
         } catch (error) {
           toast.info(
             error instanceof MidtransNotConfiguredError
-              ? t('courseDetail.checkoutNotConfigured')
-              : t('courseDetail.checkoutError'),
+              ? 'courseDetail.checkoutNotConfigured'
+              : 'courseDetail.checkoutError',
           )
         }
       },
       onError: (error) => {
         if (error instanceof CourseAlreadyEnrolledError) {
-          toast.info(t('courseDetail.checkoutAlreadyEnrolled'))
+          toast.info('courseDetail.checkoutAlreadyEnrolled')
           refreshEnrollment()
           return
         }
         if (error instanceof CourseUnpublishedError) {
-          toast.error(t('courseDetail.checkoutUnpublished'))
+          toast.error('courseDetail.checkoutUnpublished')
           return
         }
-        toast.error(t('courseDetail.checkoutError'))
+        toast.error('courseDetail.checkoutError')
       },
     })
   }

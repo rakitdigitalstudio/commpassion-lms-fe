@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 
 import { useSetIsNewUserMutation } from '@/api/user/mutations/useSetIsNewUserMutation'
 import { Button } from '@/components/Button'
@@ -8,6 +7,7 @@ import { SectionCard } from '@/components/SectionCard'
 import { Switch } from '@/components/Switch'
 import { TextField } from '@/components/TextField'
 import { useUserAuthenticationContext } from '@/context/UserAuthenticationContext'
+import { useAppToast } from '@/hooks/useAppToast'
 
 /**
  * Settings > Profile tab content (Ticket #27). Inputs are local-only —
@@ -22,6 +22,7 @@ import { useUserAuthenticationContext } from '@/context/UserAuthenticationContex
  */
 export function SettingsProfile() {
   const { t } = useTranslation()
+  const toast = useAppToast()
   const { user } = useUserAuthenticationContext()
   const initial = user?.fullName.charAt(0) ?? '?'
   const setIsNewUser = useSetIsNewUserMutation()
@@ -40,11 +41,11 @@ export function SettingsProfile() {
   const handleSaveChanges = () => {
     if (introVideoEnabled !== (user?.isNewUser ?? false)) {
       setIsNewUser.mutate(introVideoEnabled, {
-        onSuccess: () => toast.success(t('settings.changesSaved')),
+        onSuccess: () => toast.success('settings.changesSaved'),
       })
       return
     }
-    toast.success(t('settings.changesSaved'))
+    toast.success('settings.changesSaved')
   }
 
   return (
