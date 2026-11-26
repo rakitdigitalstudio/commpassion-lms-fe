@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 
 import { useResetPasswordMutation } from '@/api/auth/mutations/useResetPasswordMutation'
 import {
@@ -9,6 +8,7 @@ import {
   InvalidResetTokenError,
   RateLimitedError,
 } from '@/api/auth/service/auth'
+import { useAppToast } from '@/hooks/useAppToast'
 import { useAsyncAction } from '@/hooks/useAsyncAction'
 import { usePasswordVisibility } from '@/hooks/usePasswordVisibility'
 import { isPasswordValid } from '@/lib/password-rules'
@@ -26,6 +26,7 @@ import { isPasswordValid } from '@/lib/password-rules'
  */
 export function useResetPasswordForm() {
   const { t } = useTranslation()
+  const toast = useAppToast()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const token = searchParams.get('t')
@@ -59,7 +60,7 @@ export function useResetPasswordForm() {
         throw new InvalidResetTokenError('Missing reset token')
       }
       await handleResetPassword({ token, password })
-      toast.success(t('auth.resetPassword.successMessage'))
+      toast.success('auth.resetPassword.successMessage')
       navigate('/login', { replace: true })
     },
     (submitError) => {
