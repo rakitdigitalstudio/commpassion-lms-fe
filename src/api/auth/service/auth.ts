@@ -1,5 +1,6 @@
 import type {
   AuthResponse,
+  ChangePasswordPayload,
   ForgotPasswordPayload,
   LoginPayload,
   RegisterPayload,
@@ -8,7 +9,16 @@ import type {
   UserResponse,
 } from '@/api/auth/types'
 import { API_ENDPOINTS, HTTP_METHOD } from '@/api/core/endpoints'
-import { API_ERROR_CODE, apiUrl, getCsrfToken, readData, readErrorCode } from '@/api/core/http'
+import {
+  API_ERROR_CODE,
+  apiUrl,
+  getCsrfToken,
+  postWithCsrfRetry,
+  readData,
+  readErrorCode,
+  readErrorMessage,
+  readRetryAfterSeconds,
+} from '@/api/core/http'
 
 /**
  * Golang auth client (commpassion-core-office, internal/delivery/http/handler).
@@ -33,6 +43,27 @@ export class InvalidResetTokenError extends Error {}
 
 /** Thrown by register() on a 409 (email already registered). */
 export class EmailAlreadyRegisteredError extends Error {}
+
+/** Thrown by changePassword() when the API says `invalid_current_password`. */
+export class InvalidCurrentPasswordError extends Error {}
+
+/**
+ * Thrown by resetPassword()/changePassword() on a `validation_error` —
+ * carries the API's own `error.message` (too short/long, or same as the
+ * current password) so the field can show it verbatim instead of a
+ * generic client-side message.
+ */
+export class ApiValidationError extends Error {}
+
+/** Thrown on a `429 rate_limited` — `retryAfterSeconds` comes from the `Retry-After` header. */
+export class RateLimitedError extends Error {
+  readonly retryAfterSeconds: number
+
+  constructor(retryAfterSeconds: number) {
+    super(`Rate limited, retry after ${retryAfterSeconds}s`)
+    this.retryAfterSeconds = retryAfterSeconds
+  }
+}
 
 function toUser(user: UserResponse): User {
   return {
@@ -133,46 +164,75 @@ export async function logout(): Promise<void> {
  * Always resolves on a 2xx/4xx alike from the caller's point of view —
  * the backend intentionally returns the same response whether or not the
  * email exists (don't leak account existence), so there's nothing to
- * branch on here. A genuine network/server error still throws.
+ * branch on except a genuine rate limit; a network/server error still throws.
  */
 export async function forgotPassword(payload: ForgotPasswordPayload): Promise<void> {
-  const csrfToken = await getCsrfToken()
+  const res = await postWithCsrfRetry(API_ENDPOINTS.auth.forgotPassword, payload)
 
-  const res = await fetch(apiUrl(API_ENDPOINTS.auth.forgotPassword), {
-    method: HTTP_METHOD.POST,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': csrfToken,
-    },
-    body: JSON.stringify(payload),
-  })
-
-  if (!res.ok) {
-    throw new Error(`forgotPassword failed: ${res.status}`)
+  if (res.ok) {
+    return
   }
+
+  if ((await readErrorCode(res.clone())) === API_ERROR_CODE.RATE_LIMITED) {
+    throw new RateLimitedError(readRetryAfterSeconds(res) ?? 60)
+  }
+
+  throw new Error(`forgotPassword failed: ${res.status}`)
 }
 
+/**
+ * `payload.token` is the emailed link's `t` query param (see ChangePassword.tsx) —
+ * the wire field is still `token`, only the URL param is named `t`.
+ */
 export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
-  const csrfToken = await getCsrfToken()
+  const res = await postWithCsrfRetry(API_ENDPOINTS.auth.resetPassword, payload)
 
-  const res = await fetch(apiUrl(API_ENDPOINTS.auth.resetPassword), {
-    method: HTTP_METHOD.POST,
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRF-Token': csrfToken,
-    },
-    body: JSON.stringify(payload),
-  })
+  if (res.ok) {
+    return
+  }
 
-  // A 400 is also returned for a too-short password (`validation_error`),
-  // so branch on the code, not the status.
-  if (!res.ok && (await readErrorCode(res)) === API_ERROR_CODE.TOKEN_INVALID) {
+  // A 400 is also returned for a too-short/-long password
+  // (`validation_error`), so branch on the code, not the status.
+  const code = await readErrorCode(res.clone())
+
+  if (code === API_ERROR_CODE.TOKEN_INVALID) {
     throw new InvalidResetTokenError('Invalid or expired reset link')
   }
-
-  if (!res.ok) {
-    throw new Error(`resetPassword failed: ${res.status}`)
+  if (code === API_ERROR_CODE.VALIDATION_ERROR) {
+    throw new ApiValidationError((await readErrorMessage(res.clone())) ?? 'Invalid password.')
   }
+  if (code === API_ERROR_CODE.RATE_LIMITED) {
+    throw new RateLimitedError(readRetryAfterSeconds(res) ?? 60)
+  }
+
+  throw new Error(`resetPassword failed: ${res.status}`)
+}
+
+export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
+  const res = await postWithCsrfRetry(API_ENDPOINTS.auth.changePassword, {
+    current_password: payload.currentPassword,
+    new_password: payload.newPassword,
+  })
+
+  if (res.ok) {
+    return
+  }
+
+  if (res.status === 401) {
+    throw new UnauthenticatedError('Session expired')
+  }
+
+  const code = await readErrorCode(res.clone())
+
+  if (code === API_ERROR_CODE.INVALID_CURRENT_PASSWORD) {
+    throw new InvalidCurrentPasswordError('Current password is incorrect')
+  }
+  if (code === API_ERROR_CODE.VALIDATION_ERROR) {
+    throw new ApiValidationError((await readErrorMessage(res.clone())) ?? 'Invalid password.')
+  }
+  if (code === API_ERROR_CODE.RATE_LIMITED) {
+    throw new RateLimitedError(readRetryAfterSeconds(res) ?? 60)
+  }
+
+  throw new Error(`changePassword failed: ${res.status}`)
 }

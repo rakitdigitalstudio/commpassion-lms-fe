@@ -17,9 +17,9 @@ export interface PasswordRule {
 export const passwordRules: PasswordRule[] = [
   {
     id: 'length',
-    label: 'At least 8 characters',
+    label: 'At least 12 characters',
     labelKey: 'auth.passwordRules.length',
-    test: (password) => password.length >= 8,
+    test: (password) => password.length >= 12,
   },
   {
     id: 'uppercase',

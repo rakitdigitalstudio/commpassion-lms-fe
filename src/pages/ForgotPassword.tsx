@@ -18,7 +18,8 @@ import { IS_COMING_SOON } from '@/lib/config'
  */
 export function ForgotPassword() {
   const { t } = useTranslation()
-  const { email, setEmail, isSubmitting, isSubmitted, submit } = useForgotPasswordForm()
+  const { email, setEmail, isSubmitting, isSubmitted, retryAfterSeconds, submit } =
+    useForgotPasswordForm()
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -37,7 +38,13 @@ export function ForgotPassword() {
         </p>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
-          {IS_COMING_SOON ? <ComingSoonNotice /> : null}
+          {IS_COMING_SOON ? (
+            <ComingSoonNotice />
+          ) : retryAfterSeconds !== null ? (
+            <p role="alert" className="bg-warning/10 text-warning rounded-control p-3 text-sm">
+              {t('common.errors.rateLimited', { seconds: retryAfterSeconds })}
+            </p>
+          ) : null}
 
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium">

@@ -11,7 +11,8 @@
       "backHome": "Kembali ke Beranda"
     },
     "errors": {
-      "generic": "Terjadi kesalahan. Silakan coba lagi."
+      "generic": "Terjadi kesalahan. Silakan coba lagi.",
+      "rateLimited": "Coba lagi dalam {{seconds}} detik."
     },
     "searchCourses": "Cari kursus...",
     "pagination": {
@@ -84,8 +85,26 @@
       "successMessage": "Jika akun dengan email tersebut terdaftar, kami telah mengirimkan instruksi untuk mengatur ulang kata sandi Anda.",
       "backToSignIn": "Kembali ke Halaman Masuk"
     },
+    "resetPassword": {
+      "heading": "Atur kata sandi baru",
+      "subtitle": "Pilih kata sandi baru yang kuat untuk akun Anda.",
+      "newPasswordLabel": "Kata Sandi Baru",
+      "newPasswordPlaceholder": "Masukkan Kata Sandi Baru Anda",
+      "confirmPasswordLabel": "Konfirmasi Kata Sandi",
+      "confirmPasswordPlaceholder": "Konfirmasi Kata Sandi Baru Anda",
+      "submit": "Atur Ulang Kata Sandi",
+      "submitting": "Memproses…",
+      "successMessage": "Kata sandi Anda telah diatur ulang. Silakan masuk dengan kata sandi baru Anda.",
+      "invalidLinkHeading": "Tautan ini tidak valid",
+      "invalidLinkBody": "Tautan reset kata sandi ini hilang atau tidak valid.",
+      "requestNewLink": "Minta tautan baru",
+      "errorExpiredToken": "Tautan ini sudah kedaluwarsa atau sudah digunakan. Silakan minta tautan baru.",
+      "errorPasswordRules": "Kata sandi tidak memenuhi persyaratan di bawah ini.",
+      "errorPasswordMismatch": "Kata sandi tidak cocok.",
+      "errorGeneric": "Terjadi kesalahan. Silakan coba lagi."
+    },
     "passwordRules": {
-      "length": "Minimal 8 karakter",
+      "length": "Minimal 12 karakter",
       "uppercase": "Satu huruf kapital",
       "number": "Satu angka",
       "special": "Satu karakter khusus"
@@ -223,7 +242,11 @@
       "newPasswordLabel": "Kata Sandi Baru",
       "newPasswordPlaceholder": "Masukkan Kata Sandi Baru Anda",
       "confirmPasswordLabel": "Konfirmasi Kata Sandi",
-      "confirmPasswordPlaceholder": "Konfirmasi Kata Sandi Baru Anda"
+      "confirmPasswordPlaceholder": "Konfirmasi Kata Sandi Baru Anda",
+      "successMessage": "Kata sandi telah diubah.",
+      "errorCurrentPasswordInvalid": "Kata sandi saat ini salah.",
+      "errorPasswordRules": "Kata sandi tidak memenuhi persyaratan di bawah ini.",
+      "errorPasswordMismatch": "Kata sandi tidak cocok."
     }
   }
 }

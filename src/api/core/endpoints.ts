@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
     logout: '/api/v1/auth/logout',
     forgotPassword: '/api/v1/auth/forgot-password',
     resetPassword: '/api/v1/auth/reset-password',
+    changePassword: '/api/v1/auth/change-password',
   },
   user: {
     courses: '/api/v1/user/courses',
